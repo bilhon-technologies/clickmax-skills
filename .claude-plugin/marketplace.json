@@ -1,0 +1,14 @@
+{
+  "name": "clickmax-skills",
+  "owner": {
+    "name": "Bilhon Technologies",
+    "url": "https://clickmax.io"
+  },
+  "plugins": [
+    {
+      "name": "clickmax",
+      "source": "./",
+      "description": "Skills oficiais da Clickmax para Claude Code — CRM, funis, fluxos, produtos, pagamentos e mais"
+    }
+  ]
+}

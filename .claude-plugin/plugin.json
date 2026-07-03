@@ -1,0 +1,11 @@
+{
+  "name": "clickmax",
+  "version": "0.1.0",
+  "description": "Skills oficiais da Clickmax para Claude Code — CRM, funis, fluxos, produtos, pagamentos e mais",
+  "author": {
+    "name": "Bilhon Technologies",
+    "url": "https://clickmax.io"
+  },
+  "homepage": "https://github.com/bilhon-technologies/clickmax-skills",
+  "license": "SEE LICENSE IN LICENSE"
+}

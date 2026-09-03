@@ -1,11 +1,11 @@
 ---
 name: clickmax-leads
-description: Use when the user wants to find, inspect, filter, or compare CRM leads and their commercial context inside Clickmax.
+description: Use when the user wants to create, find, inspect, filter, or compare CRM leads and their commercial context inside Clickmax.
 ---
 
 ## When this applies
 
-Use this skill when the user wants lead discovery or inspection: search/filter contacts, inspect one lead, check whether an email already exists, compare lead-origin patterns, or pull a lead's payments/invoices/products.
+Use this skill when the user wants lead discovery/inspection OR to create a lead: search/filter contacts, inspect one lead, check whether an email already exists, create a new contact, compare lead-origin patterns, or pull a lead's payments/invoices/products.
 
 Not this skill:
 
@@ -15,9 +15,9 @@ Not this skill:
 
 ## Key assumptions
 
-- `mcp__clickmax__leads_filter_schema` is the source of truth for valid filters/operators; do not invent fields
-- `mcp__clickmax__leads_search` is the main entry for cohort discovery
-- `mcp__clickmax__leads_get` is enriched commercial context, not just a flat row
+- `mcp__plugin_clickmax_clickmax__leads_filter_schema` describes the legacy filter model; never use it to build `mcp__plugin_clickmax_clickmax__leads_search` filters
+- `mcp__plugin_clickmax_clickmax__leads_search` is the main entry for cohort discovery. `filters` is required (`[]` = all leads), and `perPage` accepts 1-100. Its only `sortBy` values are `opportunities_asc`/`opportunities_desc`; omitting `sortBy` returns leads NEWEST-FIRST by `createdAt`. So "the last N leads" uses `filters: []`, `page: 1`, `perPage: N` (N <= 100) with no `sortBy`
+- `mcp__plugin_clickmax_clickmax__leads_get` is enriched commercial context, not just a flat row
 - payments, invoices, common products, and origin trees are lead-adjacent projections, not separate core entities
 - tags, lists, and segments group leads; they do not replace the lead record itself
 - lifecycle and temperature are mutable business signals; report them as current state, not immutable history
@@ -31,14 +31,15 @@ Not this skill:
 
 ## Execute guide
 
-- For cohort discovery, inspect `mcp__clickmax__leads_filter_schema` first when the user names filters loosely or when the valid operators are unclear.
-- Search cohorts with `mcp__clickmax__leads_search`, passing the needed filters plus paging and sort fields. Use this for discovery, comparison, and broad CRM filtering.
-- Inspect one known lead with `mcp__clickmax__leads_get`, passing the lead id. Treat this as the main enriched lead view.
-- Add commercial context with `mcp__clickmax__leads_payments`, `mcp__clickmax__leads_invoices`, and `mcp__clickmax__leads_common_products` only when payments, billing status, or bought-product patterns materially change the answer.
-- Use `mcp__clickmax__leads_exists_by_email` for duplicate-check questions, not enrichment.
-- Use `mcp__clickmax__leads_origins`, `mcp__clickmax__leads_sub_origins`, and `mcp__clickmax__leads_origins_tree` for source taxonomy and breakdown questions.
-- Use `mcp__clickmax__leads_payments_utm_autocomplete` when the user needs help discovering UTM values before filtering or diagnosing acquisition patterns.
-- Preferred order: cohort question -> `mcp__clickmax__leads_filter_schema` when needed -> `mcp__clickmax__leads_search`; single lead question -> `mcp__clickmax__leads_get` -> supporting projections only if needed; origin or UTM exploration -> origin or UTM helper first -> lead search only when matching contacts are also required.
+- For cohort discovery, follow the `mcp__plugin_clickmax_clickmax__leads_search` input contract; do not translate fields from the legacy filter-schema operation.
+- Search cohorts with `mcp__plugin_clickmax_clickmax__leads_search`, passing the required `filters` array (`[]` when unfiltered) plus optional paging and sort fields. Use this for discovery, comparison, and broad CRM filtering.
+- Inspect one known lead with `mcp__plugin_clickmax_clickmax__leads_get`, passing the lead id. Treat this as the main enriched lead view.
+- Add commercial context with `mcp__plugin_clickmax_clickmax__leads_payments`, `mcp__plugin_clickmax_clickmax__leads_invoices`, and `mcp__plugin_clickmax_clickmax__leads_common_products` only when payments, billing status, or bought-product patterns materially change the answer. Unlike its siblings, `mcp__plugin_clickmax_clickmax__leads_common_products` requires `filter` (not optional) — always pass a filter, even a broad one.
+- Use `mcp__plugin_clickmax_clickmax__leads_exists_by_email` for duplicate-check questions, not enrichment.
+- Create one contact with `mcp__plugin_clickmax_clickmax__leads_create` — only `name` is required; pass `email`/`telephone` when known and check `mcp__plugin_clickmax_clickmax__leads_exists_by_email` first to avoid duplicates. It also accepts `tagIds`/`customFieldValues` inline, so a lead can be created pre-tagged/pre-classified in the SAME call instead of a separate tagging step afterward. It returns the new lead id. To seed a pipeline, create each contact here then add them as opportunity cards via `clickmax-pipelines` (`cards_create` needs the returned lead ids). For several contacts, call `leads_create` once per contact.
+- Use `mcp__plugin_clickmax_clickmax__leads_origins`, `mcp__plugin_clickmax_clickmax__leads_sub_origins`, and `mcp__plugin_clickmax_clickmax__leads_origins_tree` for source taxonomy and breakdown questions.
+- Use `mcp__plugin_clickmax_clickmax__leads_payments_utm_autocomplete` when the user needs help discovering UTM values before filtering or diagnosing acquisition patterns.
+- Preferred order: cohort question -> `mcp__plugin_clickmax_clickmax__leads_search`; single lead question -> `mcp__plugin_clickmax_clickmax__leads_get` -> supporting projections only if needed; origin or UTM exploration -> origin or UTM helper first -> lead search only when matching contacts are also required.
 
 ## Report
 
@@ -52,7 +53,7 @@ Not this skill:
 
 - Do not guess filter fields or operators.
 - Do not treat lead payments or invoices as if they were the lead record itself.
-- `mcp__clickmax__leads_exists_by_email` answers existence, not ownership or enrichment.
+- `mcp__plugin_clickmax_clickmax__leads_exists_by_email` answers existence, not ownership or enrichment.
 
 ## Anti-patterns
 

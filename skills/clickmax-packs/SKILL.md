@@ -42,6 +42,19 @@ Not this skill:
 - optional: pages may embed lists/forms (the preview surfaces them per page); the importer can map each embedded list/form to one of their own, or leave it unmapped to keep the original reference (does not block import)
 - external pages cannot be cloned — the importer supplies a URL per external page
 
+## Execute guide (exact params — avoid live tool-discovery)
+
+- `mcp__plugin_clickmax_clickmax__packs_list` REQUIRES `projectId` (no default/workspace-wide mode) — resolve the project first (`clickmax-projects`) before listing.
+- `mcp__plugin_clickmax_clickmax__packs_snapshot_get` and `mcp__plugin_clickmax_clickmax__packs_snapshot_publish` both take `{packId, version}` — `version` is NOT optional/latest-implied. Source it from the `{id, version}` returned by the last `mcp__plugin_clickmax_clickmax__packs_resnapshot` call, or from `packs_snapshot_drift`'s `latestVersion`. Never guess a version number.
+- `mcp__plugin_clickmax_clickmax__packs_create` takes `projectId` + `name` (required); `description`/`category`/`level`/`thumbnailUrl`/`funnelsEngine` optional. Add contents afterward with `packs_append` — creation itself is always empty.
+- `mcp__plugin_clickmax_clickmax__packs_import`'s dependency resolution is FOUR separate maps, not one — pass the one matching what the preview flagged as blocking, not the generic-sounding one:
+  - `resolutions` — automation/flow STEP dependencies only (keyed by step, `{type: 'automation', stepsDependencies: [...]}`).
+  - `offerResolutions` — non-shared offer remap (keyed by the pack's offer reference, `{offerId}` = the importer's own offer).
+  - `channelResolutions` — blocking provider channel remap (keyed by the pack's channel reference, `{channelId}` = the importer's own channel).
+  - `pageResolutions` — per-page list/form remap (keyed by page, `{listIdMap, formIdMap}`).
+  - Plus `externalPageUrls` (map of external-page ref → URL) and `overrideFlowsIds` (`[{originFlowId, importedFlowId}]`) for flow-id overrides.
+  - Stuffing a channel/offer remap into `resolutions` (the automation-only map) silently does nothing for that dependency — it stays unresolved and the import comes back `partial`.
+
 ## Rules
 
 - list + get only return non-deleted packs
@@ -58,3 +71,4 @@ Not this skill:
 - page list/form remap is optional — map them to keep imported pages wired to the importer's own audience, or skip to leave the original references
 - a published pack with a `warnings` snapshot is still importable; read the warnings to set expectations
 - track an in-flight import by its returned id (`packs_imported_get`) rather than assuming it completed
+- importing workspaces stay PINNED to whichever snapshot version they imported — a later `packs_resnapshot`/`packs_snapshot_publish` on the source pack does NOT automatically propagate to already-imported workspaces; they'd need to re-import to pick up the change

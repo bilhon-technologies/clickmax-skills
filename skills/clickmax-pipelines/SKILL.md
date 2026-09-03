@@ -11,6 +11,7 @@ Not this skill:
 
 - lead search and identity -> `clickmax-leads`
 - manual tagging or segment/list membership -> `clickmax-tags` / `clickmax-list-segments`
+- building or reading a saved Insights dashboard of opportunities BI -> `clickmax-insights-dashboards`
 
 ## Key assumptions
 
@@ -22,6 +23,7 @@ Not this skill:
 - some move paths may be blocked by stage passage rules
 - delete semantics are soft-hide/remove-from-board at the backend level, but still user-visible destructive actions
 - attendant assignment/settings writes replace current structures, not patch arbitrary fragments
+- `id` means a DIFFERENT thing depending on the tool — same param name, no `pipelineId`/`stageId` alias to disambiguate. On `stages_list`, `stages_create`, and `stages_reorder`, `id` is the PIPELINE id (the stage itself is created/reordered by name/list, not addressed). On `stages_update` and `stages_delete`, `id` is the STAGE id. Do not assume it means the same thing across sibling tools — check which one before calling.
 
 ## Thought process
 
@@ -32,25 +34,30 @@ Not this skill:
 
 ## Execute guide
 
-- Resolve the board before writes: use `mcp__clickmax__pipelines_list` to find the pipeline, `mcp__clickmax__stages_list` with `pipelineId` to map stage ids, and `mcp__clickmax__cards_list` with `pipelineId`, `stageId`, pagination, and optional filters such as `search` or `tagIds` when the target card still needs disambiguation.
+- Resolve the board before writes: use `mcp__plugin_clickmax_clickmax__pipelines_list` to find the pipeline, `mcp__plugin_clickmax_clickmax__stages_list` with `id` (the pipeline id, not `pipelineId`) to map stage ids, and `mcp__plugin_clickmax_clickmax__cards_list` with `pipelineId`, `stageId`, pagination, and optional filters such as `search` or `tagIds` when the target card still needs disambiguation.
 
-- Create cards with `mcp__clickmax__cards_create`, passing the target `leadIds`, `pipelineId`, and `stageId`; include `value` and `attendantIds` only when the user wants those set at creation time.
+- Creating a NEW pipeline with its stages already defined (the common "create a pipeline with stages X, Y, Z" ask): pass the stages inline in `mcp__plugin_clickmax_clickmax__pipelines_create`'s optional `stages` array (`{name, color?, type?, metaPixelEvent?}` per stage, `type` defaults to `in_progress` — use `won`/`lost` on the terminal stages) instead of one pipeline call plus N separate `stages_create` calls. One call creates the whole board.
 
-- Move cards with `mcp__clickmax__cards_move`, passing the card `id`, the destination `stageId`, and the current relative anchor (`beforeCardId` or `afterCardId`) so the board order stays intentional; include `lossReason` only when the move path requires or justifies it.
+- Create cards with `mcp__plugin_clickmax_clickmax__cards_create`, passing the target `leadIds`, `pipelineId`, and `stageId`; include `value` and `attendantIds` only when the user wants those set at creation time. Do not guess a card-creation tool name outside pipelines — `cards_create` is the only one; there is no `pipelines_create_card`.
+  - Brand-new/fictional contacts: create each one first via `clickmax-leads`'s `leads_create` (one call per contact, returns the new lead id), THEN batch them into `cards_create` calls using that pipeline's `pipelineId`/`stageId` and `leadIds: [<the returned id>]`.
+  - EXISTING contacts (e.g. "pegue os últimos N leads e adicione na pipeline X"): this is a TWO-DOMAIN task — resolve the leads first via `clickmax-leads`'s `leads_search` (no special sort needed for "last N", see that skill), resolve the pipeline/stage via `pipelines_list`/`stages_list` here, THEN call `cards_create` once per resolved lead id with that `pipelineId`/`stageId`. Load both skills' guidance for this request — do not treat it as pipelines-only just because a pipeline is named.
 
-- Assign attendants in 2 steps: first read `mcp__clickmax__pipelines_attendant_types_get` for the pipeline's valid attendant type ids, then write `mcp__clickmax__cards_assign_attendants` with explicit `assignments` entries containing `attendantId`, `attendantTypeId`, and `isPrimary`.
+- Move cards with `mcp__plugin_clickmax_clickmax__cards_move`, passing the card `id`, the destination `stageId`, and the current relative anchor (`beforeCardId` or `afterCardId`) so the board order stays intentional; include `lossReason` only when the move path requires or justifies it.
 
-- Import leads into a pipeline with `mcp__clickmax__cards_import_from_lists` only when the user wants board population from list/segment cohorts rather than one-off card creation.
+- Assign attendants in 2 steps: first read `mcp__plugin_clickmax_clickmax__pipelines_attendant_types_get` for the pipeline's valid attendant type ids, then write `mcp__plugin_clickmax_clickmax__cards_assign_attendants` with explicit `assignments` entries containing `attendantId`, `attendantTypeId`, and `isPrimary`.
 
-- Inspect card behavior with `mcp__clickmax__cards_get` for one card, `mcp__clickmax__cards_list_by_lead` for a lead's pipeline presence, `mcp__clickmax__cards_history` for move/change history, and `mcp__clickmax__cards_at_risk` for cards currently flagged as operational risk.
+- Import leads into a pipeline with `mcp__plugin_clickmax_clickmax__cards_import_from_lists` only when the user wants board population from list/segment cohorts rather than one-off card creation.
 
-- Update structure only after resolving the exact target object: use `mcp__clickmax__stages_create`, `mcp__clickmax__stages_update`, `mcp__clickmax__stages_delete`, or `mcp__clickmax__stages_reorder` for stage changes; use `mcp__clickmax__pipelines_create`, `mcp__clickmax__pipelines_update`, or `mcp__clickmax__pipelines_delete` for pipeline changes.
+- Inspect card behavior with `mcp__plugin_clickmax_clickmax__cards_get` for one card, `mcp__plugin_clickmax_clickmax__cards_list_by_lead` for a lead's pipeline presence, `mcp__plugin_clickmax_clickmax__cards_history` for move/change history, and `mcp__plugin_clickmax_clickmax__cards_at_risk` for cards currently flagged as operational risk.
 
-- Treat settings and analytics as separate from board CRUD: read current configuration with `mcp__clickmax__pipelines_settings_get` before `mcp__clickmax__pipelines_settings_update`, use `mcp__clickmax__pipelines_attendant_types_set` only when changing the pipeline's attendant-role structure itself, and use `mcp__clickmax__pipelines_analytics` for performance/throughput answers rather than card-by-card inspection.
+- Update structure only after resolving the exact target object: to add a stage to an EXISTING pipeline, use `mcp__plugin_clickmax_clickmax__stages_create` with `id` = that pipeline's id (not a `pipelineId` field, and not the new stage's id — the stage has no id yet); `mcp__plugin_clickmax_clickmax__stages_update`/`mcp__plugin_clickmax_clickmax__stages_delete` instead take `id` = the STAGE's own id, since those two target one stage directly. Use `mcp__plugin_clickmax_clickmax__stages_reorder` (`id` = pipeline id) to resequence. Use `mcp__plugin_clickmax_clickmax__pipelines_create`, `mcp__plugin_clickmax_clickmax__pipelines_update`, or `mcp__plugin_clickmax_clickmax__pipelines_delete` for pipeline changes.
+
+- Treat settings and analytics as separate from board CRUD: read current configuration with `mcp__plugin_clickmax_clickmax__pipelines_settings_get` before `mcp__plugin_clickmax_clickmax__pipelines_settings_update`, use `mcp__plugin_clickmax_clickmax__pipelines_attendant_types_set` only when changing the pipeline's attendant-role structure itself, and use `mcp__plugin_clickmax_clickmax__pipelines_analytics` for performance/throughput answers rather than card-by-card inspection.
 
 ## Report
 
 - For structural changes: report what changed, where, and the resulting status.
+- When summarizing one specific created/read pipeline in a visual card, use the pipeline name as the large headline/value. Put stage count, opportunity count, active status, and similar board metrics in pills/secondary metrics instead of replacing the headline with counts.
 - For card moves: report origin -> destination and any relevant status/owner effect.
 - For analytics/risk: summarize the operational takeaway, not raw board payloads.
 
@@ -59,6 +66,7 @@ Not this skill:
 - Do not guess stage ids from names when several stages are similar.
 - Card order uses relative positioning semantics; stale anchors can misplace cards.
 - Importing from lists/segments skips leads already present in the pipeline.
+- If `leads_create` (or any write here) returns an empty/unexpected result for a contact you need the id of, do not silently skip it or fabricate an id — call `leads_exists_by_email`/`leads_search` (see `clickmax-leads`) to recover the real id before using it in `cards_create`, or surface the failure instead of creating a card with no lead.
 
 ## Anti-patterns
 

@@ -1,138 +1,21 @@
-# Funnel execute examples
+# Funnel Connector Operation Examples
 
-## create scaffolded funnel
+## Create Scaffolded Funnel
 
-```js
-async () => {
-  const randomUUID = () => crypto.randomUUID();
-  const projectId = randomUUID();
+- Resolve the project first; do not invent `projectId`.
+- Use `mcp__plugin_clickmax_clickmax__funnels_create` with name, description, `projectId`, and optional `domainId`.
+- Use `mcp__plugin_clickmax_clickmax__funnels_sequence_create` with `template: "sales"` when the user wants the standard starter graph.
+- Validate with `mcp__plugin_clickmax_clickmax__funnels_validate`, then inspect with `mcp__plugin_clickmax_clickmax__funnels_structure_get` before reporting completion.
 
-  const funnel = await codemode.funnels_create({
-    name: 'Sales funnel',
-    description: 'Created from the sales template',
-    projectId,
-    domainId: null
-  });
+## Build Custom Graph
 
-  const sequence = await codemode.funnels_sequence_create({
-    funnelId: funnel.id,
-    template: 'sales',
-    position: { x: 0, y: 0 }
-  });
+- Use `mcp__plugin_clickmax_clickmax__funnels_node_create` for each page/branch/logic node.
+- Read the returned trigger and node ids; never guess them from labels.
+- Use the node-family connection operation after each node exists, such as `mcp__plugin_clickmax_clickmax__funnels_triggers_connect`, `mcp__plugin_clickmax_clickmax__funnels_abtest_variants_update`, `mcp__plugin_clickmax_clickmax__funnels_traffic_source_update`, or `mcp__plugin_clickmax_clickmax__funnels_conditional_branches_update`.
+- Re-read `mcp__plugin_clickmax_clickmax__funnels_structure_get` and run `mcp__plugin_clickmax_clickmax__funnels_validate` before any publish step.
 
-  const validation = await codemode.funnels_validate({ funnelId: funnel.id });
-  const structure = await codemode.funnels_structure_get({ funnelId: funnel.id });
+## Link Pages, Validate, Publish
 
-  return {
-    funnel,
-    nodes: sequence.nodes || [],
-    structure,
-    validation
-  };
-};
-```
-
-## build custom graph
-
-```js
-async () => {
-  const randomUUID = () => crypto.randomUUID();
-  const funnelId = randomUUID();
-
-  const optin = await codemode.funnels_node_create({
-    funnelId,
-    type: 'page',
-    title: 'Opt-in',
-    slug: 'optin',
-    pageType: 'capture',
-    position: { x: 0, y: 0 },
-    triggers: [{ type: 'form_submit', label: 'Form submitted' }]
-  });
-
-  const sales = await codemode.funnels_node_create({
-    funnelId,
-    type: 'page',
-    title: 'Sales page',
-    slug: 'sales',
-    pageType: 'sales',
-    position: { x: 360, y: 0 },
-    triggers: [
-      { type: 'button_click', label: 'Buy button clicked' },
-      { type: 'purchase_approved', label: 'Purchase approved' }
-    ]
-  });
-
-  const thanks = await codemode.funnels_node_create({
-    funnelId,
-    type: 'page',
-    title: 'Thank you',
-    slug: 'thank-you',
-    pageType: 'thank_you',
-    position: { x: 720, y: 0 },
-    triggers: []
-  });
-
-  const connected = await codemode.funnels_triggers_connect({
-    funnelId,
-    connections: [
-      {
-        nodeId: optin.node.id,
-        triggerId: optin.node.triggers[0].id,
-        target: sales.node.id
-      },
-      {
-        nodeId: sales.node.id,
-        triggerId: sales.node.triggers.find((trigger) => trigger.type === 'purchase_approved').id,
-        target: thanks.node.id
-      }
-    ]
-  });
-
-  return {
-    connectedTriggers: connected.triggers,
-    structure: await codemode.funnels_structure_get({ funnelId }),
-    validation: await codemode.funnels_validate({ funnelId })
-  };
-};
-```
-
-## link pages validate publish
-
-```js
-async () => {
-  const randomUUID = () => crypto.randomUUID();
-  const funnelId = randomUUID();
-
-  const pageLinks = [
-    { nodeId: randomUUID(), pageId: randomUUID() },
-    { nodeId: randomUUID(), pageId: randomUUID() }
-  ];
-
-  const linkedPages = [];
-  for (const link of pageLinks) {
-    linkedPages.push(
-      await codemode.funnels_node_connect_page({
-        funnelId,
-        nodeId: link.nodeId,
-        pageId: link.pageId
-      })
-    );
-  }
-
-  const validation = await codemode.funnels_validate({ funnelId });
-  const structure = await codemode.funnels_structure_get({ funnelId });
-  const publishableNodeIds = (structure.nodes || []).filter((node) => node.type !== 'notes').map((node) => node.id);
-
-  const published = await codemode.funnels_publish({
-    funnelId,
-    nodeIds: publishableNodeIds
-  });
-
-  return {
-    linkedPages,
-    validation,
-    publishableNodeIds,
-    published
-  };
-};
-```
+- Link existing pages with `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` only after resolving both the funnel node and page.
+- Validate with `mcp__plugin_clickmax_clickmax__funnels_validate` and inspect `mcp__plugin_clickmax_clickmax__funnels_structure_get`.
+- Publish with `mcp__plugin_clickmax_clickmax__funnels_publish` only when the user explicitly wants the funnel live; pass only publishable node ids.

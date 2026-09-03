@@ -17,7 +17,7 @@ Not this skill:
 - manual lists and dynamic segments are different grouping models
 - segment updates also affect the synced backing list metadata and lead membership lifecycle
 - upserting segment filters replaces the full tree
-- segment filters are tree-shaped; use `childrenAnd` / `childrenOr` for nested logic and preserve all branches when replacing
+- segment filters are a FLAT ARRAY of `{id, order, operator, field, negation, parentId?, value*}` items, not nested objects — nesting comes from each item's `parentId` pointing at its parent GROUP item's own `id`; group items use `field: 'children'` + `operator: 'childrenAnd'`/`'childrenOr'`. Preserve every existing item (by `id`) when replacing, not just the branch being edited.
 - reload queues recomputation; it is not just a cosmetic refresh
 - Read [filter model](references/filter-model.md) before building non-trivial segment logic.
 
@@ -30,12 +30,12 @@ Not this skill:
 
 ## Execute guide
 
-- Manual list lifecycle: use `mcp__clickmax__lists_create` to create the list, then `mcp__clickmax__lists_update_leads` to add or remove explicit lead IDs, then `mcp__clickmax__lists_get_leads` to verify the resulting membership.
-- List inspection and maintenance: use `mcp__clickmax__lists_list` to browse lists, `mcp__clickmax__lists_get` to inspect one list, and `mcp__clickmax__lists_update` when the user wants to rename the list or change its emoji.
-- Dynamic segment lifecycle: use `mcp__clickmax__segments_create` to create the segment shell, `mcp__clickmax__segments_preview_count` to estimate cohort size from a candidate filter tree, and `mcp__clickmax__segments_upsert_filters` to replace the segment's full filter definition.
+- Manual list lifecycle: use `mcp__plugin_clickmax_clickmax__lists_create` to create the list, then `mcp__plugin_clickmax_clickmax__lists_update_leads` to add or remove explicit lead IDs, then `mcp__plugin_clickmax_clickmax__lists_get_leads` to verify the resulting membership.
+- List inspection and maintenance: use `mcp__plugin_clickmax_clickmax__lists_list` to browse lists, `mcp__plugin_clickmax_clickmax__lists_get` to inspect one list, and `mcp__plugin_clickmax_clickmax__lists_update` when the user wants to rename the list or change its emoji.
+- Dynamic segment lifecycle: use `mcp__plugin_clickmax_clickmax__segments_create` to create the segment shell, `mcp__plugin_clickmax_clickmax__segments_preview_count` to estimate cohort size from a candidate filter tree, and `mcp__plugin_clickmax_clickmax__segments_upsert_filters` to replace the segment's full filter definition.
 - For nested AND/OR or negation, model the filter tree from [filter model](references/filter-model.md), preview the count, then upsert the complete tree.
-- Segment inspection and recomputation: use `mcp__clickmax__segments_get` for the segment record, `mcp__clickmax__segments_get_filters` for the current filter tree, `mcp__clickmax__segments_reload` when the user wants membership recomputed, and `mcp__clickmax__segments_get_leads` to inspect the resulting cohort.
-- Analytics follow-up: use `mcp__clickmax__segments_timeseries` or `mcp__clickmax__segments_categories_metrics` when the user wants trend or category breakdowns for a segment instead of only raw membership.
+- Segment inspection and recomputation: use `mcp__plugin_clickmax_clickmax__segments_get` for the segment record, `mcp__plugin_clickmax_clickmax__segments_get_filters` for the current filter tree, `mcp__plugin_clickmax_clickmax__segments_reload` when the user wants membership recomputed, and `mcp__plugin_clickmax_clickmax__segments_get_leads` to inspect the resulting cohort.
+- Analytics follow-up: use `mcp__plugin_clickmax_clickmax__segments_timeseries` or `mcp__plugin_clickmax_clickmax__segments_categories_metrics` when the user wants trend or category breakdowns for a segment instead of only raw membership.
 - Order of operations: manual list = create or inspect list -> update explicit lead IDs -> verify visible leads. Dynamic segment = inspect current definition -> preview broad or uncertain logic -> replace the full filter tree -> reload when refreshed membership matters -> inspect resulting leads.
 
 ## Report

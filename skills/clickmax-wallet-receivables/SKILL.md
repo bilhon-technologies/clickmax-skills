@@ -27,12 +27,12 @@ Not this skill:
 
 ## Execute guide
 
-- For "am I ready to sell/receive" or "are my bank details approved", use `mcp__clickmax__sellers_status` and interpret:
+- For "am I ready to sell/receive" or "are my bank details approved", use `mcp__plugin_clickmax_clickmax__sellers_status` and interpret:
   - `sellerStatus: enabled` + `bankAccountStatus: approved` -> ready to sell and receive
   - `pending` / `pending_correction` -> still under review; explain the `reason` and point to completing or correcting data in the wallet ("Carteira")
   - `reproved` / `blocked` / `disabled` -> blocked; explain the `reason` and the wallet correction step
-- For balances and movement history (saldo disponível, a receber, em análise, antecipável, extrato), use `mcp__clickmax__wallet_statement`; use `page`/`perPage` to browse.
-- For withdrawal/cashout history (saques), use `mcp__clickmax__wallet_withdraws`.
+- For balances and movement history (saldo disponível, a receber, em análise, antecipável, extrato), use `mcp__plugin_clickmax_clickmax__wallet_statement`; use `page`/`perPage` to browse.
+- For withdrawal/cashout history (saques), use `mcp__plugin_clickmax_clickmax__wallet_withdraws`.
 
 ## Report
 

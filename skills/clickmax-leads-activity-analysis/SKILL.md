@@ -28,14 +28,14 @@ Not this skill:
 
 ## Execute guide
 
-- Use `mcp__clickmax__lead_activities_list` for filtered activity cohorts, passing pagination plus the relevant date window and any needed pipeline, actor, or event-name filters.
-- Use `mcp__clickmax__lead_activities_list_by_lead` for one lead's raw timeline, passing the lead `id` and pagination.
-- Use `mcp__clickmax__lead_activities_metrics_by_lead` when the question is about one lead's activity totals or derived metrics inside a specific date window.
-- Use `mcp__clickmax__lead_activities_system_by_lead` when the user wants the grouped system view for one lead rather than the raw event stream.
-- Use `mcp__clickmax__lead_activities_opportunity_list` for opportunity-card activity, passing the `cardId` and pagination.
-- Use `mcp__clickmax__lead_activities_owner_stats` for owner-level concentration or summary questions across a date window.
-- Use `mcp__clickmax__lead_activities_owner_timeseries` for owner-level change-over-time questions across a date window.
-- Use `mcp__clickmax__lead_activities_owner_count` when the user only needs owner activity counts, not a trend series.
+- Use `mcp__plugin_clickmax_clickmax__lead_activities_list` for filtered activity cohorts, passing pagination plus the relevant date window and any needed pipeline, actor, or event-name filters.
+- Use `mcp__plugin_clickmax_clickmax__lead_activities_list_by_lead` for one lead's raw timeline, passing the lead id as `leadId` (not `id`) plus pagination.
+- Use `mcp__plugin_clickmax_clickmax__lead_activities_metrics_by_lead` when the question is about one lead's activity totals or derived metrics inside a specific date window.
+- Use `mcp__plugin_clickmax_clickmax__lead_activities_system_by_lead` when the user wants the grouped system view for one lead rather than the raw event stream.
+- Use `mcp__plugin_clickmax_clickmax__lead_activities_opportunity_list` for opportunity-card activity, passing the `cardId` and pagination.
+- Use `mcp__plugin_clickmax_clickmax__lead_activities_owner_stats` for owner-level concentration or summary questions across a date window.
+- Use `mcp__plugin_clickmax_clickmax__lead_activities_owner_timeseries` for owner-level change-over-time questions across a date window.
+- Use `mcp__plugin_clickmax_clickmax__lead_activities_owner_count` when the user only needs owner activity counts, not a trend series.
 - For `did X` cohorts, build a system activity/tag list for X, inspect a small page to confirm event/category fields, then paginate as needed.
 - For `did X but not Y` cohorts, get both cohorts with the same time assumptions, dedupe by lead, subtract Y from X, and report the remaining leads.
 - When comparing several streams, keep the same date window and filters so the results stay comparable.

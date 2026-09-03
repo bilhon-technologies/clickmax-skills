@@ -27,10 +27,10 @@ Not this skill:
 
 ## Execute guide
 
-- Inspect current membership with `mcp__clickmax__portal_members_list`, passing `portalId` and the needed pagination or filters such as `page`, `perPage`, `search`, and `active`.
-- Add one known member with `mcp__clickmax__portal_members_add`, passing `portalId` and `memberUserId`.
-- Add a resolved cohort with `mcp__clickmax__portal_members_bulk_add`, passing `portalId` and the `memberUserIds` list.
-- Remove one member with `mcp__clickmax__portal_members_remove`, passing `portalId` and `memberUserId`.
+- Inspect current membership with `mcp__plugin_clickmax_clickmax__portal_members_list`, passing `portalId` and the needed pagination or filters such as `page`, `perPage`, `search`, and `active`.
+- Add one known member with `mcp__plugin_clickmax_clickmax__portal_members_add`, passing `portalId` and `memberUserId`.
+- Add a resolved cohort with `mcp__plugin_clickmax_clickmax__portal_members_bulk_add`, passing `portalId` and the `memberUserIds` list.
+- Remove one member with `mcp__plugin_clickmax_clickmax__portal_members_remove`, passing `portalId` and `memberUserId`.
 - Make the removal cascade explicit: removing portal membership also removes classroom enrollments inside that same portal.
 
 ## Report

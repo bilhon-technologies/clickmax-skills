@@ -27,15 +27,15 @@ Not this skill:
 
 ## Execute guide
 
-- When the user starts from a CRM lead, resolve the member first with `mcp__clickmax__member_users_get_by_lead`, passing the lead id. Then inspect progress with `mcp__clickmax__member_users_get_progress`, passing the member-user id. If the request is about release windows or expiration, inspect access times with `mcp__clickmax__member_users_get_access_times`, scoped to the relevant classroom ids.
-- Create a new member with `mcp__clickmax__member_users_create`, passing identity fields plus the initial classrooms and portals when the enrollment should exist immediately. After creation, send the access link with `mcp__clickmax__member_users_send_access_link`, using the new member-user id and the target portal id.
+- When the user starts from a CRM lead, resolve the member first with `mcp__plugin_clickmax_clickmax__member_users_get_by_lead`, passing the lead id. Then inspect progress with `mcp__plugin_clickmax_clickmax__member_users_get_progress`, passing the member-user id. If the request is about release windows or expiration, inspect access times with `mcp__plugin_clickmax_clickmax__member_users_get_access_times`, scoped to the relevant classroom ids.
+- Create a new member with `mcp__plugin_clickmax_clickmax__member_users_create`, passing identity fields plus the initial classrooms and portals when the enrollment should exist immediately. After creation, send the access link with `mcp__plugin_clickmax_clickmax__member_users_send_access_link`, using the new member-user id and the target portal id.
 - After creating or reassigning a member, offer the access-link email path when the user wants the student invited immediately.
-- For bulk classroom changes, use `mcp__clickmax__member_users_bulk_update_classrooms`, passing the member-user ids, the intended action, and the classroom ids. Use `mcp__clickmax__member_users_bulk_update_portals` when the request is about portal access instead of classroom membership.
-- For one-off classroom membership changes, prefer `mcp__clickmax__member_users_add_to_classroom` or `mcp__clickmax__member_users_remove_from_classroom` instead of a bulk tool.
-- Adjust access duration with `mcp__clickmax__member_users_extend_access` only after confirming the exact `(classroom, content)` pair and the requested unit/window. Use `mcp__clickmax__member_users_reset_access` when the user wants to restart access tracking for that scoped item instead of extending the current window.
-- Use `mcp__clickmax__member_users_enable` / `mcp__clickmax__member_users_bulk_enable` to restore access. Use `mcp__clickmax__member_users_disable` / `mcp__clickmax__member_users_bulk_disable` for temporary revocation.
-- Use `mcp__clickmax__member_users_delete` only when the user explicitly wants permanent removal.
-- For certificates, inspect with `mcp__clickmax__member_users_get_certificate_code`, passing the member-user id.
+- For bulk classroom changes, use `mcp__plugin_clickmax_clickmax__member_users_bulk_update_classrooms`, passing the member-user ids, the intended action, and the classroom ids. Use `mcp__plugin_clickmax_clickmax__member_users_bulk_update_portals` when the request is about portal access instead of classroom membership.
+- For one-off classroom membership changes, prefer `mcp__plugin_clickmax_clickmax__member_users_add_to_classroom` or `mcp__plugin_clickmax_clickmax__member_users_remove_from_classroom` instead of a bulk tool.
+- Adjust access duration with `mcp__plugin_clickmax_clickmax__member_users_extend_access` only after confirming the exact `(classroom, content)` pair and the requested unit/window. Use `mcp__plugin_clickmax_clickmax__member_users_reset_access` when the user wants to restart access tracking for that scoped item instead of extending the current window.
+- Use `mcp__plugin_clickmax_clickmax__member_users_enable` / `mcp__plugin_clickmax_clickmax__member_users_bulk_enable` to restore access. Use `mcp__plugin_clickmax_clickmax__member_users_disable` / `mcp__plugin_clickmax_clickmax__member_users_bulk_disable` for temporary revocation.
+- Use `mcp__plugin_clickmax_clickmax__member_users_delete` only when the user explicitly wants permanent removal.
+- For certificates, inspect with `mcp__plugin_clickmax_clickmax__member_users_get_certificate_code`, passing the member-user id.
 
 ## Report
 

@@ -27,15 +27,15 @@ Not this skill:
 
 ## Execute guide
 
-- Use `mcp__clickmax__classroom_list` with the portal id first when the user gives only portal context.
-- Use `mcp__clickmax__classroom_get` with the classroom id for basic identity or status checks.
-- Use `mcp__clickmax__classroom_details` with the classroom id before editing content or copying members so you can inspect linked contents and lesson structure.
-- Use `mcp__clickmax__classroom_create` with the destination portal id, the classroom name, the initial `contentsIds`, and any `contentsAccessTime` entries when the classroom should start with pre-linked content.
-- Use `mcp__clickmax__classroom_update` with the classroom id plus only the fields that should change. Common patterns: rename the classroom with `name`; add timed content with `contentsToAdd` entries carrying `contentId`, `accessDuration`, and `accessUnit`; remove linked content with `contentsIdsToRemove`.
-- Use `mcp__clickmax__classroom_add_content` with `classroomId` and `contentId` when the user wants to link one existing content item without a broader classroom update.
-- Use `mcp__clickmax__classroom_copy_members_from` with confirmed `sourceId` and `targetId` only for enrollment copying between classrooms.
-- Use `mcp__clickmax__classroom_delete` with the classroom id only when the user is clearly asking for removal.
-- After any mutation, use `mcp__clickmax__classroom_details` again with the classroom id when the user expects the final linked-content state.
+- Use `mcp__plugin_clickmax_clickmax__classroom_list` with the portal id first when the user gives only portal context.
+- Use `mcp__plugin_clickmax_clickmax__classroom_get` with the classroom id for basic identity or status checks.
+- Use `mcp__plugin_clickmax_clickmax__classroom_details` with the classroom id before editing content or copying members so you can inspect linked contents and lesson structure.
+- Use `mcp__plugin_clickmax_clickmax__classroom_create` with the destination portal id, the classroom name, the initial `contentsIds`, and any `contentsAccessTime` entries when the classroom should start with pre-linked content.
+- Use `mcp__plugin_clickmax_clickmax__classroom_update` with the classroom id plus only the fields that should change. Common patterns: rename the classroom with `name`; add timed content with `contentsToAdd` entries carrying `contentId`, `accessDuration`, and `accessUnit`; remove linked content with `contentsIdsToRemove`.
+- Use `mcp__plugin_clickmax_clickmax__classroom_add_content` with `id` (the classroom's own id — NOT `classroomId`) and `contentId` when the user wants to link one existing content item without a broader classroom update.
+- Use `mcp__plugin_clickmax_clickmax__classroom_copy_members_from` with confirmed `sourceId` and `targetId` only for enrollment copying between classrooms.
+- Use `mcp__plugin_clickmax_clickmax__classroom_delete` with the classroom id only when the user is clearly asking for removal.
+- After any mutation, use `mcp__plugin_clickmax_clickmax__classroom_details` again with the classroom id when the user expects the final linked-content state.
 
 ## Report
 

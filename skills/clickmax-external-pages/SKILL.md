@@ -7,6 +7,18 @@ description: Use when the user wants to connect an external page/site to Clickma
 
 Use this skill for external pages: a page hosted outside the Clickmax builder that needs Clickmax tracking, capture/forms, or script installation guidance.
 
+CLASSIFICATION RULE (external vs builder): a page is EXTERNAL whenever it already lives at a URL on a domain the user has NOT connected in Clickmax (Framer, Webflow, their own site, any third-party host). Register it with `pages_create_external` (real URL) — NEVER `pages_create`. Creating a builder page for a URL you did not build yields an empty Clickmax-hosted page and breaks the capture-script setup (the app opens the visual editor instead of the script/redirect flow). If you have the live URL and still call `pages_create`, pass it as `sourceUrl`: the server rejects non-Clickmax hosts and tells you to switch to `pages_create_external`.
+
+An external page has THREE setup steps the user does in their own HTML. Only step 1 is tool-generated (it embeds a minified per-page loader); steps 2 and 3 are STATIC snippets kept in this skill's references. Page metadata (`projectSlug`, `path`, `externalUrl`) comes from `pages_get`.
+
+|Step|What it does|Snippet source|Docs|
+|-|-|-|-|
+|1. Install script (`Instalar script`)|boots the Browser SDK (tracking + page_view)|`pages_get_external_script` -> `headScript` (per-page string)|https://docs.clickmax.io/sdk|
+|2. Lead capture (`Configurar captura`)|a Clickmax-bound form/widget that ingests leads|[lead capture](references/lead-capture.md) — static|https://docs.clickmax.io/sdk/forms/|
+|3. Redirect (`Redirecionamento`)|annotate buttons/links/forms so the SDK advances the visitor to the next funnel step|[redirect](references/redirect.md) — static|https://docs.clickmax.io/sdk/tracking/|
+
+Surface each in a copyable code block with its doc link. Steps 2 and 3 only work once step 1's head script is installed. An external MCP client (Claude/Codex) with the skill installed gets steps 2/3 from these references; either way the head comes from the tool.
+
 Not this skill:
 
 - designing/editing builder page content -> use the visual builder workflow
@@ -28,11 +40,17 @@ Not this skill:
 
 ## Execute guide
 
-- Use `mcp__clickmax__pages_list` / `mcp__clickmax__pages_get` to identify existing external page records.
-- Use `mcp__clickmax__pages_create_external` when the external site does not yet have a Clickmax page record.
-- Use `mcp__clickmax__pages_update` for external page metadata or URL changes.
-- Use `mcp__clickmax__pages_get_external_script` for the install payload; tell the user to paste the head script into the external site's `<head>`.
-- Use `mcp__clickmax__pages_delete` only when the user explicitly wants to remove the Clickmax page record.
+- External page that belongs to a FUNNEL step (most common: "vincular a página externa ao funil") = compose the granular tools in order: `mcp__plugin_clickmax_clickmax__pages_create_external` (get `pageId`) -> `mcp__plugin_clickmax_clickmax__funnels_node_create` (`type: "page"` + `slug` + `triggers`) -> `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` (linking an external page auto-wires `node.config.externalUrl`) -> `mcp__plugin_clickmax_clickmax__funnels_triggers_connect` (route to the next node) -> `mcp__plugin_clickmax_clickmax__pages_get_external_script` (surface the snippets). Full graph guidance -> `clickmax-funnels` (external-page common flow).
+- Use `mcp__plugin_clickmax_clickmax__pages_list` / `mcp__plugin_clickmax_clickmax__pages_get` to identify existing external page records.
+- Use `mcp__plugin_clickmax_clickmax__pages_create_external` for a standalone external page NOT tied to a funnel node (to plug it into a funnel later, follow the granular sequence above).
+- Use `mcp__plugin_clickmax_clickmax__pages_update` for external page metadata or URL changes.
+- Use `mcp__plugin_clickmax_clickmax__pages_get_external_script` (by `pageId`) to get step 1 — it returns `headScript` (a string); tell the user to paste it before `</head>`. For steps 2/3 hand them the snippets from [lead capture](references/lead-capture.md) / [redirect](references/redirect.md) + the docs links (no tool call — static).
+- Use `mcp__plugin_clickmax_clickmax__pages_delete` only when the user explicitly wants to remove the Clickmax page record.
+
+## References
+
+- [lead capture](references/lead-capture.md) — form + widget snippets for step 2 (`/sdk/forms/`)
+- [redirect](references/redirect.md) — button/link/form annotation snippets for step 3 (`/sdk/tracking/`)
 
 ## Report
 

@@ -22,7 +22,7 @@ Before `flows_activate`:
 2. ensure the entry trigger exists
 3. ensure triggerStart / triggerExit are configured
 4. run `flows_validate`
-5. report any remaining structural problems
+5. report any remaining structural problems, including `incompleteChannelSteps` — message steps (email/telegram/WhatsApp) missing a real sender id. Resolve it with `email_sender_signatures_list` / `channel_instances_list` and `flows_step_update` before activating, rather than retrying `flows_activate` unchanged: a channel step without a real sender id fails every send no matter what activation itself currently checks
 
 ## Deletion checklist
 

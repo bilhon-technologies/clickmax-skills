@@ -2,10 +2,7 @@
   "mcpServers": {
     "clickmax": {
       "type": "http",
-      "url": "https://ai.clickmax.io/mcp",
-      "headers": {
-        "Authorization": "Bearer ${CLICKMAX_API_TOKEN}"
-      }
+      "url": "https://mcp.clickmax.io/mcp"
     }
   }
 }

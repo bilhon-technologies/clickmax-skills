@@ -67,10 +67,10 @@ Sem o auto-update ligado, a cópia local fica parada na versão instalada e a IA
 - **clickmax-products** — Use when the user wants to create, inspect, list, archive, unarchive, or delete products in the Clickmax catalog, including one-time-payment and subscription/recurring products.
 - **clickmax-projects** — Use when the user wants to create, list, inspect, rename, set-default, or delete workspace projects in Clickmax, or when any build needs a target project resolved first.
 - **clickmax-sales-insights** — Use when the user wants to know what is selling — top offers/products by revenue and quantity, order-bump attach rate, or period-over-period sales trend (revenue, average ticket, sales count) for seller sales analysis in Clickmax.
-- **clickmax-seller-subscriptions** — Use when the user wants to inspect, chart, cancel, renew, or swap cards on customer subscriptions sold through Clickmax.
+- **clickmax-seller-subscriptions** — Use when the user wants to inspect, chart, cancel, or swap cards on customer subscriptions sold through Clickmax.
 - **clickmax-support** — Use when the user asks a how-to, troubleshooting, or "why isn't this working" support question about using Clickmax, and the answer should come from the help center.
 - **clickmax-tags** — Use when the user wants to inspect, create, update, delete, clone, or apply CRM tags to leads in Clickmax.
-- **clickmax-transaction-operations** — Use when the user wants to inspect transactions or sales, read transaction charts, or refund one or many transactions in Clickmax.
+- **clickmax-transaction-operations** — Use when the user wants to inspect transactions or sales, read transaction charts, or refund a transaction in Clickmax.
 - **clickmax-vturb** — Use when the user asks about VSL / Vturb video performance — play rate, engagement, retention, A/B test winners, whether the video is converting, how many people are watching now, or how to connect the Vturb account.
 - **clickmax-wallet-receivables** — Use when the user asks if they are ready to sell/receive, about the Clickmax wallet ("Carteira"), bank/receiving account approval, balances, "a receber", receivables, statement/extrato, or withdrawals (saques).
 - **clickmax-workspace-plans** — Use when the user wants to inspect, compare, preview cancellation of, or cancel the workspace's own Clickmax SaaS subscription and billing plan.

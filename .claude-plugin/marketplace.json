@@ -4,6 +4,9 @@
     "name": "Bilhon Technologies",
     "url": "https://clickmax.io"
   },
+  "metadata": {
+    "description": "Marketplace oficial da Clickmax: skills e MCP para operar CRM, funis, fluxos, produtos e pagamentos direto do seu cliente de IA."
+  },
   "plugins": [
     {
       "name": "clickmax",

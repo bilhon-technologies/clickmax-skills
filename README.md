@@ -1,46 +1,61 @@
 # Clickmax Skills
 
-Plugin oficial da Clickmax para o [Claude Code](https://claude.com/claude-code): skills que ensinam o Claude a operar a plataforma Clickmax — CRM, leads, funis, fluxos de automação, produtos, ofertas, pagamentos, área de membros e mais — através do servidor MCP da Clickmax.
+Plugin oficial da Clickmax para [Claude Code](https://claude.com/claude-code) e [Codex](https://developers.openai.com/codex): skills que ensinam a IA a operar a plataforma Clickmax — CRM, leads, funis, fluxos de automação, produtos, ofertas, pagamentos, área de membros e mais — através do servidor MCP da Clickmax.
 
 > ⚠️ **Repositório gerado automaticamente.** O conteúdo é publicado a partir do monorepo interno da Bilhon. Edições manuais serão sobrescritas na próxima sincronização. Encontrou um problema? Abra uma issue.
 
 ## Instalação
 
-No Claude Code:
+**Claude Code:**
 
 ```
 /plugin marketplace add bilhon-technologies/clickmax-skills
 /plugin install clickmax@clickmax-skills
 ```
 
+**Codex:**
+
+```bash
+codex plugin marketplace add bilhon-technologies/clickmax-skills
+codex plugin add clickmax@clickmax-skills
+```
+
 ## Autenticação
 
-Na primeira conexão ao servidor MCP da Clickmax (`https://mcp.clickmax.io/mcp`), o Claude Code abre a autorização no navegador:
+Na primeira conexão ao servidor MCP da Clickmax (`https://mcp.clickmax.io/mcp`), o cliente abre a autorização no navegador (no Codex, rode `codex mcp login clickmax` se não abrir sozinho):
 
 1. Entre na sua conta Clickmax.
 2. Confira o que o cliente poderá fazer e selecione **Permitir acesso**.
-3. Volte ao terminal para concluir a conexão.
+3. Volte ao cliente de IA para concluir a conexão.
 
 O acesso é guardado e renovado pelo próprio cliente — não é preciso gerar, copiar nem exportar token.
 
 ## Atualizações
 
-As skills mudam junto com a plataforma, e este repositório é republicado com a versão bumpada a cada mudança. O Claude Code busca atualizações de marketplace em segundo plano depois que a sessão inicia, mas **marketplaces de terceiros vêm com o auto-update desligado**. Ligue uma vez:
+As skills mudam junto com a plataforma, e este repositório é republicado com a versão bumpada a cada mudança. Nenhum dos dois clientes atualiza sozinho por padrão — puxe a versão nova manualmente de vez em quando.
+
+**Claude Code** busca atualizações de marketplace em segundo plano depois que a sessão inicia, mas **marketplaces de terceiros vêm com o auto-update desligado**. Ligue uma vez:
 
 1. Rode `/plugin`.
 2. Vá para a aba **Marketplaces**.
 3. Selecione `clickmax-skills`.
 4. Escolha **Enable auto-update**.
 
-Quando uma versão nova chega, o Claude Code avisa para rodar `/reload-plugins`; se você não rodar, ela entra no próximo start.
-
-Para atualizar na hora, sem esperar o refresh:
+Quando uma versão nova chega, o Claude Code avisa para rodar `/reload-plugins`; se você não rodar, ela entra no próximo start. Para atualizar na hora, sem esperar o refresh:
 
 ```
 /plugin marketplace update clickmax-skills
 ```
 
-Sem o auto-update ligado, a cópia local fica parada na versão instalada e a IA segue operando com regras antigas da plataforma.
+**Codex** não tem toggle de auto-update por marketplace — pra conta pessoal, atualize com:
+
+```bash
+codex plugin marketplace upgrade clickmax-skills
+```
+
+(Workspace Business/Enterprise é exceção: importar este repositório em Admin > Plugins > Import marketplace liga sync diário automático.)
+
+Sem esses passos, a cópia local fica parada na versão instalada e a IA segue operando com regras antigas da plataforma.
 
 ## Skills incluídas
 

@@ -1,0 +1,20 @@
+{
+  "name": "clickmax-skills",
+  "interface": {
+    "displayName": "Clickmax"
+  },
+  "plugins": [
+    {
+      "name": "clickmax",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

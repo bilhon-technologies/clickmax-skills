@@ -60,3 +60,7 @@ Not this skill:
 - Asking the user for workspace id.
 - Using raw origins/UTM helpers as a substitute for lead search.
 - Returning every field when the user only asked for one operational answer.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

@@ -68,3 +68,7 @@ Translate the tool's `code` into the seller's language (PT example / EN example)
 - Paginating `dashboard_my_sales` to hand-count failures the breakdown already aggregated (`dashboard_my_sales_aggregations` returns the same counts in one call).
 - Coloring failure rows `negative` (red) or leaving them neutral — failures are recoverable, so all rows are `warning` (yellow); red is only for consummated losses.
 - Dumping `rawReasons` verbatim instead of synthesizing a labeled reason.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

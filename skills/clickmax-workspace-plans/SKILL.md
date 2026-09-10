@@ -57,3 +57,7 @@ Not this skill:
 - Canceling without preview when the user is still evaluating options.
 - Mixing workspace SaaS billing with seller revenue operations.
 - Reaching for a `plans_admin_*` tool — it does not exist; the cancel tool already only affects the caller's own workspace.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

@@ -55,3 +55,7 @@ Not this skill:
 - Deleting when disable would satisfy the request.
 - Guessing the member user instead of resolving from lead/user id.
 - Mixing progress inspection with enrollment mutation in one opaque step.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

@@ -72,3 +72,7 @@ Not this skill:
 - a published pack with a `warnings` snapshot is still importable; read the warnings to set expectations
 - track an in-flight import by its returned id (`packs_imported_get`) rather than assuming it completed
 - importing workspaces stay PINNED to whichever snapshot version they imported — a later `packs_resnapshot`/`packs_snapshot_publish` on the source pack does NOT automatically propagate to already-imported workspaces; they'd need to re-import to pick up the change
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

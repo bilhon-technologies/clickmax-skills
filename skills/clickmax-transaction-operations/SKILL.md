@@ -54,3 +54,7 @@ Not this skill:
 
 - Refunding based on fuzzy product matching without confirming the exact transactions.
 - Treating sale buyer/UTM helpers as the canonical transaction object.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

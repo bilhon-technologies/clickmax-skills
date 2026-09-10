@@ -106,3 +106,7 @@ Not this skill:
 - Writing a `delay` with a unit field (`{ type: 'days', when: 3 }`); there is no unit, a numeric `when` is always HOURS
 - Hand-setting a flow's `funnelId` (or hand-crafting funnel triggers) to "link" it to a funnel — an embedded automation is linked from the funnel's `workflow` node via `funnels_workflow_flow_set` (funnels skill); `funnelId` alone leaves an orphan (badge shows, funnel canvas empty)
 - Connecting any step's output back to the `trigger` step id — infinite loop, always rejected by the backend
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

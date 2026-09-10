@@ -59,3 +59,7 @@ Not this skill:
 - Dumping every event row without synthesis.
 - Guessing a card id from lead context.
 - Answering a timeline question with only aggregates.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

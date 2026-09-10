@@ -132,3 +132,7 @@ Common flows:
 - Retrying a failed/imperfect build by calling `funnels_create` again — it leaves duplicate funnels (all published/live if you also publish each try). One build = one funnel: fix the existing `funnelId` in place, or `funnels_delete` the broken attempt before restarting; never stack a fresh funnel on top of a failed one
 - Creating page nodes BOTH ways in one build — `funnels_node_create` by hand AND `funnels_sequence_create` — leaves the manually-created nodes orphaned and forces a messy delete/reconnect cleanup. Decide the skeleton ONCE up front: for a standard family (capture→thank-you, sales, webinar, …) use `funnels_sequence_create` alone and connect pages to ITS nodes; use `funnels_node_create` only for a custom graph the templates don't cover — never both
 - Treating a `workflow` as a step BETWEEN pages — it is a parallel side-effect with no visitor output, so giving it a `flow_completed`/`page_viewed` exit to "reach" the next page does nothing. On lead capture the SAME trigger routes the visitor to the page AND feeds the automation in parallel (`funnels_workflow_automation_create` keeps the page route); never re-point the capture trigger onto the workflow to add an automation — that used to disconnect the page
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

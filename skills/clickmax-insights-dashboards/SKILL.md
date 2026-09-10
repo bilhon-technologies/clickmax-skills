@@ -105,3 +105,7 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 - Assembling a stage widget without `pipelineId` (it is a 400) — ask which pipeline, or list them first.
 - Hand-computing `dateFrom`/`dateTo` when the ask is "this month"/"last 7 days": send `periodPreset` and let the run resolve it.
 - Switching a widget to `segmentBy: customField|tag|cardTag` without sending `customFieldId`/`tagIds` in the same call.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

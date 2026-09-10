@@ -105,3 +105,7 @@ Common flow (super-prompt "portal completo"): `portals_check_subdomain` → `por
 - Deleting a portal/course/module when the user only wants it hidden — use the toggle tools.
 - Skipping `portals_check_subdomain` and failing `portals_create` on a taken subdomain.
 - Falling back to the granular skills mid-build and losing the end-to-end sequence; stay in this builder until the tree + students + links are done.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

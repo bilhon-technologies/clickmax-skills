@@ -58,3 +58,7 @@ Not this skill:
 - Editing system tags.
 - Confusing tag assignment with segment/list membership.
 - Applying tags to a broad unresolved cohort without confirming intent.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

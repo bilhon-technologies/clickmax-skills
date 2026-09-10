@@ -84,3 +84,7 @@ Not this skill:
 - Treating pipeline settings as harmless cosmetic edits.
 - Moving cards without checking destination stage semantics.
 - Using card deletion when the user only wants to hide/archive operationally.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

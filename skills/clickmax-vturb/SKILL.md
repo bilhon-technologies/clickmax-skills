@@ -97,3 +97,7 @@ A Vturb A/B test enrolls 2+ players (variants of the same VSL) and splits traffi
 The Clickmax Vturb block supports **"Revelação progressiva"**: reveal or hide page elements at a given second of the video (`data-vturb-timer`). When the user asks when to show the CTA, anchor the recommendation on `pitchTime` from `vturb_players_list` — revealing the button around the pitch instead of at page load is the common fix for "engaja mas não clica".
 
 > Per-second data is only available for videos enrolled in an A/B test, via `retentionCurve` in `vturb_ab_test_stats`. For any other video do not claim to know the exact drop-off second — reason from `pitchTime`, `engagementRate` and `finishes`.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

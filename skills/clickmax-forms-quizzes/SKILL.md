@@ -99,3 +99,7 @@ If a `mcp__plugin_clickmax_clickmax__forms_step_upsert` is rejected, fix that on
 - Expecting a dedicated "checkout" step type; checkout is an `offer` block with a real `checkoutUrl`, reached by score/goto branching.
 - Recreating an entire quiz when a step-level edit is enough.
 - Treating form analytics as lead membership source of truth.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

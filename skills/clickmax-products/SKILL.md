@@ -85,3 +85,7 @@ Use this skill for product-catalog identity: create a product (which also mints 
 - Creating from just a name + price — assuming `type`/`class`/`category`/`paymentConfig` or fabricating the `description` instead of asking the user first. Ask, then create.
 - Offering a single merged category list for every product, or asking the category before knowing the `type` — the physical and non-physical lists are mutually exclusive, so a category picked without the type is a coin flip the platform rejects.
 - Presenting a physical product as ready to sell right after creation, when shipping and the stock document still have to be set on the product page.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

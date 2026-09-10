@@ -63,3 +63,7 @@ Project is the top-level container. Almost every build starts "in project X", so
 - Starting a funnel/product/members/flow build without a resolved project.
 - Deleting a project without inspecting its dependency counts first.
 - Assuming a freshly created project is the default; set it explicitly if needed.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

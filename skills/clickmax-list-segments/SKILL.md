@@ -56,3 +56,7 @@ Not this skill:
 - Using lists when the user clearly needs a self-updating segment.
 - Replacing segment filters without previewing the impact when the logic is broad.
 - Treating a synced segment-backed list like an arbitrary manual list.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

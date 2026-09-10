@@ -83,3 +83,7 @@ Use this skill for business/KPI questions answered by specific analytics cuts ov
 - Reporting fractions as if they were already percentages.
 - Reusing this skill for per-lead timelines or transaction refund operations.
 - Asking the user for workspace or owner ids.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

@@ -53,3 +53,7 @@ Not this skill:
 
 - Treating reorder as a single-item move patch.
 - Using module deletion to hide content temporarily.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

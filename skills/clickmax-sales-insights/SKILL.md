@@ -57,3 +57,7 @@ Not this skill:
 - Reporting attach rate against total orders instead of the main offer's orders.
 - Presenting sales growth in yellow or red instead of green.
 - Dumping the full offer list instead of a ranked, capped summary.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

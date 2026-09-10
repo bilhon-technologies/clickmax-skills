@@ -82,3 +82,7 @@ Not this skill:
 - Treating product and offer as the same object.
 - Sending to approval without checking blockers.
 - Treating `externalUrl` or checkout `hash` as cosmetic fields.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

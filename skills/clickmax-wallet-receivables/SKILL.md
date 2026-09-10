@@ -50,3 +50,7 @@ Not this skill:
 - Suggesting Stripe or any external integrator for receiving sales.
 - Reading the sales dashboard to answer wallet balance / "a receber" questions.
 - Surfacing raw bank account, pix, ids, or transaction hashes.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

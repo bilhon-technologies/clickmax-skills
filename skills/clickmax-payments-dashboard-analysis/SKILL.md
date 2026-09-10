@@ -70,3 +70,7 @@ Not this skill:
 - Paging `dashboard_my_sales` with non-paid statuses to re-count recoverable money that `recovery_recoverable_revenue` already aggregates.
 - Paging `dashboard_my_sales` to sum a KPI that `dashboard_my_sales_aggregations` returns in one call.
 - Scanning rows without `includeAggregations: false`, which recomputes every KPI on every page.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

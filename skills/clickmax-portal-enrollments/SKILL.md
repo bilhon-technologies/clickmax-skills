@@ -50,3 +50,7 @@ Not this skill:
 
 - Telling the user a portal add will automatically enroll classrooms.
 - Bulk-enrolling an unresolved cohort without clarifying scope.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

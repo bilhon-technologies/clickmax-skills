@@ -56,3 +56,7 @@ Not this skill:
 - Canceling when the user only wants to inspect or pause conceptually.
 - Using the SaaS plan tools for customer subscription problems.
 - Promising a bulk cancel or a renew; neither exists on this surface.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

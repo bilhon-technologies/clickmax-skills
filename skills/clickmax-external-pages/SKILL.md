@@ -68,3 +68,7 @@ Not this skill:
 
 - Treating a funnel node that references a page as proof the external script is installed.
 - Returning a generic web-tracking answer without using the page-specific script tool.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

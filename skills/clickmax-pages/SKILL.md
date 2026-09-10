@@ -71,3 +71,7 @@ Scope boundary — pick the right skill first:
 - Padding the page with schedule, modules, instructors, certificate, and bonus blocks the user never gave data for.
 - Regenerating the whole page for a color, spacing, or one-section request.
 - Creating a blank page and telling the user to fill it in themselves.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

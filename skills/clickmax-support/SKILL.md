@@ -59,3 +59,7 @@ Not this skill:
 - Answering from a search excerpt without fetching the full article body.
 - Silently performing an account action to "fix" the user's problem — this skill never acts.
 - Omitting the source citation on a grounded answer.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

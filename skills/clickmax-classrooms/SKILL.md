@@ -54,3 +54,7 @@ Not this skill:
 
 - Treating classroom creation as portal creation.
 - Assuming member access is identical to classroom enrollment.
+
+---
+
+Clickmax skill revision: `8239996c3d0e`

@@ -21,24 +21,25 @@ Scope boundary — pick the right skill first:
 
 - A page with real content is authored as **one full HTML document** and imported. `pages_create` alone produces a blank page or a template copy — no copy, no sections, no working form.
 - The authoring path is validated by machine, not by taste: recipe capabilities and every `requiredSections` id are checked before import. Guessing the shape wastes a round trip.
-- **A curated page design is mandatory input, not a style preference.** Choosing one is what separates a designed page from default CSS. This holds even when the user gave zero style direction.
+- **Default design = the bundled editorial HTML bases.** Explicit user references win; otherwise start from the matching resource in [visual system](references/visual-system.md), not a blank document or a catalog guess.
 - The project's style guide is a fresh default (commonly light mode, blue/navy palette, small type scale) until someone changes it, and no tool changes it. A dark/accent request that conflicts with it must be satisfied by an explicit local palette applied to every section — never by half-styled markup that lets bare tags inherit the default.
-- `<script>` is stripped on import. Every interaction is CSS-only or it does not exist.
+- Imported author scripts are stripped. Use native HTML/CSS interactions or the documented declarative motion contract.
 - One capture form per page. Two forms record the lead twice and make the funnel's `form_submit` trigger ambiguous.
-- Real facts only. Prices, deadlines, guarantees, testimonials, logos, metrics, and image URLs come from the user or they do not appear.
+- Missing facts/assets → [content discovery](references/content-discovery.md) before authoring. Explicitly requested fictional samples stay visibly labeled in draft; replace/remove before publication. Never invent actual payment, delivery, contact or access links.
 
 ## Thought process
 
 1. Resolve the target page first — existing page, new page in a project, or a page inside a funnel. Never act on a remembered id without a fresh lookup this turn.
 2. Classify the job: read/config · blueprint only · new page with content · targeted edit · explicit full rebuild · clone · publish.
 3. Narrow request on an existing page → smallest possible edit. Never regenerate unrelated sections.
-4. Resolve product, offer, audience, proof, assets, and constraints only as far as the job needs.
-5. Pick the recipe from the page type, then pick the curated design, then decide the section rhythm — in that order. Structure before copy, copy before CSS.
+4. Resolve account facts and ask the unanswered [content discovery](references/content-discovery.md) questions. A request for the default design does not skip discovery.
+5. Pick the recipe, read its bundled HTML base (or the explicit reference), then select composition variants and map verified content into slots. Reuse the funnel palette.
 6. Author, validate, fix every error, import as draft.
 7. Publication is always a separate, explicitly approved step.
 
 ## Execute guide
 
+0. **Content discovery** — ask only missing facts/assets, including proof and real next-step URLs: [content discovery](references/content-discovery.md).
 1. **Pipeline and tool ordering** — recipes, manifest, generation context, validation error codes, target rules, clone, configuration, and publication: [authoring pipeline](references/authoring-pipeline.md).
 2. **Visual system** — choosing the curated design, mapping it onto the injected tokens, type scale, color ramp, spacing, container, and breakpoints: [visual system](references/visual-system.md).
 3. **Structure and copy** — the mandatory spine, page jobs, section logic, and copy rules: [sections and copy](references/sections-and-copy.md).
@@ -51,7 +52,7 @@ Scope boundary — pick the right skill first:
 - Build/edit answers: the visible sections, the chosen design, the responsive behavior, and exactly what changed. Do not dump markup unless asked.
 - List missing business facts and assets as explicit gaps, named.
 - Uncertain or failed save → say so and say what must be re-checked. Never claim success from a call that did not confirm.
-- Close by offering a desktop and mobile review. Offer publication only as a separate opt-in.
+- Before reporting a finished layout, inspect the imported draft on desktop and mobile; repair overflow, missing assets, typography and inactive actions. If no browser is available, disclose that visual review is pending. Publication remains a separate opt-in.
 
 ## Warnings
 
@@ -64,7 +65,7 @@ Scope boundary — pick the right skill first:
 
 ## Anti-patterns
 
-- Freehanding the visual system instead of selecting a curated design.
+- Recreating the default visual system from prose instead of adapting the bundled HTML base.
 - A generic "modern and clean" direction with no concrete visual concept.
 - Writing copy before deciding the page job, the audience's awareness level, and the objection being answered.
 - The same centered card layout in every section.
@@ -74,4 +75,4 @@ Scope boundary — pick the right skill first:
 
 ---
 
-Clickmax skill revision: `8239996c3d0e`
+Clickmax skill revision: `e5f6c41959a9`

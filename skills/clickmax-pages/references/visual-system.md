@@ -1,14 +1,21 @@
 # Visual system
 
-## Step 1 — choose a curated design. Always.
+## Step 1 — resolve a concrete visual base
 
-`mcp__plugin_clickmax_clickmax__page_designs_list` then `mcp__plugin_clickmax_clickmax__page_designs_get`. This is not optional and not conditional on the user asking for a style.
+Priority: explicit user reference → explicitly selected catalog design → bundled default. “Use the platform default” selects the bundled default; it does not skip content discovery.
 
-- **No style request** → pick the curated design that best fits the product and audience. This is what makes a page read as designed instead of as default CSS.
-- **A style request exists** (brand, reference URL, or something generic like "dark with a purple accent") → pick the closest **structural** match; dark-first vs light-first is the main filter. Then **adapt the request to the design, not the design to the request**: map what was asked onto the slots the design already has — its accent token, its documented decorative signature, its component set. "Dark with a purple accent" means picking a dark-first design and retinting its accent to purple. It does not mean bolting a new decorative element onto a design that has no such pattern.
-- If the request conflicts with an explicit Do/Don't in the chosen design, satisfy the intent through the design's own system rather than breaking its rule.
+|Recipe|Read before authoring|
+|-|-|
+|`sales` / `capture`|[Editorial sales HTML](../assets/editorial-sales.html) + [adaptation contract](default-design-course-launch-editorial.md)|
+|`checkout`|[Editorial checkout HTML](../assets/editorial-checkout.html) + [checkout contract](default-design-checkout.md)|
+|`thank-you`|[Editorial thank-you HTML](../assets/editorial-thank-you.html) + [confirmation contract](default-design-thank-you.md)|
+|Other recipes|Select a compatible catalog design and obey the recipe's capabilities.|
 
-Type scale, spacing, component patterns, container width, and decorative signature come from the chosen design **verbatim**. Freehanding those is what produces an unreadable type scale, missing gutters, and mismatched contrast.
+Read the actual HTML resource, including CSS; a filename or prose summary is not enough. Resources ship with the skill, so defaults work without a seeded catalog. If the client cannot read companion resources, report the missing installation/resource and retrieve it through the client's supported skill mechanism; do not silently claim to have used the default.
+
+For an explicit catalog choice, use `mcp__plugin_clickmax_clickmax__page_designs_list` / `mcp__plugin_clickmax_clickmax__page_designs_get` and reuse its identifier in the manifest. Bundled defaults have no required catalog ID: omit `designIdOrSlug` rather than invent one. Explicit reference wins over incompatible catalog decoration rules.
+
+The HTML bases own exact default CSS and responsive behavior. Choose variants before filling slots; preserve proportion, whitespace, ticket silhouette and typographic hierarchy. Never ship example business facts, draft notices or pending links as final content.
 
 ### When the catalog is empty or nothing fits
 
@@ -20,9 +27,9 @@ Rare, and it is not a licence to inherit the project's neutral default. Build a 
 - Give sections distinct roles: split heroes, offset grids, tinted surfaces, oversized numerals, editorial dividers, asymmetric alignment. Never one narrow centered column with identical cards top to bottom.
 - Keep one color mode and one system. Variety comes from composition, density, scale, and accent tint — never from an unrelated palette in one section.
 
-## Step 2 — map the design onto the injected tokens
+## Step 2 — resolve the effective palette
 
-The server injects brand tokens before the page's own CSS. Use `var(--cx-...)` with a fallback; a raw hex outside the palette comes back in `warnings`.
+The server injects inherited tokens before authored CSS. Inspect them before authoring: a fresh guide may conflict with the requested/default design. For the bundled base, resolve one `.ce-page` palette and explicit typography, then reuse it on every funnel page. Do not replace intentional design colors with neutral guide defaults merely to silence `OFF_PALETTE_COLOR`; report the intentional override and correct accidental drift. For a compatible established brand, map design values onto its tokens.
 
 |Token|Role|
 |-|-|
@@ -69,7 +76,7 @@ So when the requested look conflicts with that default, `var(--cx-color-...)` al
 
 ## Color and surface rhythm
 
-- **One color mode for the whole page.** If the request is dark, every section keeps a dark background. No section flips to the opposite mode "for variety".
+- Keep one coherent color mode. The bundled light editorial base explicitly includes an accent band and dark footer; preserve these documented exceptions. Do not introduce arbitrary inversions.
 - **Contrast comes from surface steps inside that one mode**, not from mode flips: a stage section, then a tonal section, then a card plane. Each section owns its own `background-color` — do not rely on one global background that sections punch holes in.
 - When a genuinely inverted block is wanted (a dark hero on a light page), use the ready-made `.cx-invert` class on the `<section>`. It repaints heading, paragraph, list item, label, and link together. Do not hand-recolor inside an inverted block — that is how an illegible gray subtitle on a dark background gets made.
 - `.cx-surface` and `.cx-surface-elevated` exist for cards and forms.

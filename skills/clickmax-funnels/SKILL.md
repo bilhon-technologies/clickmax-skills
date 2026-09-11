@@ -16,6 +16,10 @@ Not this skill:
 - ONE page, with no funnel graph involved (create, restyle, rebuild, configure, publish a single page) -> `clickmax-pages`
 - Fine-grained visual edits after creation (moving one block or changing one mounted element) -> page editor UI.
 
+## Discovery before authoring
+
+For AI-authored pages, read [AI funnel creation](references/ai-funnel-creation.md) and load `clickmax-pages` before mutation. Guided discovery is the default for missing proof, people/assets and delivery links; “use the platform default design” does not skip it. Reuse supplied facts, accept an explicit skip, and continue an already requested draft after answers without another assembly approval.
+
 ## Build completion rule (mandatory)
 
 - ONE build = ONE funnel. Call `funnels_create` exactly once. If a later step fails, validation is dirty, or the graph looks wrong, FIX the existing `funnelId` in place — re-run only the specific failing `funnels_node_create`/connect/`funnels_abtest_variants_update` — NEVER call `funnels_create` again to "start over". Retrying by re-creating leaves duplicate funnels (and if you also publish each attempt, several live funnels with the same name). If a prior attempt already left a half-built funnel, delete it with `funnels_delete` (or reuse it) instead of stacking another.
@@ -116,7 +120,7 @@ Common flows:
 - For a `workflow` node, configure entry/exit from the funnel side; flow-level start events are for standalone automations, not funnel-embedded flows
 - Creating nodes without connecting them leaves a broken-looking graph: no routed edges and stacked nodes
 - When the target project, product, or offer is ambiguous, ask the user to choose an existing entity or explicitly request a new one before mutation.
-- Never fabricate testimonials, customers, metrics, certifications, dates, scarcity, guarantees, or outcomes while filling skipped discovery answers.
+- Never fabricate factual proof or commercial facts while filling skipped discovery answers. Explicitly requested fictional testimonial samples follow the draft-only labeling and publication rules in `clickmax-pages`.
 
 ## Anti-patterns
 
@@ -135,4 +139,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `8239996c3d0e`
+Clickmax skill revision: `e5f6c41959a9`

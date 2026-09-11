@@ -2,19 +2,20 @@
 
 ## The only path that produces a page with real content
 
-`recipe → curated design → one manifest → generation context → author HTML → validate → draft import → (separate) publish`
+`content discovery → recipe → HTML base / explicit design → manifest → context → adapt HTML → validate → draft import → visual review → (separate) publish`
 
 Every step feeds the next with the **same** manifest object. Changing it mid-flight is the most common cause of a validation that passes and an import that fails.
 
 1. `mcp__plugin_clickmax_clickmax__pages_recipes_list` — pick the one recipe compatible with the target page type.
-2. `mcp__plugin_clickmax_clickmax__page_designs_list`, then `mcp__plugin_clickmax_clickmax__page_designs_get` on the chosen one. Mandatory, even with no style request from the user.
+2. Resolve the [visual base](visual-system.md): read the bundled HTML for the default, or inspect an explicit reference/catalog choice. Only the catalog path needs `mcp__plugin_clickmax_clickmax__page_designs_list` / `mcp__plugin_clickmax_clickmax__page_designs_get`.
 3. Build the manifest: `recipeId` plus the optional `designIdOrSlug` of the design chosen in step 2. Reuse it unchanged from here on.
 4. `mcp__plugin_clickmax_clickmax__pages_generation_context_get` with the manifest and the target — returns the token CSS and token names the page must use.
-5. Author one complete responsive HTML document.
+5. Adapt one complete responsive HTML document from the base. Fill slots with verified answers, select composition variants, and follow [content discovery](content-discovery.md) for missing facts.
 6. `mcp__plugin_clickmax_clickmax__pages_validate_html` with the same target, manifest, HTML, and `offerId` when there is a checkout. Writes nothing.
 7. `valid: false` → fix **every** entry in `errors` and revalidate. Read `warnings` too; they are actionable.
 8. `mcp__plugin_clickmax_clickmax__pages_import_html_draft` with the exact validated artifact. Always lands unpublished.
-9. Publication only after separate explicit consent, via `mcp__plugin_clickmax_clickmax__pages_publish`.
+9. Inspect the imported draft at desktop/tablet/mobile widths. Check headings, gutters, image loading, section rhythm and every CTA destination; correct the same page ID and inspect again. If unavailable, report visual verification pending.
+10. Before publication, replace/remove every `data-cx-draft-placeholder` and fictional proof sample, verify actual checkout/access links, then publish only after explicit consent via `mcp__plugin_clickmax_clickmax__pages_publish`.
 
 `mcp__plugin_clickmax_clickmax__pages_import_html` is the legacy-compatible entry point: it defaults to publishing and only enforces the recipe when a manifest is supplied. Prefer the draft import for anything generated.
 

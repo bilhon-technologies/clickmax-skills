@@ -6,43 +6,30 @@ Use this workflow in any MCP client when the user wants the assistant to researc
 
 ## Discovery modes
 
-Ask once before mutation:
+Load `clickmax-pages` and follow its **content discovery** reference before authoring. Guided discovery is the default for missing content; default design only delegates visual decisions. Explicit automatic creation or skip-discovery bypasses optional questions, never the need to distinguish facts from assumptions.
 
-|Mode|Behavior|Draft authorization|
-|-|-|-|
-|Guided research|Ask 1-3 concise optional questions per round. Every question accepts an answer or “infer for me”; also offer “skip discovery”.|Show the resulting blueprint and ask before assembly.|
-|Automatic creation|Infer reversible structural and creative choices from real account context and the request; do not run the questionnaire.|Choosing automatic creation authorizes assembly of an unpublished draft, never publication.|
-
-Client UI is not assumed: use structured elicitation when available; otherwise present the same choices in normal conversation. Skipped answers delegate a decision, not a fact.
+Use the client's structured input when available, otherwise ask in normal conversation and wait. Ask only missing facts (especially proof, mentors/assets and real delivery links); reuse every answer across the funnel. No questionnaire UI is required.
 
 Both modes produce one internal brief:
 
-`objective | audience | offer | positioning hypothesis | page sequence | CTA path | visual preset | narrative | motion | verified proof/assets | assumptions | factual gaps`
+`objective | audience | offer | positioning hypothesis | page sequence | CTA path | visual preset | narrative | motion | verified proof/assets | selected omissions | explicitly requested fictional draft samples | assumptions | factual gaps`
 
-Guided research covers only high-impact gaps:
-
-1. Offer, audience, objective, and primary CTA.
-2. Visual direction: **Cinematic Event | Premium Platform | Minimal Product | Immersive Storytelling | Direct Conversion**; optional reference URL; motion `subtle | balanced | expressive`.
-3. Verified commercial facts/assets: price, dates, guarantee, testimonials, metrics, customers, certifications, media, and checkout offer.
-
-Recommend an answer for creative choices. IF omitted → select from context and report the assumption.
+An existing request to create the funnel authorizes continuing draft assembly after discovery; do not request approval again. A blueprint-only request ends at the blueprint. Publishing remains separate.
 
 ## Safe inference
 
-May infer: benefits, objections, FAQ, section order, CTA hierarchy, and positioning copy derived from verified product context.
-
-Must not invent: testimonials, customer/logo names, sales/result metrics, certifications, dates, scarcity, guarantees, awards, press mentions, or outcome claims. Missing proof/facts → omit the section, or use the draft proof preview described in `clickmax-pages`; never create plausible fake proof.
+Infer reversible creative choices from verified context. Missing proof, fictional sample labels and unavailable delivery destinations follow `clickmax-pages` content discovery. Explicitly requested fictional samples are draft-only and must be replaced/removed before publication. Skipping discovery never authorizes invented testimonials, customers, metrics, certifications, dates, scarcity, guarantees, awards, press mentions or outcome claims.
 
 A positioning hypothesis is copy, not evidence. Avoid turning it into a guaranteed or historical result.
 
 ## One design for the whole funnel
 
-The design is chosen **once, before the first page**, and reused unchanged on every page after it. This is the funnel-scoped half of the rule; how to choose and apply a design is in `clickmax-pages`.
+The design is chosen **once, before the first page**, and reused consistently on every page after it. This is the funnel-scoped half of the rule; how to choose and apply a design is in `clickmax-pages`.
 
-- Select one design whose light/dark mode and narrative match the brief, and record its id in the brief so every later page reuses the same one.
+- Resolve one base through `clickmax-pages` and record its resource name plus chosen palette/variants in the brief. Record a catalog id only when an actual catalog design was selected; never invent an id for a bundled default.
 - Vary section composition by page purpose; never redesign the visual system per page.
-- From the second page on, reuse the first page's CSS block literally and change only the content.
-- The server inherits brand tokens through the funnel, but it does **not** control layout. A different hero on page three leaves the funnel visually broken even with the correct palette.
+- Reuse shared typography, palette, spacing and component rules; adapt layout to sales, checkout and thank-you purposes using the matching page-authoring base.
+- The server inherits brand tokens through the funnel, but it does **not** control layout. Shared tokens alone do not establish a coherent layout; preserve the same component language while varying composition.
 - The motion level chosen in discovery (`subtle | balanced | expressive`) applies funnel-wide: expressive means at most 1-2 focal moments per viewport, not motion on every block.
 
 ## Page authoring inside a funnel
@@ -58,7 +45,7 @@ Follow the pipeline in `clickmax-pages` for every page. Two things are specific 
 
 1. Resolve the real project, product, offer, and usable assets; never guess ids.
 2. Build one blueprint: funnel family, ordered pages, node types, exits, offer/form contracts, the chosen design, and assumptions.
-3. Guided mode → request assembly approval. Automatic mode → continue from the user's mode selection.
+3. Continue the requested draft after discovery; ask for assembly only if the user requested a blueprint without creation.
 4. Call `mcp__plugin_clickmax_clickmax__funnels_create` exactly once; standard family → `mcp__plugin_clickmax_clickmax__funnels_sequence_create`, custom graph → `mcp__plugin_clickmax_clickmax__funnels_node_create`, never both for the same skeleton.
 5. Author each planned page through the `clickmax-pages` pipeline, ending in `mcp__plugin_clickmax_clickmax__pages_import_html_draft` with the funnel target described above.
 6. Attach every returned page with `mcp__plugin_clickmax_clickmax__funnels_node_connect_page`; route page triggers with `mcp__plugin_clickmax_clickmax__funnels_triggers_connect` and other node families with their dedicated connection tool.

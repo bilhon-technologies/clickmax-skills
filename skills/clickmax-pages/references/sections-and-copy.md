@@ -58,7 +58,7 @@ Never generate these to fill space. Five honest blocks convert better than fifte
 
 - **Five-second test**: someone who has never heard of the product understands the offer from the hero alone.
 - Sentences of 15–20 words. Active voice. No jargon.
-- **One primary CTA, repeated three times, with the same label.** Competing CTAs ("watch the demo", "download the guide", "talk to sales") split the decision and drop conversion.
+- **One primary CTA, repeated where the composition calls for it, with the same label.** Competing CTAs ("watch the demo", "download the guide", "talk to sales") split the decision and drop conversion.
 - The CTA label states the benefit, not the mechanic: "I want the 15-minute routine" beats "Submit".
 - **No navigation at the top.** A link out of the page is a lost conversion. The footer carries legal and contact only.
 - Headline = a specific promise plus the distinct mechanism. A promise that would fit any business sells none.
@@ -68,9 +68,9 @@ Never generate these to fill space. Five honest blocks convert better than fifte
 
 ## Proof, and what to do when there is none
 
-**Never fabricate a testimonial, a student count, a rating, a logo, a metric, a deadline, a price, or a guarantee.** These are the elements a real buyer checks, and a fake one is visible.
+Follow [content discovery](content-discovery.md) before deciding to omit proof. Never present fictional testimonials, counts, ratings, logos, metrics, dates, prices or guarantees as real. Explicitly requested fictional testimonial samples are allowed only with the visible draft labels and publication restrictions in that contract.
 
-Without proof, two honest options:
+After asking the user, use their choice: real supplied proof, explicitly requested labeled fictional draft samples, omission, or the empty layout preview below. Without a fictional-sample request, the two fallback options are:
 
 1. Omit the block and tell the user which fact is missing.
 2. In an unpublished draft only, render a **layout preview**: the real final component, styled with the page's own radius, typography, and grid, but with a visible "Layout preview — replace before publishing" label, a dashed or otherwise distinct draft treatment, and literal slots — "Customer name", "Role or context", "Insert a verified testimonial", "Verifiable number".

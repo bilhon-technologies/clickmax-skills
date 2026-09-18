@@ -114,7 +114,7 @@ The most reusable block in a long page. Three parts, same order everywhere: a pi
 
 ## Persistent conversion furniture
 
-- **Urgency bar** at the very top, only when the deadline is real. Static text, never a fake countdown — a counter needs JavaScript and would not survive import anyway.
+- **Urgency bar** at the very top, only when the deadline is real. Use the real countdown timer (see Interactive components below) — never fake the number as static text.
 - **Fixed action bar** at the bottom with the price and the same CTA label as the hero. Compresses to label + CTA on narrow screens.
 - **Progress meter** for a limited batch:
 
@@ -132,13 +132,140 @@ The most reusable block in a long page. Three parts, same order everywhere: a pi
 
 The number must be real. A fabricated scarcity meter is the fastest way to lose a buyer who comes back the next day and sees the same percentage.
 
+## Interactive components
+
+Six components hydrate via the platform's runtime bundle, already inlined into every published page — same classes/attributes the visual editor emits, no `<script>` needed. `pages_validate_html` catches the common mistakes below as warnings, never hard errors.
+
+### Countdown/timer
+
+```html
+<div class="cm-stopwatch" id="promo-timer" timer-type="countdown" data-end-date="2026-12-31" data-end-time="23:59">
+  <div class="cm-stopwatch-item visible-block" data-unit="hours"><div class="cm-stopwatch-value">00</div></div>
+  <div class="cm-stopwatch-item visible-block" data-unit="minutes"><div class="cm-stopwatch-value">00</div></div>
+</div>
+```
+
+- `id` unique on the page — the runtime keys its instance map by it
+- `timer-type="countdown"` (or omitted) needs `data-end-date="YYYY-MM-DD"` + `data-end-time="HH:MM"`, or it starts at zero/expired
+- only units carrying `visible-block` are shown; the import derives the editor's `data-show-<unit>` flags from them, so the timer keeps working after the page is opened and saved in the visual editor
+- `data-unit`: `hours` \| `minutes` \| `seconds` \| `days` \| `weeks` \| `months` \| `years`
+
+### Accordion
+
+```html
+<div class="cm-accordion-item">
+  <div class="cm-accordion-header">Do I need previous experience?</div>
+  <div class="cm-accordion-content">No. The first session starts from zero.</div>
+</div>
+```
+
+Toggled purely by class; header and content must share the same parent. No companion CSS needed.
+
+### Popup
+
+```html
+<button class="cm-button-open-popup">See the bonus</button>
+
+<div class="cm-popup not-visible">
+  <div class="cm-popup-overlay"></div>
+  <div class="cm-popup-modal">
+    <div class="cm-popup-close-button">✕</div>
+    <div class="bonus-card">...</div>
+  </div>
+</div>
+```
+
+```css
+/* visual on the modal or a wrapper inside it — never on .cm-popup */
+.cm-popup-modal {
+  width: min(92vw, 480px);
+  border-radius: 16px;
+  background: #fff;
+}
+.cm-popup-overlay {
+  background: rgba(0, 0, 0, 0.55);
+} /* optional; keep it semi-transparent */
+```
+
+- contract: `div.cm-popup.not-visible > div.cm-popup-modal`, **only one `.cm-popup` per page** — a second one is silently inert
+- **never style `.cm-popup`** — no CSS rule, no `style` attribute. The runtime already makes the root a transparent fixed full-screen layer; any background or size there covers the whole page when it opens (`pages_validate_html` warns `POPUP_ROOT_STYLED`)
+- all visual styling goes on `.cm-popup-modal` or a wrapper inside it
+- backdrop: optional `.cm-popup-overlay` before the modal, semi-transparent by default; if restyled, keep an `rgba` background
+- keep `not-visible` on the root or it opens on load (skip only when `on-load="show"` is set on `.cm-popup-modal` on purpose)
+- close: `.cm-popup-close-button` inside the modal
+- optional attributes on `.cm-popup-modal`: `on-load="show"`, `on-see="#targetId"`, `when-click="#targetId"`, `close-page="show"`
+
+### Order-bump toggle
+
+```html
+<input class="cm-checkmark-checkbox" type="checkbox" data-orderbump-id="<offerId>" />
+```
+
+Or `<button class="cm-checkmark-button" data-orderbump-id="<offerId>">`. `offerId` must match one of the ids passed to the checkout's order-bump list, or the toggle has nothing to attach to.
+
+### Icon action
+
+```html
+<span class="cm-icon" action-type="open-link" action-link="https://example.com"></span>
+```
+
+`action-type` needs its matching attribute:
+
+|`action-type`|Required attribute|
+|-|-|
+|`open-link`|`action-link`|
+|`scroll-to`|`scroll-element` (an id)|
+|`show-or-hide`|`data-show` and/or `data-hide` (comma-separated ids)|
+|`open-popup` / `close-popup`|`popup-id`|
+|`mark-complete`|`complete-element` (an id)|
+|`nothing-happens`|none|
+
+### Navigation
+
+```html
+<nav class="cm-navigation">
+  <a class="cm-navigation-item" href="#pricing">Pricing</a>
+</nav>
+```
+
+- in-page links: `href="#<id>"` pointing at an element with that exact, unique `id` (e.g. `<section id="pricing">`); the runtime scrolls to it smoothly, also inside the editor canvas and preview
+- dropdown: `<div class="cm-has-dropdown">Label <div class="cm-submenu"><a class="cm-navigation-item" href="#faq">FAQ</a></div></div>`
+- the editor turns these links into its own menu on the first load, so they stay editable in **Gerenciar Menu** and survive every save
+- the mobile toggle button self-creates — never hand-write it
+
 ## Logo belt
 
 Two identical strips side by side, the track translated by `calc(-100% - var(--gap))` so strip two ends exactly where strip one began. The strip must be wider than the viewport, or a gap opens at the end of the cycle. Wrap the animation in `prefers-reduced-motion` — when motion is reduced, show the first set statically.
 
 ## Video
 
-An `<iframe>` from YouTube or Vimeo is the only embed that survives import. Give it a `title`, a bounded aspect ratio, and never autoplay with sound.
+### YouTube / Vimeo
+
+An `<iframe>` from YouTube or Vimeo is the only plain embed that survives import. Give it a `title`, a bounded aspect ratio, and never autoplay with sound.
+
+### VTurb
+
+```html
+<div data-cx-vturb="<videoId>"></div>
+```
+
+- server resolves the marker into the real `<vturb-smartplayer>`; the published page loads its player script on its own
+- `videoId` must already exist as a VTurb player on this workspace
+- a hand-written `<script>` for VTurb is always stripped — it never boots the player; the marker is the only working path
+
+### Watch-gate (optional)
+
+Reveal or hide other elements once a timer elapses. Works on a plain YouTube/Panda iframe or on a VTurb marker:
+
+```html
+<iframe data-provider="youtube" id="unique-id" data-video-id="..." data-timer="00:05:00" data-cx-show="ctaId"></iframe>
+<div data-cx-vturb="<videoId>" data-vturb-timer="300" data-cx-show="ctaId" data-cx-hide="lockId"></div>
+```
+
+- `data-cx-show` / `data-cx-hide`: comma-separated element ids to reveal/hide once the timer elapses
+- the iframe path additionally needs `data-provider="youtube|panda"` + `id` + `data-video-id` + `data-timer="HH:MM:SS"`
+- the VTurb path additionally needs `data-vturb-timer="<seconds>"` on the same marker (plain seconds, e.g. `300` = 5 min); the marker stays as the player wrapper, so every attribute on it (id, class, gate) survives
+- prefer `data-cx-show`/`data-cx-hide`; the legacy `component-to-show`/`component-to-hide` still work but are kept only for pages built by hand in the editor
 
 ## Images
 

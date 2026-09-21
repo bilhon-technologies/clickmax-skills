@@ -26,6 +26,7 @@ Not this skill:
 
 ## Thought process
 
+0. ANY sales value/count question ("quantas vendas hoje", "quanto vendi", "quanto faturei", "como estão minhas vendas", "e agora?" refresh) → MANDATORY sales-overview bundle (defined in `clickmax-analytics`): in the SAME script also call `mcp__plugin_clickmax_clickmax__recovery_recoverable_revenue` (or reuse `aggregations.recovery` when `dashboard_my_sales_aggregations` already ran) + `mcp__plugin_clickmax_clickmax__transactions_failure_breakdown`, same window. Skip only when the user explicitly limits the answer ("só o número", "só vendas pagas").
 1. Identify whether the user needs KPIs, paginated rows, filter discovery, deeper my-sales queries, or the recoverable-revenue total.
 2. Prefer the narrowest dashboard surface that answers the question.
 3. Use my-sales when the filter logic is more expressive than the lightweight dashboard lists.
@@ -53,7 +54,7 @@ Not this skill:
 - Order results from highest-signal KPI or cohort insight to supporting rows.
 - Cap long row dumps and prefer ranked summaries with `+N more` when needed.
 - Treat follow-up actions as opt-in only.
-- **A sales-count/value answer ("quantas vendas", "quanto vendi") ALWAYS leads with a `cx-hero`** for the paid value + count (`value-tone="positive"`), even for a single sale or a small amount — never state the sales value only in prose. This mirrors the recovery rule below and holds regardless of how many sales there are.
+- **A sales-count/value answer ("quantas vendas", "quanto vendi") ALWAYS leads with a `cx-hero`** for the paid value + count (`value-tone="positive"`), even for a single sale or a small amount — never state the sales value only in prose. This mirrors the recovery rule below and holds regardless of how many sales there are. Then, same reply: `cx-hero` a recuperar (`warning`, `icon="database-sync"`) + `cx-ranking` of top failure reasons (`warning`, `hint` = next action per `clickmax-failure-diagnosis`) + one opt-in next step. Refresh follow-ups ("e agora?") re-run the whole bundle and keep the same shape.
 - **Recoverable revenue is money still winnable back, not a consummated loss** — present it end to end in the `warning` money tone, never `negative`. Lead a recovery answer with a `cx-hero` for the total recoverable value (`icon="database-sync"`), then a `cx-breakdown` (`layout="kanban"`) by origin/stage; differentiate sub-cases (bank decline vs pending vs abandoned) via `hint`/label text, not by changing the tone. Empty state: "Nada a recuperar no período 🎉". Never surface card data or CPF/document.
 
 ## Warnings
@@ -64,6 +65,7 @@ Not this skill:
 
 ## Anti-patterns
 
+- Answering "quantas vendas / quanto vendi" with only the paid hero and making the user ask for recoverable value, failures, and next action one by one.
 - Stating the sales value/count only in prose instead of a `cx-hero` — the model may plan a hero in its own reasoning and then drop it when writing the final answer; the hero is mandatory output, not optional polish.
 - Pulling my-sales for every small dashboard question.
 - Dumping raw paginated rows without synthesis.
@@ -73,4 +75,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `b65f0f1384d1`
+Clickmax skill revision: `f4dc49fe4764`

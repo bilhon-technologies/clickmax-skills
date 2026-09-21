@@ -9,7 +9,7 @@ Use this skill for business/KPI questions answered by specific analytics cuts ov
 
 ## Not this skill
 
-- payment dashboard browsing, headline KPIs, my-sales, or loss/recovery cohorts (`failed`, `canceled`, `refunded`, `chargedBack`, `dispute`, `pending`) -> `clickmax-payments-dashboard-analysis`
+- payment dashboard browsing, my-sales rows, or drilling into one loss/recovery cohort (`failed`, `canceled`, `refunded`, `chargedBack`, `dispute`, `pending`) -> `clickmax-payments-dashboard-analysis` (the sales-overview bundle below stays here)
 - refund/chargeback operations on a transaction -> `clickmax-transaction-operations`
 - raw per-lead timelines or owner activity aggregates -> `clickmax-leads-activity-analysis`
 - finding/filtering individual leads -> `clickmax-leads`
@@ -26,18 +26,35 @@ Use this skill for business/KPI questions answered by specific analytics cuts ov
 - there is no direct "lost/refused revenue" cut in this skill; `previousPeriodGrowth` (in `analytics_sales_metrics`) can be negative but means decline vs the prior window, not lost money.
 - `analytics_top_products` `limit` defaults 5 (max 100); `analytics_sales_pages` `limit` defaults 5 (max 20).
 
+## Sales overview bundle (MANDATORY)
+
+Sales-overview question ("como estão minhas vendas", "quanto faturei", "quanto vendi hoje", "quantas vendas", "quanto estou perdendo", "resumo das vendas", "how are my sales") = ONE complete answer, never only the literal number. Sellers expect faturado + a recuperar + why sales fail + what to do, without asking one by one.
+
+Run in the SAME Code Mode script, same window + filters:
+
+|Call|Gives|
+|-|-|
+|`mcp__plugin_clickmax_clickmax__analytics_total_sales`|faturado (`totalRevenue` + internal/external split)|
+|`mcp__plugin_clickmax_clickmax__recovery_recoverable_revenue`|total a recuperar (deduplicated buckets: failed, canceled, refunded, pixPending, boletoPending, cartAbandonment)|
+|`mcp__plugin_clickmax_clickmax__transactions_failure_breakdown`|failures by stable `code` + value|
+
+- Map `from`/`to` (failure breakdown) and `transactionPeriod` (recovery) to the same `startDate`/`endDate` window.
+- Translate failure `code` → label + next action via the `clickmax-failure-diagnosis` map (`activate_skill` it); never print raw gateway reasons or raw `code`.
+- Headline "a recuperar" = recovery total (deduplicated). Failure-breakdown `count`/`value` are per ATTEMPT (same buyer retrying counts N times) → label them "tentativas", never "pessoas", never sum them into the recoverable headline.
+- NEVER page `dashboard_my_sales` rows to hand-count failures or buyers for this answer.
+- One tool failing → still answer with the others and say which part is missing.
+- Skip the bundle only when the user asks for ONE specific cut ("só o faturamento", "top produtos", "quantos leads").
+
 ## Thought process
 
-1. Map the question to the narrowest tool:
-   - "quanto faturei" / "how much did I make" -> `analytics_total_sales` for the range (headline revenue: internal + external + total), or `analytics_sales_metrics` when they also want conversion, top product, or growth vs a prior period.
+1. Sales-overview question → run the bundle above. Otherwise map the question to the narrowest tool:
+   - revenue-only cut ("só o faturamento") -> `analytics_total_sales` for the range (headline revenue: internal + external + total), or `analytics_sales_metrics` when they also want conversion, top product, or growth vs a prior period.
    - "quantos leads" / lead conversion / lead price -> `analytics_leads_metrics`; lead-engagement overview across lists -> `analytics_leads_overview`.
    - "top produtos" / best sellers -> `analytics_top_products`.
    - "desempenho do funil" -> `analytics_funnel` (step + aggregate stats + sales history).
    - messaging engagement -> `analytics_messages_metrics`; automation reach/executions -> `analytics_flows_overview`.
    - page traffic -> `analytics_sales_pages`; latest workspace movement -> `analytics_recent_activities`.
-2. For "quanto estou perdendo" / lost money: this skill has no direct loss field. Decide what the user means and be explicit:
-   - money not converted (failed/canceled/refunded/chargeback/pending) -> hand off to `clickmax-payments-dashboard-analysis` (`dashboard_my_sales` with non-paid statuses); that is where loss cohorts live.
-   - within this skill you can only approximate the gap: low `salesConversionPercentage` and `totalViews` vs `totalProductsSold` (from `analytics_sales_metrics`) show demand that did not convert, and negative `previousPeriodGrowth` shows revenue decline. Frame these as leakage signals, not a refund/loss total, and say so.
+2. "quanto estou perdendo" / lost money → the bundle's recovery total + failure ranking IS the answer (recoverable money, not consummated loss). Extra leakage signals, labeled as such, never as a loss total: low `salesConversionPercentage`, `totalViews` vs `totalProductsSold`, negative `previousPeriodGrowth` (all from `analytics_sales_metrics`).
 3. For period-over-period questions, always pass an explicit previous window so growth is meaningful.
 
 ## Execute guide
@@ -53,9 +70,8 @@ Use this skill for business/KPI questions answered by specific analytics cuts ov
 - Sales-page traffic: use `mcp__plugin_clickmax_clickmax__analytics_sales_pages` with optional `projectSlugs` / `funnelIds` and `limit`.
 - Recent activity: use `mcp__plugin_clickmax_clickmax__analytics_recent_activities` with `startDate`/`endDate` and optional `projectIds`, `funnelIds`, `categories`.
 - Showcase prompt "quanto faturei nos últimos 15 dias e quanto estou perdendo":
-  1. Compute the 15-day window (`endDate` = today, `startDate` = today − 15d) and the immediately prior 15-day window for `previousStartDate` / `previousEndDate`.
-  2. Call `mcp__plugin_clickmax_clickmax__analytics_total_sales` for headline revenue and `mcp__plugin_clickmax_clickmax__analytics_sales_metrics` for conversion, top product, and `previousPeriodGrowth` over the same 15 days.
-  3. There is no lost-revenue cut here: report the demand-vs-conversion gap (views vs products sold, low `salesConversionPercentage`, negative growth) as leakage signals, and hand off to `clickmax-payments-dashboard-analysis` for the actual failed/refunded/abandoned amount. State that the "loss" figure is partial unless that skill is used.
+  1. Window: `endDate` = today, `startDate` = today − 15d; prior 15 days → `previousStartDate` / `previousEndDate`.
+  2. Run the bundle + `mcp__plugin_clickmax_clickmax__analytics_sales_metrics` (conversion, top product, `previousPeriodGrowth`) over the same 15 days.
 - Keep the same date window and filters across tools in one answer so numbers stay comparable.
 
 ## Report
@@ -64,8 +80,9 @@ Use this skill for business/KPI questions answered by specific analytics cuts ov
 - Answer in plain business language with formatted currency and percentages (fractions ×100); never surface UUIDs, slugs, or raw payloads.
 - Lead with the headline number the user asked for, then the strongest supporting cut (growth vs prior period, top product, conversion).
 - The runtime renders presentation cards: emit a `cx-metric` for each headline KPI (revenue, conversion, leads) and a `cx-ranking` for top-products / top-flows lists instead of long inline tables.
+- Bundle answer order: `cx-hero` faturado (`value-tone="positive"`) → `cx-hero` a recuperar (`icon="database-sync"`, `warning`) → `cx-ranking` of failure reasons by value, every row `tone="warning"`, `hint` = next action (`clickmax-failure-diagnosis` rules) → close with ONE opt-in next step (e.g. recovery automation for the top reason) via the `question` tool. No markdown tables for this data. Empty recovery → "Nada a recuperar no período 🎉".
 - Cap ranked lists and summarize the tail as `+N more`.
-- When "loss" was requested, be explicit that this skill covers revenue/conversion and that failed/refunded/abandoned amounts require the payments dashboard skill; give the partial signal you do have rather than inventing a loss total.
+- When "loss" was requested, report the recoverable total from the bundle (recoverable, not lost); never invent a loss total.
 - Treat follow-up actions as opt-in only.
 
 ## Warnings
@@ -73,12 +90,13 @@ Use this skill for business/KPI questions answered by specific analytics cuts ov
 - Do not present `previousPeriodGrowth` or a negative trend as "money lost"; it is a period-over-period delta.
 - Do not merge `totalExternalSales` into native-sales conclusions without labeling it; external is imported-platform revenue.
 - Comparison tools need both windows; a missing previous window makes growth meaningless.
-- Do not invent refund, chargeback, or abandoned-cart totals — those fields are not in these tools.
+- Do not invent refund, chargeback, or abandoned-cart totals — take them only from `recovery_recoverable_revenue`.
 - Backend clamps dates to the last two years; flag it if the user asked for older data.
 
 ## Anti-patterns
 
-- Answering "quanto estou perdendo" with a fabricated loss number instead of routing to the payments dashboard skill.
+- Answering a sales-overview question with only the revenue number and making the user ask for recoverable value, failures, and next action one by one.
+- Answering "quanto estou perdendo" with a fabricated loss number instead of the bundle's recoverable total.
 - Dumping every product/page/activity row instead of a ranked, capped summary.
 - Reporting fractions as if they were already percentages.
 - Reusing this skill for per-lead timelines or transaction refund operations.
@@ -86,4 +104,4 @@ Use this skill for business/KPI questions answered by specific analytics cuts ov
 
 ---
 
-Clickmax skill revision: `b65f0f1384d1`
+Clickmax skill revision: `f4dc49fe4764`

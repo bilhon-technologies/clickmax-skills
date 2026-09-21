@@ -19,6 +19,7 @@ Not this skill:
 - `code` is a stable category derived from the gateway's free-text reason; `rawReasons` holds the original strings that fell into each bucket.
 - `unknown` means the gateway reason did not match a known pattern — lean on `rawReasons` to describe it.
 - `value` mirrors the dashboard's failed-value semantics; render it as currency, do not re-scale it against other tools.
+- `count`/`value` are per ATTEMPT: one buyer retrying N times counts N → say "tentativas", never "pessoas"; the deduplicated recoverable total is `recovery_recoverable_revenue`, not the sum of this breakdown.
 
 ## Thought process
 
@@ -71,4 +72,4 @@ Translate the tool's `code` into the seller's language (PT example / EN example)
 
 ---
 
-Clickmax skill revision: `b65f0f1384d1`
+Clickmax skill revision: `f4dc49fe4764`

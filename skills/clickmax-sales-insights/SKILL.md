@@ -41,6 +41,7 @@ Not this skill:
 - For an attach-rate answer, use a `cx-ranking` of attach % per order bump (`value` = attach rate, `tag` = attached/eligible count), ordered highest first; or a `cx-breakdown` (`layout="list"`) when comparing with/without bump.
 - For a period comparison, use `cx-compare` with two bars per row (current vs previous) and a `tag` showing the signed delta with its base (e.g. "+12% vs período anterior"). Positive movement uses `positive`/`acid` accents; a drop uses `negative`/`torch`.
 - Order results highest-signal first; cap long rankings with `+N more`.
+- Question also asks the period's sales value ("quanto vendeu hoje e de cada oferta") → add the sales-overview bundle (`clickmax-analytics`: a recuperar + failure reasons with next action) after the ranking, same window.
 - Treat follow-up actions as opt-in only. Never surface card data, CPF/document, or internal ids as visible text.
 - Empty state: "Nenhuma venda no período."
 
@@ -60,4 +61,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `b65f0f1384d1`
+Clickmax skill revision: `f4dc49fe4764`

@@ -59,7 +59,8 @@ Sem esses passos, a cópia local fica parada na versão instalada e a IA segue o
 
 ## Skills incluídas
 
-- **clickmax-analytics** — Use when the user asks business/revenue/KPI questions like how much they made, how they are performing, top products, lead counts, or funnel performance over a period.
+- **clickmax-analytics** — Use when the user asks business/revenue/KPI questions like how much they made, how they are performing, top products, lead counts, funnel performance, or campaign/email open rates over a period.
+- **clickmax-campaign-planning** — Use when the user asks for a multi-week or multi-month marketing plan, campaign sequence, launch calendar or nurture strategy that should be built on the account's own history (open rates, base growth, tags, channels, brand voice) and later executed in Clickmax.
 - **clickmax-classrooms** — Use when the user wants to list, inspect, create, update, link content to, copy members between, or delete classrooms inside Clickmax member portals.
 - **clickmax-external-pages** — Use when the user wants to connect an external page/site to Clickmax tracking or forms using Clickmax page scripts.
 - **clickmax-failure-diagnosis** — Use when the seller asks why their sales/transactions are failing or being declined, wants failed payments grouped by reason, or wants the recoverable value and next action per failure reason in Clickmax.

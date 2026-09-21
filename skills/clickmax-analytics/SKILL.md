@@ -1,11 +1,11 @@
 ---
 name: clickmax-analytics
-description: Use when the user asks business/revenue/KPI questions like how much they made, how they are performing, top products, lead counts, or funnel performance over a period.
+description: Use when the user asks business/revenue/KPI questions like how much they made, how they are performing, top products, lead counts, funnel performance, or campaign/email open rates over a period.
 ---
 
 ## When this applies
 
-Use this skill for business/KPI questions answered by specific analytics cuts over a date range: revenue totals, period-over-period sales, lead/conversion metrics, funnel step performance, messaging engagement, top products, most-accessed sales pages, and recent workspace activity.
+Use this skill for business/KPI questions answered by specific analytics cuts over a date range: revenue totals, period-over-period sales, lead/conversion metrics, funnel step performance, messaging engagement, campaign (broadcast) and per-channel message performance, top products, most-accessed sales pages, and recent workspace activity.
 
 ## Not this skill
 
@@ -53,6 +53,7 @@ Run in the SAME Code Mode script, same window + filters:
    - "top produtos" / best sellers -> `analytics_top_products`.
    - "desempenho do funil" -> `analytics_funnel` (step + aggregate stats + sales history).
    - messaging engagement -> `analytics_messages_metrics`; automation reach/executions -> `analytics_flows_overview`.
+   - campaign open/click rate, per-channel delivery/open/bounce, WhatsApp template reads -> see `### Campaign and message performance`.
    - page traffic -> `analytics_sales_pages`; latest workspace movement -> `analytics_recent_activities`.
 2. "quanto estou perdendo" / lost money → the bundle's recovery total + failure ranking IS the answer (recoverable money, not consummated loss). Extra leakage signals, labeled as such, never as a loss total: low `salesConversionPercentage`, `totalViews` vs `totalProductsSold`, negative `previousPeriodGrowth` (all from `analytics_sales_metrics`).
 3. For period-over-period questions, always pass an explicit previous window so growth is meaningful.
@@ -74,6 +75,19 @@ Run in the SAME Code Mode script, same window + filters:
   2. Run the bundle + `mcp__plugin_clickmax_clickmax__analytics_sales_metrics` (conversion, top product, `previousPeriodGrowth`) over the same 15 days.
 - Keep the same date window and filters across tools in one answer so numbers stay comparable.
 
+### Campaign and message performance
+
+|Question|Tool + input|Read|
+|-|-|-|
+|"how did my campaigns do" / "what is my open rate"|`mcp__plugin_clickmax_clickmax__broadcasts_list` with `channel = email`, `perPage = 20` (`50` for a baseline)|each campaign's `rates` (open/click/bounce over `sent`) + volume-weighted average across sent campaigns; campaign sends only|
+|"how is email/WhatsApp performing overall in a period" (campaigns + automations)|`mcp__plugin_clickmax_clickmax__messages_metrics` for the window, again for the previous window of the same length; optional `platform` (WhatsApp = `gupshup`)|per-platform `total`, `reached`, `opened`, `failed`, `bounced`, `spamComplaints`, `openRate` / `failureRate` / `bounceRate`, trend vs previous window|
+|"why did this campaign do well/badly" / "when do people open"|`mcp__plugin_clickmax_clickmax__broadcasts_insights` with `broadcastId` from `mcp__plugin_clickmax_clickmax__broadcasts_list`|`opensByHour`, `topLinks`, `devices`, `clients`, `geo`, `engagement` (open/click rate + delta vs previous campaign), `creditCost`|
+|WhatsApp template reads/clicks|`mcp__plugin_clickmax_clickmax__gupshup_template_analytics` with the template `externalId` from `mcp__plugin_clickmax_clickmax__gupshup_templates_list` (only templates submitted to Meta have one)|`sent`, `delivered`, `read`, `clicked`, `readRate` / `clickRate` over delivered|
+
+- `messages_metrics` `openRate` = opened / reached, first opens only; no clicks there → click rates come from `broadcasts_list`.
+- automation (flow) emails are not in `broadcasts_list` → `messages_metrics` covers campaigns + automations combined.
+- rates here are 0..1 fractions or `null` when the denominator is 0; show `null` as "no data", not 0%.
+
 ## Report
 
 - Open with the period assumed and the workspace scope (all projects unless the user narrowed it).
@@ -92,6 +106,7 @@ Run in the SAME Code Mode script, same window + filters:
 - Comparison tools need both windows; a missing previous window makes growth meaningless.
 - Do not invent refund, chargeback, or abandoned-cart totals — take them only from `recovery_recoverable_revenue`.
 - Backend clamps dates to the last two years; flag it if the user asked for older data.
+- Never compare a campaign open rate (`broadcasts_list`, over sent) with a `messages_metrics` open rate (over reached, campaigns + automations) as if they were the same number: different denominators and scopes.
 
 ## Anti-patterns
 
@@ -104,4 +119,4 @@ Run in the SAME Code Mode script, same window + filters:
 
 ---
 
-Clickmax skill revision: `f4dc49fe4764`
+Clickmax skill revision: `b4a9bf26bba2`

@@ -72,4 +72,4 @@ Translate the tool's `code` into the seller's language (PT example / EN example)
 
 ---
 
-Clickmax skill revision: `f4dc49fe4764`
+Clickmax skill revision: `b4a9bf26bba2`

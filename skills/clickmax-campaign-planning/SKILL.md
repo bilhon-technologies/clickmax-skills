@@ -39,7 +39,7 @@ Not this skill:
 2. Brand voice is already in the snapshot as `brand`; call `mcp__plugin_clickmax_clickmax__brand_get` alone only to reread it later. If `brand` is null or its `status` is `draft`, ask one question about tone (or offer to set up the brand) before writing copy angles.
 3. If `emailCampaigns.baseline.campaigns` is below 3, also use `mcp__plugin_clickmax_clickmax__messages_metrics` for the same window to get an automation-inclusive email open rate, and label it as such. Need more than the 10 campaigns in `emailCampaigns.recent`? Use `mcp__plugin_clickmax_clickmax__broadcasts_list` with `channel = email`.
 4. For the best past campaign, use `mcp__plugin_clickmax_clickmax__broadcasts_insights` to extract the best send hours (`opensByHour`) and the most-clicked link (`topLinks`) — reuse them as scheduling and CTA evidence.
-5. Resolve audiences: match the user's words to `tags` from the snapshot (top 15 by size; `mcp__plugin_clickmax_clickmax__tags_list` / `mcp__plugin_clickmax_clickmax__lists_list` for the full set); measure each phase's audience with `mcp__plugin_clickmax_clickmax__segments_preview_count`. Report the measured count, not an estimate.
+5. Resolve audiences: match the user's words to `tags` from the snapshot (top 15 by size; `mcp__plugin_clickmax_clickmax__tags_list` / `mcp__plugin_clickmax_clickmax__lists_list` for the full set); measure each phase's audience with `mcp__plugin_clickmax_clickmax__segments_preview_count`. Combined audience (tag A AND tag B, tag AND temperature) = one top-level filter item per condition, each with a short label `id` ("a", "b"), `valueUuid` = the real tag id, `temperatureStatus` via `valueString`. Report the measured count, not an estimate.
 6. WhatsApp: `mcp__plugin_clickmax_clickmax__channel_instances_list`, then `mcp__plugin_clickmax_clickmax__gupshup_templates_list`; if approved templates exist, `mcp__plugin_clickmax_clickmax__gupshup_template_analytics` on the most used one (by its `externalId`) for read/click rates.
 7. Product: the user's product, else `topProducts` from the snapshot or `mcp__plugin_clickmax_clickmax__insights_top_offers`.
 8. Write the plan with [the plan template](references/plan-template.md).
@@ -59,7 +59,7 @@ Not this skill:
 - Do not invent tag names, list names or past results. If a needed tag does not exist, list it under "a criar".
 - Do not promise features the account does not have (email-engagement segment filters, waitlist entity, free-form WhatsApp outside the 24h window).
 - Do not state a campaign open rate from `mcp__plugin_clickmax_clickmax__messages_metrics`, or a channel rate from one campaign.
-- Tag counts overlap: when `mcp__plugin_clickmax_clickmax__segments_preview_count` cannot measure a combined audience, show each tag's own count, say the union was not measured, and never add tag counts together.
+- Tag counts overlap: never add tag counts together — measure the combination with `mcp__plugin_clickmax_clickmax__segments_preview_count`; only if that call fails, show each tag's own count and say the combination was not measured.
 - Dates: compute from today; name weekdays correctly; keep hard deadlines consistent across phases and messages.
 - Urgency claims ("7 vagas restantes") must come from the user's real numbers — ask, or leave as a placeholder the user must fill.
 
@@ -72,4 +72,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `b4a9bf26bba2`
+Clickmax skill revision: `119094644ae7`

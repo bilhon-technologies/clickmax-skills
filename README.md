@@ -89,6 +89,7 @@ Sem esses passos, a cópia local fica parada na versão instalada e a IA segue o
 - **clickmax-transaction-operations** — Use when the user wants to inspect transactions or sales, read transaction charts, or refund a transaction in Clickmax.
 - **clickmax-vturb** — Use when the user asks about VSL / Vturb video performance — play rate, engagement, retention, A/B test winners, whether the video is converting, how many people are watching now, or how to connect the Vturb account.
 - **clickmax-wallet-receivables** — Use when the user asks if they are ready to sell/receive, about the Clickmax wallet ("Carteira"), bank/receiving account approval, balances, "a receber", receivables, statement/extrato, or withdrawals (saques).
+- **clickmax-webchat** — Use when the user wants to create, inspect, edit, enable, or disable a Clickmax webchat bot (the embeddable chat widget channel) and its pre-chat bot flow — greetings, lead capture, clickable questions, AI classification, and handoff to a human attendant.
 - **clickmax-workspace-plans** — Use when the user wants to inspect, compare, preview cancellation of, or cancel the workspace's own Clickmax SaaS subscription and billing plan.
 
 ## Licença

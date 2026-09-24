@@ -53,6 +53,7 @@ Scope boundary — pick the right skill first:
 - List missing business facts and assets as explicit gaps, named.
 - Uncertain or failed save → say so and say what must be re-checked. Never claim success from a call that did not confirm.
 - Before reporting a finished layout, inspect the imported draft on desktop and mobile; repair overflow, missing assets, typography and inactive actions. If no browser is available, disclose that visual review is pending. Publication remains a separate opt-in.
+- After a create/publish that finishes the requested work, follow `clickmax-getting-started` to close with at most one opt-in offer of the next setup task.
 
 ## Warnings
 
@@ -75,4 +76,4 @@ Scope boundary — pick the right skill first:
 
 ---
 
-Clickmax skill revision: `44bb06f9c91a`
+Clickmax skill revision: `63730708f960`

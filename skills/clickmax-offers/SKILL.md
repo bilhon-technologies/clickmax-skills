@@ -67,6 +67,7 @@ Not this skill:
 - Then report lifecycle state, commercial settings changed or inspected, and any remaining blockers.
 - For approval requests, say clearly `ready for approval` or list each blocking item.
 - For create/clone/update/archive/unarchive/delete actions, state the action result first and keep follow-up actions opt-in.
+- After a create/publish that finishes the requested work, follow `clickmax-getting-started` to close with at most one opt-in offer of the next setup task.
 
 ## Warnings
 
@@ -85,4 +86,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `44bb06f9c91a`
+Clickmax skill revision: `63730708f960`

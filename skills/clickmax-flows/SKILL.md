@@ -76,6 +76,7 @@ Not this skill:
 - For validate: always surface `hasEntryTrigger`, `danglingTargets`, `orphanStepIds`, and `incompleteChannelSteps`, even when `valid=true`. When `incompleteChannelSteps` is non-empty, say plainly that the listed message step(s) have no real sender configured (which channel/step, in user terms — never the raw field name) and that the flow will not deliver until that's resolved, then offer to fix it (list the workspace's numbers/bots/sender signatures and set the one the user picks)
 - For lifecycle: explain the new mode in user terms (`active` = processing real contacts; `closed`/`archived` = stopped)
 - Cap long step/edge lists; summarize rather than dumping giant payloads
+- After a create/publish that finishes the requested work, follow `clickmax-getting-started` to close with at most one opt-in offer of the next setup task.
 
 ## Warnings
 
@@ -109,4 +110,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `44bb06f9c91a`
+Clickmax skill revision: `63730708f960`

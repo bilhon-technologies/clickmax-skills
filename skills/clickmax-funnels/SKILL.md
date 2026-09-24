@@ -106,6 +106,7 @@ Common flows:
 - For deactivate: explain that the funnel is offline, not deleted
 - For analytics: summarize the main period metrics instead of dumping raw payloads
 - Cap long node/trigger lists and prefer graph summaries
+- After a create/publish that finishes the requested work, follow `clickmax-getting-started` to close with at most one opt-in offer of the next setup task.
 
 ## Warnings
 
@@ -139,4 +140,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `44bb06f9c91a`
+Clickmax skill revision: `63730708f960`

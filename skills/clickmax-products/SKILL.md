@@ -64,6 +64,7 @@ Use this skill for product-catalog identity: create a product (which also mints 
 - To let the user OPEN the created product, the CTA must NAVIGATE, not re-ask: use `action="open-page"` with `path="/creator/products/<mainOfferId>/details"`. IMPORTANT: that page loads by the product's MAIN OFFER id — use `offer.id` (the `isMain: true` offer returned by `products_create`), NOT `product.id`. The URL segment is misleadingly named "product" but a `product.id` there opens the wrong/empty page. NEVER use `action="confirm"` for a "Ver produto"/"abrir" button — confirm only re-sends a chat message and does not navigate.
 - For list, order by relevance to the request, note archived items, and cap long results with `+N more`.
 - For archive/unarchive/delete, state the action result first and keep further actions opt-in.
+- After a create/publish that finishes the requested work, follow `clickmax-getting-started` to close with at most one opt-in offer of the next setup task.
 
 ## Warnings
 
@@ -88,4 +89,4 @@ Use this skill for product-catalog identity: create a product (which also mints 
 
 ---
 
-Clickmax skill revision: `44bb06f9c91a`
+Clickmax skill revision: `63730708f960`

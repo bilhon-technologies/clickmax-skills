@@ -101,6 +101,7 @@ or a constraint `field` name (`offerId`, `projectId`, `tagId`, …); those are i
 - `crm.tag.lead.apply.v1` — tag applied to a lead · `[tagId]`
 - `crm.tag.lead.remove.v1` — tag removed from a lead · `[tagId]`
 - `crm.lead.birthday.reminder.v1` — it is a lead's birthday · no scopes (fires per lead workspace-wide, not narrowable to one lead)
+- `crm.lead.email.confirmed.v1` — lead clicked "Confirm subscription" in a double opt-in email · `[segmentId]` optional (fires once per confirmed email address; confirming again does not refire)
 
 ### Opportunities (CRM kanban)
 

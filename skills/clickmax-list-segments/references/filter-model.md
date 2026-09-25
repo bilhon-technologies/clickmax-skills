@@ -14,7 +14,7 @@ purpose = build dynamic segment filters without losing logic during full-tree re
 - `parentId` = `id` of this item's parent GROUP item in the same array; omit for top-level. Must match an item's `id` or the call fails.
 - Top-level items are ANDed → intersection (tag A AND tag B, tag AND temperature) = sibling top-level leaves, no group needed.
 - Group node = `field: 'children'` + `operator: 'childrenAnd'` | `'childrenOr'`; no value; children = items whose `parentId` points to it. Needed only for OR or nesting.
-- Leaf node = real `field` (`tagId`, `temperatureStatus`, `email`, `score`, `origin`…) + comparison `operator` (`equals`, `contains`, `startsWith`, `endsWith`, `greaterThan`, `greaterThanOrEqual`, `lessThan`, `lessThanOrEqual`, `in`) + exactly one `value*` slot matching the field type (`tagId` → `valueUuid` = real tag id; `temperatureStatus` → `valueString`).
+- Leaf node = real `field` (`tagId`, `temperatureScore`, `leadScore`, `email`, `origin`…) + comparison `operator` (`equals`, `contains`, `startsWith`, `endsWith`, `greaterThan`, `greaterThanOrEqual`, `lessThan`, `lessThanOrEqual`, `in`) + exactly one `value*` slot matching the field type (`tagId` → `valueUuid` = real tag id; `temperatureScore`/`leadScore` → `valueNumber`).
 - `negation: true` on ANY item (group or leaf) inverts it; no separate "not" operator.
 
 ### Worked example: tag A AND tag B (measure combined audience)

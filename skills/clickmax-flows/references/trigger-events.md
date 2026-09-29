@@ -105,8 +105,11 @@ or a constraint `field` name (`offerId`, `projectId`, `tagId`, …); those are i
 
 ### Opportunities (CRM kanban)
 
-- `crm.opportunity.card.moved.v1` — an opportunity card moves between pipeline stages · `[pipelineId, fromStageId, toStageId]`
-  - "entered stage X" = constrain `toStageId`; "left stage X" = constrain `fromStageId`. There is no separate entered/exited event.
+- `crm.opportunity.entered.column.v1` — an opportunity LANDS on a stage: created directly in it (modal, flow action, import) OR moved into it · `[stageId]` (`pipelineId` optional). Fires only when the stage actually changes.
+- `crm.opportunity.exited.column.v1` — an opportunity LEAVES a stage by a move (never on creation) · `[stageId]` = the stage left (`pipelineId` optional).
+  - These two are what the trigger picker writes for "entered stage" / "left stage". Prefer them for new flows.
+- `crm.opportunity.card.moved.v1` — LEGACY (`pickable: false`): older flows still carry it and keep matching, but the picker no longer offers it · `[pipelineId, fromStageId, toStageId]`
+  - Fires only on a move, never on creation directly in a stage, and it also fires when a card is reordered inside the same stage — use `entered/exited.column` instead.
   - Does not fire for cards with no primary lead (card↔lead is N:N; events without `leadId` are dropped).
 
 ### Members area (scope = `portalId`; lesson/module/course also take `contentId`)

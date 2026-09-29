@@ -59,19 +59,24 @@ Sem esses passos, a cópia local fica parada na versão instalada e a IA segue o
 
 ## Skills incluídas
 
+- **clickmax-activities** — Use when the user asks about the team's Activities queue (follow-up tasks and booked appointments together), such as what is late, what is scheduled for a day or week, workload per attendant, or closing a batch of them.
 - **clickmax-analytics** — Use when the user asks business/revenue/KPI questions like how much they made, how they are performing, top products, lead counts, funnel performance, or campaign/email open rates over a period.
 - **clickmax-campaign-planning** — Use when the user asks for a multi-week or multi-month marketing plan, campaign sequence, launch calendar or nurture strategy that should be built on the account's own history (open rates, base growth, tags, channels, brand voice) and later executed in Clickmax.
 - **clickmax-classrooms** — Use when the user wants to list, inspect, create, update, link content to, copy members between, or delete classrooms inside Clickmax member portals.
+- **clickmax-contacts-member-access** — Use when the user wants to give a whole group of CRM contacts (a list, a segment, a filtered selection) access to a community and/or classrooms of the members area in Clickmax.
+- **clickmax-custom-fields** — Use when the user wants to audit, clean up, or manage the workspace custom fields (campos customizados) of contacts or opportunities — fill rate, usage, health, who filled them, groups, bulk changes, or creating/editing one.
+- **clickmax-drive** — Use when the user wants to find, organize, share, comment on, restore or clean up files and folders in the Clickmax workspace Drive (spaces, trash, quota, Google Drive).
 - **clickmax-external-pages** — Use when the user wants to connect an external page/site to Clickmax tracking or forms using Clickmax page scripts.
 - **clickmax-failure-diagnosis** — Use when the seller asks why their sales/transactions are failing or being declined, wants failed payments grouped by reason, or wants the recoverable value and next action per failure reason in Clickmax.
-- **clickmax-flows** — Use when the user wants to create, inspect, change, validate, or activate/archive a Clickmax automation flow and its step graph — including any request to send/create an email (or SMS/WhatsApp) message to leads, even one mentioning a checkout button or a custom visual/dark style (the flow email step's own template options, never a page).
+- **clickmax-flows** — Use when the user wants to create, inspect, change, validate, test, debug (executions, failures, retry), or activate/archive a Clickmax automation flow and its step graph — including any request to send/create an email (or SMS/WhatsApp) message to leads, even one mentioning a checkout button or a custom visual/dark style (the flow email step's own template options, never a page).
 - **clickmax-forms-quizzes** — Use when the user wants to safely create, edit, publish, inspect, or analyze Clickmax forms and quizzes.
 - **clickmax-funnels** — Use when the user wants to create, inspect, change, publish, deactivate, delete, or analyze a Clickmax funnel graph.
 - **clickmax-getting-started** — Use when the user asks what to do next, how far along the account setup ("Primeiros passos") is, or right after the conversation finished a setup task (product, offer, page, funnel, channel, automation, quiz, lesson, pipeline, opportunity) and the next pending setup task may be offered.
 - **clickmax-insights-dashboards** — Use when the user wants to build, change, or read a saved Insights dashboard of opportunities BI in Clickmax — assembling widgets, starting from a template, or asking for the numbers of a dashboard they already have.
-- **clickmax-leads** — Use when the user wants to create, find, inspect, filter, or compare CRM leads and their commercial context inside Clickmax.
+- **clickmax-leads** — Use when the user wants to create, find, inspect, filter, verify the e-mail of, or compare CRM leads and their commercial context inside Clickmax.
 - **clickmax-leads-activity-analysis** — Use when the user wants to inspect CRM activity streams, event timelines, or activity-derived metrics for leads and opportunities.
 - **clickmax-list-segments** — Use when the user wants to create, inspect, update, reload, or use manual lists and dynamic segments to group leads in Clickmax.
+- **clickmax-meetings** — Use when the user wants to book, reschedule, hand over to another attendant, cancel or look up one booked meeting (agendamento) of a contact in Clickmax.
 - **clickmax-members** — Use when the user wants to inspect, create, update, enable, disable, enroll, or remove member users and their access/progress in Clickmax Members.
 - **clickmax-members-area** — Use when the user wants to build/create a full members area — a portal with classrooms, courses, modules, lessons, students, and login links — end to end in one flow.
 - **clickmax-modules** — Use when the user wants to list, inspect, create, update, reorder, or delete modules and lesson ordering inside a Clickmax Members course.
@@ -87,7 +92,8 @@ Sem esses passos, a cópia local fica parada na versão instalada e a IA segue o
 - **clickmax-sales-insights** — Use when the user wants to know what is selling — top offers/products by revenue and quantity, order-bump attach rate, or period-over-period sales trend (revenue, average ticket, sales count) for seller sales analysis in Clickmax.
 - **clickmax-seller-subscriptions** — Use when the user wants to inspect, chart, cancel, or swap cards on customer subscriptions sold through Clickmax.
 - **clickmax-support** — Use when the user asks a how-to, troubleshooting, or "why isn't this working" support question about using Clickmax, and the answer should come from the help center.
-- **clickmax-tags** — Use when the user wants to inspect, create, update, delete, clone, or apply CRM tags to leads in Clickmax.
+- **clickmax-tags** — Use when the user wants to inspect, X-ray usage of, create, update, delete, clone, or apply CRM tags to leads in Clickmax.
+- **clickmax-temperature-score** — Use when the user wants to understand, tune, or audit contact Temperature (behavioural 0-100 engagement) and contact Score (criteria-based fit points) in Clickmax, including why one contact has a given number and the Temperature × Score health of the base.
 - **clickmax-transaction-operations** — Use when the user wants to inspect transactions or sales, read transaction charts, or refund a transaction in Clickmax.
 - **clickmax-vturb** — Use when the user asks about VSL / Vturb video performance — play rate, engagement, retention, A/B test winners, whether the video is converting, how many people are watching now, or how to connect the Vturb account.
 - **clickmax-wallet-receivables** — Use when the user asks if they are ready to sell/receive, about the Clickmax wallet ("Carteira"), bank/receiving account approval, balances, "a receber", receivables, statement/extrato, or withdrawals (saques).

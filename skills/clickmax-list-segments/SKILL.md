@@ -19,6 +19,9 @@ Not this skill:
 - upserting segment filters replaces the full tree
 - segment filters are a FLAT ARRAY of `{id, order, operator, field, negation, parentId?, value*}` items, not nested objects — nesting comes from each item's `parentId` pointing at its parent GROUP item's own `id`; group items use `field: 'children'` + `operator: 'childrenAnd'`/`'childrenOr'`. Preserve every existing item (by `id`) when replacing, not just the branch being edited.
 - reload queues recomputation; it is not just a cosmetic refresh
+- `lists_create` makes an EMPTY list. To make a list from the contacts of opportunity cards use `opportunities_bulk_create_list` (see `clickmax-pipelines`): it creates AND fills the list, and its `affected` counts contacts.
+- `suspectedFraud` (`operator: equals`, `valueBool`) is a segment field: flags possible card testing (e-mail unrelated to the name AND suspicious document), derived at read time — it works in saved segments and combines with any other item; `false` = contacts not flagged.
+- `segments_categories_metrics` also returns origin × sub-origin and a visitor journey (channels, UTM sources, referrers, landing pages, devices) that counts only contacts linked to a tracked visitor — say so when reporting "how they arrived"; Temperature × Score health is `lead_indicators_metrics`.
 - Read [filter model](references/filter-model.md) before building non-trivial segment logic.
 
 ## Thought process
@@ -35,7 +38,7 @@ Not this skill:
 - Dynamic segment lifecycle: use `mcp__plugin_clickmax_clickmax__segments_create` to create the segment shell, `mcp__plugin_clickmax_clickmax__segments_preview_count` to estimate cohort size from a candidate filter tree, and `mcp__plugin_clickmax_clickmax__segments_upsert_filters` to replace the segment's full filter definition.
 - For nested AND/OR or negation, model the filter tree from [filter model](references/filter-model.md), preview the count, then upsert the complete tree.
 - Segment inspection and recomputation: use `mcp__plugin_clickmax_clickmax__segments_get` for the segment record, `mcp__plugin_clickmax_clickmax__segments_get_filters` for the current filter tree, `mcp__plugin_clickmax_clickmax__segments_reload` when the user wants membership recomputed, and `mcp__plugin_clickmax_clickmax__segments_get_leads` to inspect the resulting cohort.
-- Analytics follow-up: use `mcp__plugin_clickmax_clickmax__segments_timeseries` or `mcp__plugin_clickmax_clickmax__segments_categories_metrics` when the user wants trend or category breakdowns for a segment instead of only raw membership.
+- Analytics follow-up: use `mcp__plugin_clickmax_clickmax__segments_timeseries` or `mcp__plugin_clickmax_clickmax__segments_categories_metrics` when the user wants trend, category or entry-channel breakdowns for a segment instead of only raw membership.
 - Order of operations: manual list = create or inspect list -> update explicit lead IDs -> verify visible leads. Dynamic segment = inspect current definition -> preview broad or uncertain logic -> replace the full filter tree -> reload when refreshed membership matters -> inspect resulting leads.
 
 ## Report
@@ -59,4 +62,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `91bd05e0468a`
+Clickmax skill revision: `8654499c3889`

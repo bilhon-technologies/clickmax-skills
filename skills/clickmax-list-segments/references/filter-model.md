@@ -16,6 +16,8 @@ purpose = build dynamic segment filters without losing logic during full-tree re
 - Group node = `field: 'children'` + `operator: 'childrenAnd'` | `'childrenOr'`; no value; children = items whose `parentId` points to it. Needed only for OR or nesting.
 - Leaf node = real `field` (`tagId`, `temperatureScore`, `leadScore`, `email`, `origin`…) + comparison `operator` (`equals`, `contains`, `startsWith`, `endsWith`, `greaterThan`, `greaterThanOrEqual`, `lessThan`, `lessThanOrEqual`, `in`) + exactly one `value*` slot matching the field type (`tagId` → `valueUuid` = real tag id; `temperatureScore`/`leadScore` → `valueNumber`).
 - `negation: true` on ANY item (group or leaf) inverts it; no separate "not" operator.
+- Boolean contact flags use `operator: equals` + `valueBool`; `suspectedFraud` = possible card testing (`true` flagged, `false` not flagged). Temperature/Score use `isNotEmpty` (+ `negation: true`) for "not calculated yet".
+- Filtering OPPORTUNITY cards by contact fields nests this same array, stringified in `valueString` of a `lead` item (`operator: childrenAnd|childrenOr`) of the opportunity filter — see `opportunities_query`.
 
 ### Worked example: tag A AND tag B (measure combined audience)
 

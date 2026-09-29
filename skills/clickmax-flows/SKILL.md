@@ -1,11 +1,11 @@
 ---
 name: clickmax-flows
-description: Use when the user wants to create, inspect, change, validate, or activate/archive a Clickmax automation flow and its step graph — including any request to send/create an email (or SMS/WhatsApp) message to leads, even one mentioning a checkout button or a custom visual/dark style (the flow email step's own template options, never a page).
+description: Use when the user wants to create, inspect, change, validate, test, debug (executions, failures, retry), or activate/archive a Clickmax automation flow and its step graph — including any request to send/create an email (or SMS/WhatsApp) message to leads, even one mentioning a checkout button or a custom visual/dark style (the flow email step's own template options, never a page).
 ---
 
 ## When this applies
 
-Use this skill when the user wants to operate a Clickmax automation flow: list/find one, inspect its graph, create/edit/connect/delete steps, configure entry events, validate, or change lifecycle mode. A one-off "create/send an email to my leads" request is this skill too — build a minimal flow with a `trigger` + `flows_send_email` step. Do NOT reinterpret it as a landing page: a checkout button, dark theme, or urgency tone the user asks for are the email template's CTA/colors/font (`flows_send_email`'s style params), never page markup.
+Use this skill when the user wants to operate a Clickmax automation flow: list/find one, inspect its graph, create/edit/connect/delete steps, configure entry events, validate, test it with a real contact, investigate its executions (who is stuck/failed and why), retry or stop runs, see which other automations are linked to a tag/stage/message, or change lifecycle mode. A one-off "create/send an email to my leads" request is this skill too — build a minimal flow with a `trigger` + `flows_send_email` step. Do NOT reinterpret it as a landing page: a checkout button, dark theme, or urgency tone the user asks for are the email template's CTA/colors/font (`flows_send_email`'s style params), never page markup.
 
 Not this skill:
 
@@ -32,6 +32,7 @@ Not this skill:
 - Read [email authoring](references/email-authoring.md) before writing an email step's content — the default slot template only ever recolors, never truly restyles; a genuinely designed email needs `customHtml`.
 - Read [WhatsApp templates](references/whatsapp-templates.md) before writing a WhatsApp step — free-form text only reaches contacts inside the 24h window, so every other trigger needs an approved template.
 - Read [trigger events](references/trigger-events.md) when mapping user intent to flow entry events + constraints.
+- Read [executions, testing and links](references/executions-and-testing.md) before running a test, retrying/stopping executions, diagnosing a failed or stuck run, or answering "which automations react to / feed this tag, stage or message".
 - Read [examples](references/examples.md) when you need a concrete build/branch/inspect pattern.
 
 ## Thought process
@@ -42,6 +43,8 @@ Not this skill:
 4. Build trigger-first: create or inspect the entry trigger, then downstream steps, then connections, then validate.
 5. Prefer `flows_structure_get` as the canonical compact graph view before connecting, deleting, or diagnosing.
 6. Activate only after validation passes and the user explicitly wants the flow running on real contacts.
+7. To prove a draft works, run it once for the user's own contact (`flows_test_run_start`) instead of activating: a test is a REAL run for one contact, activation opens the flow to everyone.
+8. To investigate what happened, go list (`flows_executions_list`) → one run (`flows_execution_get`) → fix the cause → only then retry.
 
 ## Execute guide
 
@@ -56,7 +59,7 @@ Not this skill:
 - For a flow linked to a funnel workflow node, keep flow-level trigger arrays empty unless the user is intentionally converting it into a standalone automation; wire entry/exit from the funnel skill instead.
 - Use `mcp__plugin_clickmax_clickmax__flows_list` to find candidate flows by name before asking for confirmation on ambiguous matches.
 - Use `mcp__plugin_clickmax_clickmax__flows_structure_get` as the canonical graph view before connecting, deleting, or diagnosing steps.
-- Use `mcp__plugin_clickmax_clickmax__flows_validate` before activation and surface `hasEntryTrigger`, `danglingTargets`, `orphanStepIds`, and `incompleteChannelSteps` (channel steps — email/telegram/WhatsApp — missing their sender id: `emailSenderSignatureId`, `telegramBotId`, or `gupshupAppId` under `numberStrategy: 'fixed'`), not just `valid`. Resolve any `incompleteChannelSteps` before activating — with `email_sender_signatures_list` / `channel_instances_list`, then `flows_step_update` — rather than retrying `flows_activate` unchanged: a channel step without a real sender id fails on every single send no matter what activation itself currently checks, so never treat a clean validation as a substitute for having resolved the sender at creation.
+- Use `mcp__plugin_clickmax_clickmax__flows_validate` before activation and surface its `issues` (each has a `severity` and the `stepId` to fix — group errors before warnings; codes and meaning are in [executions, testing and links](references/executions-and-testing.md#validation-issues)) plus `hasEntryTrigger`, `danglingTargets`, `orphanStepIds`, and `incompleteChannelSteps` (channel steps — email/telegram/WhatsApp — missing their sender id: `emailSenderSignatureId`, `telegramBotId`, or `gupshupAppId` under `numberStrategy: 'fixed'`), not just `valid`. Resolve any `incompleteChannelSteps` before activating — with `email_sender_signatures_list` / `channel_instances_list`, then `flows_step_update` — rather than retrying `flows_activate` unchanged: a channel step without a real sender id fails on every single send no matter what activation itself currently checks, so never treat a clean validation as a substitute for having resolved the sender at creation.
 - For branching, connect each branch explicitly with the correct `handle`, such as `true` / `false` for conditionals.
 
 - WhatsApp steps are TEMPLATE-first. `mcp__plugin_clickmax_clickmax__flows_send_whatsapp` REJECTS `format: 'text'` unless `numberStrategy: 'context'`, because free-form text only delivers inside the 24h customer-care window and only a flow started by the contact's own inbound WhatsApp message guarantees that window is open. Every other trigger (funnel, tag, schedule, checkout) takes a template. Order to follow, cheapest first: 1) `mcp__plugin_clickmax_clickmax__gupshup_templates_list` for an existing `approved` template that already says what the user wants; 2) for a generic use case (OTP, order update, reminder), `mcp__plugin_clickmax_clickmax__gupshup_template_library_list` + `mcp__plugin_clickmax_clickmax__gupshup_template_library_create` — Meta pre-vetted, near-instant approval; 3) otherwise author one with `mcp__plugin_clickmax_clickmax__gupshup_templates_create`, show the exact copy to the user, and only then `mcp__plugin_clickmax_clickmax__gupshup_templates_submit`. See [WhatsApp templates](references/whatsapp-templates.md).
@@ -73,7 +76,8 @@ Not this skill:
 - For list/find: compact candidate table (`name`, `mode`, `category`), not full raw graph dumps
 - For create/build/edit: confirm what changed in user terms (which trigger, which steps, what happens next) — not step ids or edge internals
 - When summarizing one specific created/read automation in a visual card, use the automation/flow name as the large headline/value. Put node count, status, channel mix, and similar build metrics in pills, sub-metrics, or `value-suffix`, not as the main headline.
-- For validate: always surface `hasEntryTrigger`, `danglingTargets`, `orphanStepIds`, and `incompleteChannelSteps`, even when `valid=true`. When `incompleteChannelSteps` is non-empty, say plainly that the listed message step(s) have no real sender configured (which channel/step, in user terms — never the raw field name) and that the flow will not deliver until that's resolved, then offer to fix it (list the workspace's numbers/bots/sender signatures and set the one the user picks)
+- For validate: always surface the `issues` list (errors first, then warnings, each pointing at the node in user terms), `hasEntryTrigger`, `danglingTargets`, `orphanStepIds`, and `incompleteChannelSteps`, even when `valid=true` (warnings never flip it). When `incompleteChannelSteps` is non-empty, say plainly that the listed message step(s) have no real sender configured (which channel/step, in user terms — never the raw field name) and that the flow will not deliver until that's resolved, then offer to fix it (list the workspace's numbers/bots/sender signatures and set the one the user picks)
+- For executions: lead with counts by status and the top failure reasons in plain words (never raw error JSON), name the affected contacts, cap the list (`+N more`), and offer retry/stop as an opt-in next step with the exact number of contacts it touches
 - For lifecycle: explain the new mode in user terms (`active` = processing real contacts; `closed`/`archived` = stopped)
 - Cap long step/edge lists; summarize rather than dumping giant payloads
 - After a create/publish that finishes the requested work, follow `clickmax-getting-started` to close with at most one opt-in offer of the next setup task.
@@ -91,6 +95,8 @@ Not this skill:
 - `gupshup_templates_create` validates the template against Meta's rules before saving and returns EVERY violation at once. Fix them all in the next call instead of retrying the same payload — the error text says what to change.
 - Message personalization uses single-brace lead tokens — `{name}`, `{email}`, `{telephone}` — never `{{name}}` or `{{lead.name}}`; an unknown/misformatted key is delivered to the lead literally. Use them as fact, do not ask the user which format applies (GupShup/WhatsApp templates are the only exception: positional `{{...}}` `paramMapping`). See [step types](references/step-types.md).
 - Never echo a raw UUID to the user. Step inputs store tags/lists/products by id; resolve them to names via the `flows3.builder` `labels` map (or the matching `clickmax-tags`/list/product lookup tool when an id is absent from `labels`). A UUID in your reply is a bug — report "the tag **Black Friday**", not its id.
+- `flows_test_run_start` is NOT a dry run: it sends real messages, applies tags, spends credits and counts in the flow's metrics. Only with the user's explicit go-ahead, naming the recipient; default to the user's own contact
+- `flows_execution_retry` / `flows_executions_retry_by_error` re-run the failed node INCLUDING its side effect (the message is sent again, possibly to many contacts); retrying without fixing the cause fails again. `flows_execution_cancel` is permanent for that run
 - Never wire a step's `target` (via `flows_step_connect` or the inline `target` on `flows_step_create`/`flows_send_*`) back to the flow's `trigger` step id. The trigger is the entry point only; any step pointing back at it makes the worker reprocess the automation from the start forever (infinite loop). The backend rejects this with a 400 — treat that error as confirmation the graph you were building was wrong, not something to retry.
 
 ## Anti-patterns
@@ -107,7 +113,10 @@ Not this skill:
 - Writing a `delay` with a unit field (`{ type: 'days', when: 3 }`); there is no unit, a numeric `when` is always HOURS
 - Hand-setting a flow's `funnelId` (or hand-crafting funnel triggers) to "link" it to a funnel — an embedded automation is linked from the funnel's `workflow` node via `funnels_workflow_flow_set` (funnels skill); `funnelId` alone leaves an orphan (badge shows, funnel canvas empty)
 - Connecting any step's output back to the `trigger` step id — infinite loop, always rejected by the backend
+- Presenting a test run as a simulation, or retrying/stopping executions without saying how many contacts are affected
+- Retrying failures in bulk before reading the cause (`flows_execution_get`) and fixing it
+- Answering "which automations use this tag" from memory instead of `flows_link_targets_list` / `flows_link_sources_list`
 
 ---
 
-Clickmax skill revision: `91bd05e0468a`
+Clickmax skill revision: `8654499c3889`

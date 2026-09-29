@@ -13,6 +13,7 @@
 - `flows_close` = stop a running flow without deleting it
 - `flows_archive` = retire the flow from active use
 - `flows_delete` = permanent destructive delete of the flow and every step
+- Per-contact runs (not lifecycle): `flows_test_run_start`, `flows_execution_retry`, `flows_executions_retry_by_error` = real side effects on real contacts (need consent, state the count); `flows_execution_cancel` = permanent for that run. See [executions and testing](executions-and-testing.md)
 
 ## Activation checklist
 

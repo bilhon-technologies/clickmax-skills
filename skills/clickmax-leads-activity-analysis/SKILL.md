@@ -10,6 +10,7 @@ Use this skill when the user needs the raw or grouped activity stream behind CRM
 Not this skill:
 
 - tag lifecycle views -> `clickmax-tags`
+- the Activities queue (follow-up tasks + booked appointments: what is late, the team's agenda, closing a batch) -> `clickmax-activities`. Same word, different data: this skill reads the event log of what HAPPENED, that one reads work someone owes or booked
 - high-level KPI dashboard reading with no need for raw event streams -> use the direct analytics tools
 - kanban/pipeline card mutation -> `clickmax-pipelines`
 
@@ -19,6 +20,7 @@ Not this skill:
 - system-list/system-by-lead are derived grouped views, not manual tags
 - owner stats/timeseries/count are aggregate activity tools, not row-level cohort discovery
 - opportunity activity requires `cardId`
+- timeline rows carry who did it (`actorId`/`actorType`: `user` = a person of the workspace, `system` = nobody did it by hand, e.g. public booking link, calendar sync, automatic no-show); older rows may have neither, which means "not recorded", not "system"
 
 ## Thought process
 
@@ -62,4 +64,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `91bd05e0468a`
+Clickmax skill revision: `8654499c3889`

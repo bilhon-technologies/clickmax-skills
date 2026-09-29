@@ -44,6 +44,11 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 - Running a dashboard is **stateless** — the config does not have to be saved. Use it to preview a board before creating it.
 - A widget whose selection cannot run **degrades to an empty result** instead of failing the call — and says so: `status: 'error'` on that widget. Trust the field, never the zero: an all-zero widget with `status: 'ok'` is a real "no results for this cut".
 - Deleting a dashboard removes only the saved view; opportunity data is untouched.
+- The shared period must be coherent: a `dateFrom`/`dateTo` that does not parse, or a start after the end, is a 400 on write (`create`/`compose`/`settings_update`). `null` on one end = open window on that side.
+- MEETING widgets (`entity: meeting`) have two people per meeting: who CONDUCTS it (`segmentBy: attendant`) and who BOOKED it (`segmentBy: scheduler`; public booking, automations and calendar sync have no booker and land in an unnamed bucket). `segmentBy: appointmentSchedule` groups by the public agenda the meeting was booked on (no agenda = "no record"). Read the catalog `meetings` group before composing — it already has: who-books × who-conducts table (`meetingHandoff`: booked, for self / for others, held, no-show, still scheduled, show rate), show rate by conductor and by booker, and four self-booking cards. Prefer these presets over hand-built selections.
+- SELF BOOKING = `selfBookedOnly: true` on a meeting widget: only meetings the contact booked alone on the public agenda. It rides on presets (`meetings-self-booked-*`) and is accepted in a raw `widget` selection.
+- Options that exist ONLY in a full dashboard `config` (`analytics_dashboards_create` / `_update` / `_run`) — the widget-level tools (`compose`, `widget_add`, `widget_update`) cannot set them and a key they do not know is dropped silently, not refused: `meetingAttendantField` (`attendant` default | `scheduler` — WHICH person the shared `attendantIds` filter and a widget owner scope point at; "meetings Helena booked" needs `scheduler`, otherwise the number is the closer agenda), `distinctByOpportunity` (counts opportunities with at least one meeting instead of meetings; meetings without a card drop out; the period total is distinct over the whole period, so it is not the sum of the daily buckets), `leadTimeDateFrom`/`leadTimeDateTo` (own cohort window for `leadTime`, by card CREATION date — replaces the dashboard period for that widget and the run lists the period as ignored) and `businessDaysOnly` (time-in-stage counted Mon–Fri only, BRT, no holiday calendar).
+- Forecast has a daily view per closer: preset `forecast-upcoming-daily-by-attendant` (table day × responsible, from today on). Preset `forecast-by-attendant` is a daily bar per responsible (it was a monthly ranking).
 
 ## Thought process
 
@@ -105,7 +110,9 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 - Assembling a stage widget without `pipelineId` (it is a 400) — ask which pipeline, or list them first.
 - Hand-computing `dateFrom`/`dateTo` when the ask is "this month"/"last 7 days": send `periodPreset` and let the run resolve it.
 - Switching a widget to `segmentBy: customField|tag|cardTag` without sending `customFieldId`/`tagIds` in the same call.
+- Sending `meetingAttendantField`, `distinctByOpportunity`, `leadTimeDateFrom/To` or `businessDaysOnly` through `widget_add`/`widget_update`/`compose` and reporting them as applied.
+- Answering "how many meetings did X schedule" with a conductor filter (the default) — that is the closer agenda.
 
 ---
 
-Clickmax skill revision: `91bd05e0468a`
+Clickmax skill revision: `8654499c3889`

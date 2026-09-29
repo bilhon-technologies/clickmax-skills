@@ -80,6 +80,7 @@ Sem esses passos, a cópia local fica parada na versão instalada e a IA segue o
 - **clickmax-pages** — Use when the user wants to create, inspect, restyle, rebuild, clone, configure, or publish a native Clickmax-hosted page.
 - **clickmax-payments-dashboard-analysis** — Use when the user wants payment dashboard KPIs, paginated dashboard views, my-sales queries, filter lookups, or a recoverable-revenue reading (how much is failed/canceled/refunded/pending/abandoned to win back) for seller revenue analysis in Clickmax.
 - **clickmax-pipelines** — Use when the user wants to operate CRM pipelines, stages, opportunity cards, attendants, or pipeline analytics in Clickmax.
+- **clickmax-playbooks** — Use when the user wants to create, edit, delete, link to pipelines, preview, or rehearse a CRM playbook (the sales method with stages, questions, tones, keyword triggers and guardrails that guides meetings and calls) in Clickmax.
 - **clickmax-portal-enrollments** — Use when the user wants to list, add, bulk add, or remove member enrollments at the portal level in Clickmax Members.
 - **clickmax-products** — Use when the user wants to create, inspect, list, archive, unarchive, or delete products in the Clickmax catalog, including one-time-payment and subscription/recurring products.
 - **clickmax-projects** — Use when the user wants to create, list, inspect, rename, set-default, or delete workspace projects in Clickmax, or when any build needs a target project resolved first.

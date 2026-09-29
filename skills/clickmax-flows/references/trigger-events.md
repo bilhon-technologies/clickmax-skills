@@ -149,10 +149,9 @@ or a constraint `field` name (`offerId`, `projectId`, `tagId`, …); those are i
 - `crm.conversation.started.v1` — new conversation on any connected channel · `[channelInstanceId, channel]`
 - `crm.conversation.contact-silent.v1` — conversation contact silent for a set time · `[channel, offset]` (note the HYPHEN in `contact-silent`, not a dot — a guessed `crm.conversation.contact.silent.v1` is wrong and silently never fires)
 
-### Mass automation (broadcast pseudo-events — valid `eventName` values but not real AMQP events)
+### Manual start (pseudo-event — valid `eventName` value but not a real AMQP event)
 
-- `manual` — one-off mass send to every contact on a list · `[listId (resolve via lists_list search — never guess; empty data means not found, check suggestions and offer those instead of inventing an id)]`
-- `manual-tag` — one-off mass send to every contact with a tag · `[tagId]`
+- `manual` — "Início manual": the flow reacts to nothing; a published flow is run on demand ("Executar" in the editor) for an audience chosen at that moment (contacts, list, tag or segment), now or scheduled. No scopes/config on the trigger — the audience belongs to the run, not the trigger. (Replaced the old `manual`+listId / `manual-tag` / `scheduled` / `scheduled-tag` mass-send triggers.)
 
 ## Notes
 

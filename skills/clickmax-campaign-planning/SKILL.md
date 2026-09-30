@@ -35,7 +35,7 @@ Not this skill:
 
 ## Execute guide
 
-1. `mcp__plugin_clickmax_clickmax__account_snapshot` with `windowDays = 90`. Read `unavailable` first — a source listed there was not read; say so, never fill it in. `emailCampaigns.baseline: null` with no `broadcasts` in `unavailable` = the account never sent an email campaign. `emailCampaigns.baselineTruncated: true` → call it "baseline das últimas 200 campanhas" whenever you cite it.
+1. `mcp__plugin_clickmax_clickmax__account_snapshot` with `windowDays = 90`. Read `unavailable` first — a source listed there was not read; say so, never fill it in. `emailCampaigns.baseline: null` with no `broadcasts` in `unavailable` = the account never sent an email campaign. `emailCampaigns.baseline` covers every email campaign the account ever sent — cite `campaigns` as the sample size.
 2. Brand voice is already in the snapshot as `brand`; call `mcp__plugin_clickmax_clickmax__brand_get` alone only to reread it later. If `brand` is null or its `status` is `draft`, ask one question about tone (or offer to set up the brand) before writing copy angles.
 3. If `emailCampaigns.baseline.campaigns` is below 3, also use `mcp__plugin_clickmax_clickmax__messages_metrics` for the same window to get an automation-inclusive email open rate, and label it as such. Need more than the 10 campaigns in `emailCampaigns.recent`? Use `mcp__plugin_clickmax_clickmax__broadcasts_list` with `channel = email`.
 4. For the best past campaign, use `mcp__plugin_clickmax_clickmax__broadcasts_insights` to extract the best send hours (`opensByHour`) and the most-clicked link (`topLinks`) — reuse them as scheduling and CTA evidence.
@@ -72,4 +72,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `3aa555794005`
+Clickmax skill revision: `3bd50b6a886e`

@@ -41,6 +41,7 @@ For AI-authored pages, read [AI funnel creation](references/ai-funnel-creation.m
 - `funnels_validate.valid` is not enough by itself; still inspect disconnected triggers, orphan nodes, and missing page links
 - Delete tools are destructive and should be confirmed unless deletion was already explicit
 - Connections define the visual flow: the builder arranges the funnel left-to-right by following routed edges. Disconnected nodes have no graph flow, so they tend to stack in the first column.
+- One domain per funnel: the funnel serves every published node on its domain (`funnels_get.settings.domain`, else the project's public domain), and every next-step redirect opens there. A page with its own `domainId` inside a funnel on another domain → the visitor leaves the page's address on the next step. Page created for / linked to a funnel → same `domainId` as the funnel (`null` when the funnel has none)
 
 - Read [lifecycle and safety](references/lifecycle-and-safety.md) when deciding between draft edits, publish, deactivate, or destructive delete.
 - Read [node types and edges](references/node-types-and-edges.md) when choosing node types and the correct connection tool for each edge family.
@@ -117,6 +118,7 @@ Common flows:
 - Use the correct edge tool for the node family (`funnels_triggers_connect`, `funnels_abtest_variants_update`, `funnels_traffic_source_update`, `funnels_conditional_branches_update`)
 - `funnels_node_connect_page` rules, all refused server-side: target = `page`/`draft` node ONLY (never `ab_test`/`conditional`/`workflow`/`traffic_source`/`quiz` — connect THOSE to a page node instead) | page and funnel in the SAME project | one page per node, so a second call REPLACES the first and returns the swapped-out page in `replacedPageId` — read it before reporting two pages as linked
 - `funnels_validate.nodesWithUnusedPage` = node carrying a page its type never serves (legacy link); the visitor never reaches that page
+- "Lead doesn't reach the next page" / next step on an unexpected address → compare `pages_get.domainName` of each funnel page with the funnel domain before touching triggers; fix = align the domain (`pages_update` `domainId` or the funnel's domain) + republish, only with user approval
 - For a `workflow` node, link its flow (`funnels_workflow_flow_set`, resolving `flowId` via `flows_list`/`flows_create`) and set its exit event (`funnels_workflow_exit_trigger_set`); a workflow without a linked flow does not fire automation and is flagged by `funnels_validate.workflowsMissingFlow`
 - For a `workflow` node, configure entry/exit from the funnel side; flow-level start events are for standalone automations, not funnel-embedded flows
 - Creating nodes without connecting them leaves a broken-looking graph: no routed edges and stacked nodes
@@ -140,4 +142,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `220ae9ced6c5`
+Clickmax skill revision: `3aa555794005`

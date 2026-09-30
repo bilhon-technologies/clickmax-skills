@@ -17,8 +17,9 @@ Not this skill:
 ## Key assumptions
 
 - Scope = one workspace; never ask for workspace id
-- Granular step writes only work while the flow is `draft` / `template`
-- The graph is steps connected by each step output `target`; there is no separate edge object
+- Graph writes work while the flow is `draft`, `template`, or paused (`closed`); a paused flow stays paused after the edit. `active` → ask the user, pause with `flows_close`, then edit. Never edit `scheduled`/`archived`
+- The graph is steps connected by each step output `target`; there is no separate edge object. Each visible step lists its `outputs[]` (`handle` + `target`) — handle vocabulary in [step types](references/step-types.md#output-handles)
+- A message that waits for a reply (or a timeout) owns hidden helper steps; never target them — address the message's `invalid`/`timeout` handles instead
 - The entry is a single `trigger` step; a flow has at most one trigger step
 - Trigger start/exit events live at flow level (`triggerStart` / `triggerExit`), not inside arbitrary step fields
 - Standalone flows use flow-level trigger events; funnel-embedded flows (`funnelId` set) are started/exited by funnel workflow nodes instead
@@ -40,35 +41,42 @@ Not this skill:
 1. Classify the request: read/list/inspect/validate vs create/edit/connect vs lifecycle/destructive.
 2. Resolve `flowId` first. If `flows3.builder` screen context is present, use its `flowId` (the user is editing that flow); otherwise find an existing flow by name, or create one in `draft`.
 3. Check whether the flow is editable before planning step writes.
-4. Build trigger-first: create or inspect the entry trigger, then downstream steps, then connections, then validate.
-5. Prefer `flows_structure_get` as the canonical compact graph view before connecting, deleting, or diagnosing.
+4. Plan the whole change set (trigger → steps → wiring) and send it as ONE `flows_graph_apply` call; the next call only fixes what its result reports.
+5. Prefer `flows_structure_get` (or `flows3.builder`) as the canonical graph view before editing, deleting, or diagnosing.
 6. Activate only after validation passes and the user explicitly wants the flow running on real contacts.
 7. To prove a draft works, run it once for the user's own contact (`flows_test_run_start`) instead of activating: a test is a REAL run for one contact, activation opens the flow to everyone.
 8. To investigate what happened, go list (`flows_executions_list`) → one run (`flows_execution_get`) → fix the cause → only then retry.
 
 ## Execute guide
 
-- For a new flow, use `mcp__plugin_clickmax_clickmax__flows_create` first, then add the single `trigger` step with `mcp__plugin_clickmax_clickmax__flows_step_create`, then create downstream steps, connect them with `mcp__plugin_clickmax_clickmax__flows_step_connect`, and finish with `mcp__plugin_clickmax_clickmax__flows_validate`. Shortcut: `mcp__plugin_clickmax_clickmax__flows_step_create` and every `mcp__plugin_clickmax_clickmax__flows_send_*` tool accept an inline `target` — wire a step's output to the next step id in the SAME create call instead of a separate `flows_step_connect` round-trip; only use `flows_step_connect` for connecting steps after the fact (e.g. rewiring, or connecting a conditional's `true`/`false` branches).
+- Build AND every adjustment = `mcp__plugin_clickmax_clickmax__flows_graph_apply`: one call per change set, applied atomically with the canvas's own wiring rules. Read `mcp__plugin_clickmax_clickmax__flows_structure_get` (or `flows3.builder`) first and use each step's real `outputs[].handle`. Ops run in order:
+  - `add` — new step with a `$ref` (e.g. `$welcome`) usable by later ops in the SAME call; `after: {step, handle}` inserts it on that output and the output's previous destination becomes the new step's main output (insert in the middle = one op, nothing drops); `capture: {timeoutMinutes?}` on a WhatsApp/Telegram/Instagram message makes it wait for the reply
+  - `update` (input/action) | `connect` (`from` + `handle` → `to`) | `disconnect` | `remove` (`bridge` default true = predecessor reconnects to successor) | `move` | `setTriggers` (standalone flows only; same replace semantics as `flows_step_triggers_set`)
+  - `layout`: default places new steps next to their predecessor; `'organize'` re-lays out the whole flow; `'none'` keeps positions
+- Never create a step in one call and connect it in another — that leaves a loose step on the canvas the user is watching. Finish only when the result has `orphanStepIds = []` and `triggerWithoutOutput = false`; otherwise fix it in a follow-up `flows_graph_apply` before replying.
+- New flow: `mcp__plugin_clickmax_clickmax__flows_create` → one `flows_graph_apply` (trigger + steps + wiring + `setTriggers`) → `mcp__plugin_clickmax_clickmax__flows_validate`.
+- Messages inside `add` use the raw `send_message` input ([step types](references/step-types.md)). To insert ONE message alone, a `mcp__plugin_clickmax_clickmax__flows_send_*` tool with `after: {step, handle?}` is equivalent (per-channel schema). The other `flows_step_*` tools stay for isolated single-step edits.
 - `category` (on `flows_create`/`flows_update`) is a FIXED ENUM, not free text — one of `atendimento`, `vendas`, `suporte`, `marketing`, `cobranca`, `onboarding`, `retencao`, `pesquisa`, `agendamento`, `qualificacao`, `feedback`, `notificacao`, `integracao`, `teste`, `outro`. Pick the closest match from this exact list; guessing a plausible-sounding word outside it (e.g. `recuperacao`) fails validation. It's optional — omit it entirely if none fit well.
-- For an existing flow, check editability with `mcp__plugin_clickmax_clickmax__flows_get_mode`, inspect the current graph with `mcp__plugin_clickmax_clickmax__flows_structure_get`, apply only the needed `mcp__plugin_clickmax_clickmax__flows_step_*` mutations, and validate again before any lifecycle change.
+- For an existing flow, check editability with `mcp__plugin_clickmax_clickmax__flows_get_mode`, inspect the current graph with `mcp__plugin_clickmax_clickmax__flows_structure_get`, apply only the needed ops in one `flows_graph_apply`, and validate again before any lifecycle change.
 - Use `mcp__plugin_clickmax_clickmax__flows_update` only for flow metadata such as name/category; it does not edit the step graph.
 - Read the valid `action` names and their `input` fields from `mcp__plugin_clickmax_clickmax__flows_actions_catalog`, and a `conditional`'s valid `statements[].type` and its fields from `mcp__plugin_clickmax_clickmax__flows_conditionals_catalog`, BEFORE writing any non-message step. These are the only authoritative sources for those shapes — the catalogs also mark `comingSoon` actions that cannot be used yet. Never guess an `action`, a `statement.type`, or an `input` key. An invented key inside an otherwise valid `input` is not rejected — it is simply never read by the engine (`removeFromOtherPipelines` on `assignOpportunity` is exactly this, written by the flows3 drawer and consumed by nobody), so the step reports created and configures nothing. The shapes worth memorizing (and the `assignOpportunity` `opportunityId` trap) are in [step types](references/step-types.md).
 
 - Read the valid entry/exit events from `mcp__plugin_clickmax_clickmax__flows_triggers_catalog` before suggesting or setting a trigger — it returns each event's friendly `label`, `description`, and the `scopes` it can be narrowed by; pick the exact `eventName` and never invent one. See [trigger events](references/trigger-events.md).
-- Use `mcp__plugin_clickmax_clickmax__flows_step_triggers_set` only when changing entry events, and send the complete `triggerStart` / `triggerExit` arrays that should remain on the flow.
+- Change entry events with the `setTriggers` op (or `mcp__plugin_clickmax_clickmax__flows_step_triggers_set`), and send the complete `triggerStart` / `triggerExit` arrays that should remain on the flow.
 - For a flow linked to a funnel workflow node, keep flow-level trigger arrays empty unless the user is intentionally converting it into a standalone automation; wire entry/exit from the funnel skill instead.
 - Use `mcp__plugin_clickmax_clickmax__flows_list` to find candidate flows by name before asking for confirmation on ambiguous matches.
-- Use `mcp__plugin_clickmax_clickmax__flows_structure_get` as the canonical graph view before connecting, deleting, or diagnosing steps.
-- Use `mcp__plugin_clickmax_clickmax__flows_validate` before activation and surface its `issues` (each has a `severity` and the `stepId` to fix — group errors before warnings; codes and meaning are in [executions, testing and links](references/executions-and-testing.md#validation-issues)) plus `hasEntryTrigger`, `danglingTargets`, `orphanStepIds`, and `incompleteChannelSteps` (channel steps — email/telegram/WhatsApp — missing their sender id: `emailSenderSignatureId`, `telegramBotId`, or `gupshupAppId` under `numberStrategy: 'fixed'`), not just `valid`. Resolve any `incompleteChannelSteps` before activating — with `email_sender_signatures_list` / `channel_instances_list`, then `flows_step_update` — rather than retrying `flows_activate` unchanged: a channel step without a real sender id fails on every single send no matter what activation itself currently checks, so never treat a clean validation as a substitute for having resolved the sender at creation.
-- For branching, connect each branch explicitly with the correct `handle`, such as `true` / `false` for conditionals.
+- Use `mcp__plugin_clickmax_clickmax__flows_structure_get` as the canonical graph view before connecting, deleting, or diagnosing steps — each step's `outputs[].handle` is the exact vocabulary `flows_graph_apply` accepts.
+- Use `mcp__plugin_clickmax_clickmax__flows_validate` before activation and surface its `issues` (each has a `severity` and the `stepId` to fix — group errors before warnings; codes and meaning are in [executions, testing and links](references/executions-and-testing.md#validation-issues)) plus `hasEntryTrigger`, `danglingTargets`, `orphanStepIds`, `triggerWithoutOutput`, and `incompleteChannelSteps` (channel steps — email/telegram/WhatsApp — missing their sender id: `emailSenderSignatureId`, `telegramBotId`, or `gupshupAppId` under `numberStrategy: 'fixed'`), not just `valid`. Resolve any `incompleteChannelSteps` before activating — with `email_sender_signatures_list` / `channel_instances_list`, then `flows_step_update` — rather than retrying `flows_activate` unchanged: a channel step without a real sender id fails on every single send no matter what activation itself currently checks, so never treat a clean validation as a substitute for having resolved the sender at creation.
+- For branching, connect each branch explicitly with the correct `handle` (`true` / `false` for conditionals); an unknown handle is rejected with the step's valid outputs — use one of those.
 
 - WhatsApp steps are TEMPLATE-first. `mcp__plugin_clickmax_clickmax__flows_send_whatsapp` REJECTS `format: 'text'` unless `numberStrategy: 'context'`, because free-form text only delivers inside the 24h customer-care window and only a flow started by the contact's own inbound WhatsApp message guarantees that window is open. Every other trigger (funnel, tag, schedule, checkout) takes a template. Order to follow, cheapest first: 1) `mcp__plugin_clickmax_clickmax__gupshup_templates_list` for an existing `approved` template that already says what the user wants; 2) for a generic use case (OTP, order update, reminder), `mcp__plugin_clickmax_clickmax__gupshup_template_library_list` + `mcp__plugin_clickmax_clickmax__gupshup_template_library_create` — Meta pre-vetted, near-instant approval; 3) otherwise author one with `mcp__plugin_clickmax_clickmax__gupshup_templates_create`, show the exact copy to the user, and only then `mcp__plugin_clickmax_clickmax__gupshup_templates_submit`. See [WhatsApp templates](references/whatsapp-templates.md).
 - Never stall the build waiting for Meta. A template still `pending` can already be wired into the step — create the automation, then tell the user plainly that WhatsApp starts sending once Meta approves the template (hours to days) and that everything else runs immediately.
 
-- Minimal build pattern: [create -> trigger -> action](references/examples.md#create---trigger---action)
-- Linear automation pattern: [trigger -> delay -> send_message](references/examples.md#trigger---delay---send_message)
-- Branch pattern: [conditional -> true/false branch](references/examples.md#conditional---truefalse-branch)
-- Read-only diagnostics: [inspect -> validate](references/examples.md#inspect---validate)
+- Minimal build pattern: [create -> trigger -> action](references/examples.md#create-trigger-action)
+- Linear automation pattern: [trigger -> delay -> send_message](references/examples.md#trigger-delay-message)
+- Branch pattern: [conditional -> true/false branch](references/examples.md#conditional-branch)
+- Adjustments: [insert in the middle](references/examples.md#insert-in-the-middle) | [swap two steps](references/examples.md#swap-two-steps) | [message that waits for a reply](references/examples.md#message-that-waits-for-a-reply)
+- Read-only diagnostics: [inspect -> validate](references/examples.md#inspect-and-validate)
 
 ## Report
 
@@ -76,7 +84,7 @@ Not this skill:
 - For list/find: compact candidate table (`name`, `mode`, `category`), not full raw graph dumps
 - For create/build/edit: confirm what changed in user terms (which trigger, which steps, what happens next) — not step ids or edge internals
 - When summarizing one specific created/read automation in a visual card, use the automation/flow name as the large headline/value. Put node count, status, channel mix, and similar build metrics in pills, sub-metrics, or `value-suffix`, not as the main headline.
-- For validate: always surface the `issues` list (errors first, then warnings, each pointing at the node in user terms), `hasEntryTrigger`, `danglingTargets`, `orphanStepIds`, and `incompleteChannelSteps`, even when `valid=true` (warnings never flip it). When `incompleteChannelSteps` is non-empty, say plainly that the listed message step(s) have no real sender configured (which channel/step, in user terms — never the raw field name) and that the flow will not deliver until that's resolved, then offer to fix it (list the workspace's numbers/bots/sender signatures and set the one the user picks)
+- For validate: always surface the `issues` list (errors first, then warnings, each pointing at the node in user terms), `hasEntryTrigger`, `danglingTargets`, `orphanStepIds`, `triggerWithoutOutput`, and `incompleteChannelSteps`, even when `valid=true` (warnings never flip it). When `incompleteChannelSteps` is non-empty, say plainly that the listed message step(s) have no real sender configured (which channel/step, in user terms — never the raw field name) and that the flow will not deliver until that's resolved, then offer to fix it (list the workspace's numbers/bots/sender signatures and set the one the user picks)
 - For executions: lead with counts by status and the top failure reasons in plain words (never raw error JSON), name the affected contacts, cap the list (`+N more`), and offer retry/stop as an opt-in next step with the exact number of contacts it touches
 - For lifecycle: explain the new mode in user terms (`active` = processing real contacts; `closed`/`archived` = stopped)
 - Cap long step/edge lists; summarize rather than dumping giant payloads
@@ -97,13 +105,15 @@ Not this skill:
 - Never echo a raw UUID to the user. Step inputs store tags/lists/products by id; resolve them to names via the `flows3.builder` `labels` map (or the matching `clickmax-tags`/list/product lookup tool when an id is absent from `labels`). A UUID in your reply is a bug — report "the tag **Black Friday**", not its id.
 - `flows_test_run_start` is NOT a dry run: it sends real messages, applies tags, spends credits and counts in the flow's metrics. Only with the user's explicit go-ahead, naming the recipient; default to the user's own contact
 - `flows_execution_retry` / `flows_executions_retry_by_error` re-run the failed node INCLUDING its side effect (the message is sent again, possibly to many contacts); retrying without fixing the cause fails again. `flows_execution_cancel` is permanent for that run
-- Never wire a step's `target` (via `flows_step_connect` or the inline `target` on `flows_step_create`/`flows_send_*`) back to the flow's `trigger` step id. The trigger is the entry point only; any step pointing back at it makes the worker reprocess the automation from the start forever (infinite loop). The backend rejects this with a 400 — treat that error as confirmation the graph you were building was wrong, not something to retry.
+- Never wire a step's output (a `connect` op, `flows_step_connect`, or an inline `target`) back to the flow's `trigger` step id. The trigger is the entry point only; any step pointing back at it makes the worker reprocess the automation from the start forever (infinite loop). The backend rejects this with a 400 — treat that error as confirmation the graph you were building was wrong, not something to retry.
 
 ## Anti-patterns
 
 - Asking the user for workspace id or a hidden platform id
 - Guessing `flowId` or step ids instead of resolving them
-- Editing steps on non-editable modes instead of stopping and explaining the constraint
+- Editing an `active` flow without asking + pausing it first (`flows_close`), or editing a `scheduled` one at all
+- Creating a step and connecting it in a later call, or spreading one adjustment over several calls — use one `flows_graph_apply`
+- Replying "done" while the last result still has `orphanStepIds` or `triggerWithoutOutput = true`
 - Treating `valid=true` as publish-ready while ignoring dangling targets or orphan steps
 - Activating a flow without explicit user intent to start real processing
 - Creating a second flow to retry after a step/connect/trigger error — keep editing the same `flowId` and fix the failing call; recreating leaves duplicate half-built automations
@@ -119,4 +129,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `3bd50b6a886e`
+Clickmax skill revision: `4c2337900a4a`

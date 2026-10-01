@@ -19,7 +19,8 @@ Not this skill:
 - A plan without the account's numbers is a failure of this skill. Every target must cite its baseline; every audience must name a real tag, list or filter and its measured size.
 - Rates come as fractions (`0.295` = 29,5%); `null` = nothing sent, not zero.
 - Campaign open/click rates are over sent recipients and count first opens only. Channel-wide `mcp__plugin_clickmax_clickmax__messages_metrics` rates are over reached recipients, include automations, and have no clicks — never mix the two in one comparison. WhatsApp shows up there as platform `gupshup`.
-- Segments can filter by tag, list, purchase/transaction, product/offer, subscription, temperature status, score, UTM/origin, page or funnel visited, form/quiz answers, webinar attendance, lead creation date and lead fields. They CANNOT filter by "opened the last N emails", "clicked an email" or "inactive for N days". When the plan needs email-engagement behavior, use temperature status or score as the proxy and say it is a proxy.
+- Segments can filter by tag, list, purchase/transaction, product/offer, subscription, temperature status, score, UTM/origin, page or funnel visited, form/quiz answers, webinar attendance, email engagement (opened / clicked / received and did not open, in the last N days or on one campaign), lead creation date and lead fields. Email engagement counts people only — bot and scanner opens and clicks are excluded, so it can be lower than a campaign's reported opens — and it is the measured "engaged" audience; temperature is a complementary signal, not a substitute.
+- "Opened the last 3 campaigns" has no single filter: combine one `opened` item per campaign (each with its `broadcastId`), or use "opened in the last N days" and say which one you used.
 - WhatsApp free-form text only reaches contacts inside the 24h customer-care window; everything else needs an approved template. A WhatsApp step is only real if the account has a connected number and approved templates (or the plan includes creating them as a step — see `clickmax-flows`).
 - There is no waitlist entity: a "waitlist" is a tag plus an automation.
 
@@ -39,7 +40,7 @@ Not this skill:
 2. Brand voice is already in the snapshot as `brand`; call `mcp__plugin_clickmax_clickmax__brand_get` alone only to reread it later. If `brand` is null or its `status` is `draft`, ask one question about tone (or offer to set up the brand) before writing copy angles.
 3. If `emailCampaigns.baseline.campaigns` is below 3, also use `mcp__plugin_clickmax_clickmax__messages_metrics` for the same window to get an automation-inclusive email open rate, and label it as such. Need more than the 10 campaigns in `emailCampaigns.recent`? Use `mcp__plugin_clickmax_clickmax__broadcasts_list` with `channel = email`.
 4. For the best past campaign, use `mcp__plugin_clickmax_clickmax__broadcasts_insights` to extract the best send hours (`opensByHour`) and the most-clicked link (`topLinks`) — reuse them as scheduling and CTA evidence.
-5. Resolve audiences: match the user's words to `tags` from the snapshot (top 15 by size; `mcp__plugin_clickmax_clickmax__tags_list` / `mcp__plugin_clickmax_clickmax__lists_list` for the full set); measure each phase's audience with `mcp__plugin_clickmax_clickmax__segments_preview_count`. Combined audience (tag A AND tag B, tag AND temperature) = one top-level filter item per condition, each with a short label `id` ("a", "b"), `valueUuid` = the real tag id, temperature via `temperatureScore` + `valueNumber` (0-100; hot = `greaterThanOrEqual` the account cutoff, default 60). Report the measured count, not an estimate.
+5. Resolve audiences: match the user's words to `tags` from the snapshot (top 15 by size; `mcp__plugin_clickmax_clickmax__tags_list` / `mcp__plugin_clickmax_clickmax__lists_list` for the full set); measure each phase's audience with `mcp__plugin_clickmax_clickmax__segments_preview_count`. Combined audience (tag A AND tag B, tag AND temperature) = one top-level filter item per condition, each with a short label `id` ("a", "b"), `valueUuid` = the real tag id, temperature via `temperatureScore` + `valueNumber` (0-100; hot = `greaterThanOrEqual` the account cutoff, default 60). Engaged audience = `emailEngagement` item with `valueString` `{"engagement":"opened","withinDays":<N>}` (format and recipes in the `segments_preview_count` description; inactive = the same item negated). Report the measured count, not an estimate.
 6. WhatsApp: `mcp__plugin_clickmax_clickmax__channel_instances_list`, then `mcp__plugin_clickmax_clickmax__gupshup_templates_list`; if approved templates exist, `mcp__plugin_clickmax_clickmax__gupshup_template_analytics` on the most used one (by its `externalId`) for read/click rates.
 7. Product: the user's product, else `topProducts` from the snapshot or `mcp__plugin_clickmax_clickmax__insights_top_offers`.
 8. Write the plan with [the plan template](references/plan-template.md).
@@ -57,7 +58,9 @@ Not this skill:
 ## Warnings
 
 - Do not invent tag names, list names or past results. If a needed tag does not exist, list it under "a criar".
-- Do not promise features the account does not have (email-engagement segment filters, waitlist entity, free-form WhatsApp outside the 24h window).
+- Do not promise features the account does not have (a single "opened N of the last M campaigns" filter, waitlist entity, free-form WhatsApp outside the 24h window).
+- A saved segment with a day window is recalculated about once a day, not live: say so when a phase sends to it, and re-measure with `mcp__plugin_clickmax_clickmax__segments_preview_count` right before the send.
+- Email engagement history before late September 2026 undercounts opens (older data kept only the first open, often a bot's): on long windows, call the number a floor.
 - Do not state a campaign open rate from `mcp__plugin_clickmax_clickmax__messages_metrics`, or a channel rate from one campaign.
 - Tag counts overlap: never add tag counts together — measure the combination with `mcp__plugin_clickmax_clickmax__segments_preview_count`; only if that call fails, show each tag's own count and say the combination was not measured.
 - Dates: compute from today; name weekdays correctly; keep hard deadlines consistent across phases and messages.
@@ -72,4 +75,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `4c2337900a4a`
+Clickmax skill revision: `150b1177d5c9`

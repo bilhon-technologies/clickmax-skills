@@ -43,8 +43,8 @@ Not this skill:
 5. Resolve audiences: match the user's words to `tags` from the snapshot (top 15 by size; `mcp__plugin_clickmax_clickmax__tags_list` / `mcp__plugin_clickmax_clickmax__lists_list` for the full set); measure each phase's audience with `mcp__plugin_clickmax_clickmax__segments_preview_count`. Combined audience (tag A AND tag B, tag AND temperature) = one top-level filter item per condition, each with a short label `id` ("a", "b"), `valueUuid` = the real tag id, temperature via `temperatureScore` + `valueNumber` (0-100; hot = `greaterThanOrEqual` the account cutoff, default 60). Engaged audience = `emailEngagement` item with `valueString` `{"engagement":"opened","withinDays":<N>}` (format and recipes in the `segments_preview_count` description; inactive = the same item negated). Report the measured count, not an estimate.
 6. WhatsApp: `mcp__plugin_clickmax_clickmax__channel_instances_list`, then `mcp__plugin_clickmax_clickmax__gupshup_templates_list`; if approved templates exist, `mcp__plugin_clickmax_clickmax__gupshup_template_analytics` on the most used one (by its `externalId`) for read/click rates.
 7. Product: the user's product, else `topProducts` from the snapshot or `mcp__plugin_clickmax_clickmax__insights_top_offers`.
-8. Write the plan with [the plan template](references/plan-template.md).
-9. End by offering concrete next actions: create the phase-1 tags and segment, build the phase-1 automation, draft the first email in the brand voice. Only execute after the user says yes.
+8. Write the full plan with [the plan template](references/plan-template.md) as the reply text. The user sees only the reply text: a plan that stays in your reasoning was never delivered.
+9. Only after the plan is written, offer concrete next actions: create the phase-1 tags and segment, build the phase-1 automation, draft the first email in the brand voice. Only execute after the user says yes.
 
 ## Report
 
@@ -72,7 +72,8 @@ Not this skill:
 - A generic 5-month template with round targets and no baseline.
 - Audiences described as "contatos engajados" with no filter and no size.
 - Ending with a list of options instead of offering to build phase 1.
+- Asking "which part should I prepare?" without having written the plan first.
 
 ---
 
-Clickmax skill revision: `150b1177d5c9`
+Clickmax skill revision: `81a2e43d059d`

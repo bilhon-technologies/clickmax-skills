@@ -89,6 +89,7 @@ Sem esses passos, a cópia local fica parada na versão instalada e a IA segue o
 - **clickmax-portal-enrollments** — Use when the user wants to list, add, bulk add, or remove member enrollments at the portal level in Clickmax Members.
 - **clickmax-products** — Use when the user wants to create, inspect, list, archive, unarchive, or delete products in the Clickmax catalog, including one-time-payment and subscription/recurring products.
 - **clickmax-projects** — Use when the user wants to create, list, inspect, rename, set-default, or delete workspace projects in Clickmax, or when any build needs a target project resolved first.
+- **clickmax-proposals** — Use when the user wants to find, create, edit, version or consolidate Clickmax proposal templates (slide deck or Word document) and the proposals generated for contacts/opportunities.
 - **clickmax-sales-insights** — Use when the user wants to know what is selling — top offers/products by revenue and quantity, order-bump attach rate, or period-over-period sales trend (revenue, average ticket, sales count) for seller sales analysis in Clickmax.
 - **clickmax-seller-subscriptions** — Use when the user wants to inspect, chart, cancel, or swap cards on customer subscriptions sold through Clickmax.
 - **clickmax-support** — Use when the user asks a how-to, troubleshooting, or "why isn't this working" support question about using Clickmax, and the answer should come from the help center.

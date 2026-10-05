@@ -44,6 +44,7 @@ Scope boundary — pick the right skill first:
 2. **Visual system** — choosing the curated design, mapping it onto the injected tokens, type scale, color ramp, spacing, container, and breakpoints: [visual system](references/visual-system.md).
 3. **Structure and copy** — the mandatory spine, page jobs, section logic, and copy rules: [sections and copy](references/sections-and-copy.md).
 4. **Components** — the CSS-only building blocks that survive import, plus the form, checkout, CTA, and motion contracts: [components](references/components.md).
+5. **Whop/Hotmart/Stripe checkout** — selling through the workspace's own account: integration check FIRST (no integration → instruct the user to connect it, never build without it), catalog walk, `externalCheckout`, limits to tell the user: [external checkout](references/external-checkout.md).
 
 ## Report
 
@@ -60,6 +61,7 @@ Scope boundary — pick the right skill first:
 - Never publish without explicit consent, and never as part of a build step.
 - Never replace a non-empty page unless the user asked for a full rebuild.
 - Never hand-write checkout markup — the payment runtime looks for specific ids and a mistake breaks charging with no visible symptom.
+- Whop/Hotmart/Stripe checkout requested and the integration is missing or incomplete → instruct the user to connect/complete it in Integrações and stop; never deliver that page without its checkout.
 - Never invent an image URL. A broken image in production is worse than a section without one.
 - A validation call that returns `valid: false` means fix and revalidate — not try a different tool.
 - Warnings on a successful import are actionable: re-import the same page id with the corrected CSS.
@@ -76,4 +78,4 @@ Scope boundary — pick the right skill first:
 
 ---
 
-Clickmax skill revision: `43bc1adc6622`
+Clickmax skill revision: `af754fe98a14`

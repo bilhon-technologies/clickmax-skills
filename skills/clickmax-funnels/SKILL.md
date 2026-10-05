@@ -84,6 +84,7 @@ Common flows:
 - Custom funnel = use `mcp__plugin_clickmax_clickmax__funnels_node_create`, then the correct connection tool for that node family, then `mcp__plugin_clickmax_clickmax__funnels_structure_get`, then `mcp__plugin_clickmax_clickmax__funnels_validate`.
 - Go live with existing pages = use `mcp__plugin_clickmax_clickmax__funnels_node_connect_page`, then `mcp__plugin_clickmax_clickmax__funnels_validate`, then `mcp__plugin_clickmax_clickmax__funnels_publish`.
 - Page WITH a checkout = `mcp__plugin_clickmax_clickmax__pages_templates_list` (`type: ["checkout"]`, pick `canUse: true`), then `mcp__plugin_clickmax_clickmax__pages_create` (`type: "checkout"` + `templateId` + `offerId` + `funnelId`) so the offer is auto-bound to the checkout, then `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` to link it. See [pages and checkout](references/pages-and-checkout.md).
+- Step that sells through the workspace's Whop, Hotmart or Stripe account = an `external_checkout` node (`config.provider` `whop`|`hotmart`|`stripe`) + a page built with `externalCheckout` of the same provider, linked with `mcp__plugin_clickmax_clickmax__funnels_node_connect_page`. Start with `mcp__plugin_clickmax_clickmax__external_checkout_accounts_list`; its `setup` not null (not connected / incomplete) → relay the instructions and stop before creating the node. See [pages and checkout](references/pages-and-checkout.md#whop-or-hotmart-checkout-step).
 - Funnel step is an EXTERNAL page (the user gives a URL hosted OUTSIDE Clickmax — their own site/domain/landing) = compose these granular tools in order (NEVER `pages_create` — that makes an empty INTERNAL page):
   1. `mcp__plugin_clickmax_clickmax__pages_create_external` (`projectId` + `externalUrl` + `name` + `type`) -> returns the `pageId`. `projectId` = the FUNNEL's project; a page from another project is refused at connect time.
   2. `mcp__plugin_clickmax_clickmax__funnels_node_create` (`funnelId`, `type: "page"`, a `slug`, `pageType`, and `triggers` = one `contact_captured` + one `undefined`) -> returns the page node id.
@@ -142,4 +143,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `43bc1adc6622`
+Clickmax skill revision: `af754fe98a14`

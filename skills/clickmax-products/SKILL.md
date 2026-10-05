@@ -11,6 +11,7 @@ Use this skill for product-catalog identity: create a product (which also mints 
 
 - Pricing variants, extra offers, checkout config, cloning, approval → use `clickmax-offers`.
 - Choosing/creating the owning project for `projectId` → use `clickmax-projects`.
+- Selling through the user's own Whop, Hotmart or Stripe account (a checkout on a page or funnel step) → `clickmax-pages` external checkout, which checks the integration first and instructs the user to connect it when missing. Never create a Clickmax product as a stand-in.
 - A product is the catalog item; an offer is the sellable price point. One main offer is created together with the product; everything beyond that first price point is offer work.
 
 ## Key assumptions
@@ -89,4 +90,4 @@ Use this skill for product-catalog identity: create a product (which also mints 
 
 ---
 
-Clickmax skill revision: `43bc1adc6622`
+Clickmax skill revision: `af754fe98a14`

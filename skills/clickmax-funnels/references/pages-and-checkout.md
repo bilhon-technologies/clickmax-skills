@@ -25,6 +25,18 @@ The fastest path when the user explicitly wants a ready-made Clickmax checkout r
 
 When the checkout should carry the funnel's own visual identity instead of the template's, author it through `clickmax-pages` with the `checkout` recipe and connect it the same way from step 3.
 
+## Whop, Hotmart or Stripe checkout step
+
+When the step sells through the workspace's Whop, Hotmart or Stripe account (not a Clickmax offer):
+
+0. `mcp__plugin_clickmax_clickmax__external_checkout_accounts_list` for that platform FIRST. `setup` not null → relay `setup.instructions` (connect or complete the integration in Integrações) and stop: no node, no page.
+1. `mcp__plugin_clickmax_clickmax__funnels_node_create` with `type: "external_checkout"` and `config: { provider: "whop" | "hotmart" | "stripe" }` — always pass the provider. Omit `triggers`: the node gets `purchase_approved` (+ accept fallbacks). It never emits `purchase_declined`, `cart_abandoned`, pix or boleto, and its triggers cannot go to a `workflow` node.
+2. Author the page in `clickmax-pages` (its external-checkout reference): catalog walk → `mcp__plugin_clickmax_clickmax__pages_import_html_draft` with `externalCheckout` of the SAME provider and the funnel's `projectId`/`funnelId`.
+3. `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` on that node, then route `purchase_approved` to the next step (thank-you/upsell) with `mcp__plugin_clickmax_clickmax__funnels_triggers_connect`.
+4. Tell the user Whop and Stripe sales are tied to the page once the funnel/page is published (Stripe does not charge before that); revenue shows in the funnel's results.
+
+Never fall back to a page node without checkout, or to another platform, when the integration is missing.
+
 ## Linking and routing
 
 - Link with `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` after the page exists. A page node with no page linked is a slot the visitor cannot reach.
@@ -36,7 +48,7 @@ When the checkout should carry the funnel's own visual identity instead of the t
 
 ## A checkout is an offer's checkout
 
-"Page with a checkout" means a page whose checkout block is bound to an `offerId`. Passing the offer at creation (template path) or at import (authored path) is what wires it; without an offer the block renders and charges nothing. One checkout per page — payment is resolved per page.
+"Page with a checkout" means a page whose checkout block is bound to an `offerId` — or, for a Whop/Hotmart/Stripe step, to the account's plan/offer/price via `externalCheckout`. Passing the offer at creation (template path) or at import (authored path) is what wires it; without an offer the block renders and charges nothing. One checkout per page — payment is resolved per page.
 
 ## Notes
 

@@ -108,4 +108,4 @@ Common flow (super-prompt "portal completo"): `portals_check_subdomain` → `por
 
 ---
 
-Clickmax skill revision: `e3851ddecfda`
+Clickmax skill revision: `43bc1adc6622`

@@ -50,7 +50,7 @@ Pass `offerId` on the same import. The server replaces the marker with the real 
 - One checkout per page.
 - `offerId` with no marker, or a marker with no `offerId`, both come back as warnings — the block exists but nothing charges, or the offer is bound with nowhere to pay.
 - Order bumps are attached after the page exists, and the call full-replaces the list.
-- Selling through the workspace's Whop, Hotmart or Stripe account: same marker, `externalCheckout` instead of `offerId` — [external checkout](external-checkout.md). Native order bumps and `checkout_set` do not apply.
+- Selling through the workspace's Whop, Hotmart, Stripe or Pagar.me account: same marker, `externalCheckout` instead of `offerId` — [external checkout](external-checkout.md). Native order bumps and `checkout_set` do not apply.
 
 ## FAQ — `<details>`, never JavaScript
 

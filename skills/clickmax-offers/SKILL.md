@@ -10,7 +10,7 @@ Use this skill for offer-level commercial control: pricing/currency/checkout var
 Not this skill:
 
 - product catalog identity/archive/delete -> use the direct product tools
-- "checkout" through the user's own Whop, Hotmart or Stripe account (embedded on a page or as a funnel step) -> `clickmax-pages` external checkout: it starts with `mcp__plugin_clickmax_clickmax__external_checkout_accounts_list` and, with no integration, instructs the user to connect it. Do NOT create a Clickmax product/offer or an `externalUrl` offer as a substitute.
+- "checkout" through the user's own Whop, Hotmart, Stripe or Pagar.me account (embedded on a page or as a funnel step) -> `clickmax-pages` external checkout: it starts with `mcp__plugin_clickmax_clickmax__external_checkout_accounts_list` and, with no integration, instructs the user to connect it. Do NOT create a Clickmax product/offer or an `externalUrl` offer as a substitute.
 
 ## Key assumptions
 
@@ -87,4 +87,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `0d36eff982d7`
+Clickmax skill revision: `fe9bb7841acc`

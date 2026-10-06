@@ -13,20 +13,24 @@ A page can sell through the workspace's own **Whop**, **Hotmart** or **Stripe** 
 
 Never mix them: one page has exactly one checkout, either a Clickmax offer or one external account.
 
+Which platforms you may name: only these three, the ones Clickmax embeds. Offer one only when the user already has an active integration for it, or when the user asks about selling through another platform ("you can connect Whop, Hotmart or Stripe if you prefer"). Never name or suggest other gateways (PayPal, Mercado Pago, PagSeguro, Kiwify, Eduzz…) as a page checkout — say they are not available and offer the native checkout or these three.
+
 ## Step 0 — the integration must exist
 
 `mcp__plugin_clickmax_clickmax__external_checkout_accounts_list` with `platform: "whop" | "hotmart" | "stripe"` is ALWAYS the first call, before writing any copy or HTML.
 
-- `setup` is not null → **stop the build** and relay `setup.instructions` in the user's language, with the `setup.docsUrl` link:
-  - `not_connected` → no active integration. Tell the user to open **Integrações → Explorar Integrações → <platform>**, create it following the guide, and come back. Offer to continue right after.
-  - `incomplete` → the integration exists but fields are empty (`missingCredentials` names them exactly as the form shows, e.g. **Chave publicável**, **Segredo de assinatura do webhook**). Tell the user which fields to fill in **Integrações → <their integration>**.
+- `setup` is not null → **stop the build** and guide the setup, in the user's language:
+  1. Say in one line what is missing: `not_connected` = no active integration; `incomplete` = the integration lacks the fields in `missingCredentials` (named exactly as the Integrations form shows, e.g. **Chave publicável**).
+  2. Relay `setup.steps` in order as a short numbered list — what to click in Clickmax and what to do on the platform's site. Keep menu and field names exactly as given; do not invent or reorder steps.
+  3. Close with one `cx-cta` `action="open-page"` whose `path` is `setup.openPath` (opens the platform's integration form) and the full guide link `setup.docsUrl`. Offer to continue the page once it is connected.
+  - An existing integration cannot be edited: an `incomplete` one is fixed by creating it again with every field. Whop/Hotmart can also go on right away: ask for the offer's payment link instead of a raw code — Hotmart: `pay.hotmart.com/…?off=kjl7fk5t` → `offerCode` is the `off=` value; Whop: `whop.com/checkout/plan_…` → `planId` is the `plan_…` segment. Extract it yourself; never ask the user for a raw code.
 - Never build a page without the checkout as a workaround, never invent an `incomingId`, and never switch to another platform or to a Clickmax offer without the user asking.
 - What each platform needs to sell from a page:
 
 |Platform|Fields in Integrações|Without them|
 |-|-|-|
-|Whop|**Token da API** (key with the Admin role)|Products/plans cannot be listed; the user can paste the plan id (`plan_…`)|
-|Hotmart|**Client ID** + **Client Secret** (production credential)|Products/offers cannot be listed; the user can paste the offer code (`off`)|
+|Whop|**Token da API** (key with the Admin role)|Products/plans cannot be listed; the user can paste the plan's checkout link (`whop.com/checkout/plan_…`)|
+|Hotmart|**Client ID** + **Client Secret** (production credential)|Products/offers cannot be listed; the user can paste the offer's payment link (`pay.hotmart.com/…?off=…`) — found in Hotmart under the product, **Precificação e ofertas**|
 |Stripe|**Chave secreta ou restrita**, **Chave publicável**, **Segredo de assinatura do webhook**|The checkout does not charge — the import is rejected until all three are filled|
 
 ## Collect the choice from real data

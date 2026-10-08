@@ -21,7 +21,7 @@ Not this skill:
 - reload queues recomputation; it is not just a cosmetic refresh
 - `lists_create` makes an EMPTY list. To make a list from the contacts of opportunity cards use `opportunities_bulk_create_list` (see `clickmax-pipelines`): it creates AND fills the list, and its `affected` counts contacts.
 - `suspectedFraud` (`operator: equals`, `valueBool`) is a segment field: flags possible card testing (e-mail unrelated to the name AND suspicious document), derived at read time — it works in saved segments and combines with any other item; `false` = contacts not flagged.
-- `emailEngagement` (block, JSON in `valueString`) filters by opened / clicked / received-and-did-not-open, in the last N days or on one campaign, counting people only (bots excluded). A saved segment with a day window is recalculated about once a day; a broadcast to it recalculates the audience when created or scheduled, other uses read the daily list — re-measure with `segments_preview_count` right before using it. Shape in [filter model](references/filter-model.md).
+- `emailEngagement` (block, JSON in `valueString`) filters by opened / clicked / received-and-did-not-open, in the last N days or on one campaign, or by opened at least N of the last M campaigns received (`openedCount`), counting people only (bots excluded). A saved segment with a day window is recalculated about once a day; a broadcast to it recalculates the audience when created or scheduled, other uses read the daily list — re-measure with `segments_preview_count` right before using it. Shape in [filter model](references/filter-model.md).
 - `segments_categories_metrics` also returns origin × sub-origin and a visitor journey (channels, UTM sources, referrers, landing pages, devices) that counts only contacts linked to a tracked visitor — say so when reporting "how they arrived"; Temperature × Score health is `lead_indicators_metrics`.
 - Read [filter model](references/filter-model.md) before building non-trivial segment logic.
 
@@ -63,4 +63,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `a13590fbff81`
+Clickmax skill revision: `2f946ae45dc1`

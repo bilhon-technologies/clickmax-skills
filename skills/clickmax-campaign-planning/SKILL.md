@@ -19,8 +19,8 @@ Not this skill:
 - A plan without the account's numbers is a failure of this skill. Every target must cite its baseline; every audience must name a real tag, list or filter and its measured size.
 - Rates come as fractions (`0.295` = 29,5%); `null` = nothing sent, not zero.
 - Campaign open/click rates are over sent recipients and count first opens only. Channel-wide `mcp__plugin_clickmax_clickmax__messages_metrics` rates are over reached recipients, include automations, and have no clicks — never mix the two in one comparison. WhatsApp shows up there as platform `gupshup`.
-- Segments can filter by tag, list, purchase/transaction, product/offer, subscription, temperature status, score, UTM/origin, page or funnel visited, form/quiz answers, webinar attendance, email engagement (opened / clicked / received and did not open, in the last N days or on one campaign), lead creation date and lead fields. Email engagement counts people only — bot and scanner opens and clicks are excluded, so it can be lower than a campaign's reported opens — and it is the measured "engaged" audience; temperature is a complementary signal, not a substitute.
-- "Opened the last 3 campaigns" has no single filter: combine one `opened` item per campaign (each with its `broadcastId`), or use "opened in the last N days" and say which one you used.
+- Segments can filter by tag, list, purchase/transaction, product/offer, subscription, temperature status, score, UTM/origin, page or funnel visited, form/quiz answers, webinar attendance, email engagement (opened / clicked / received and did not open, in the last N days or on one campaign; opened at least N of the last M campaigns), lead creation date and lead fields. Email engagement counts people only — bot and scanner opens and clicks are excluded, so it can be lower than a campaign's reported opens — and it is the measured "engaged" audience; temperature is a complementary signal, not a substitute.
+- "Engaged across campaigns" is one filter: `openedCount` (e.g. opened at least 2 of the last 5 campaigns received; "opened the last 3" = `min: 3, lastCampaigns: 3`). Prefer it over "opened in the last N days" when the plan cares about consistency, not recency, and say which one you used.
 - WhatsApp free-form text only reaches contacts inside the 24h customer-care window; everything else needs an approved template. A WhatsApp step is only real if the account has a connected number and approved templates (or the plan includes creating them as a step — see `clickmax-flows`).
 - There is no waitlist entity: a "waitlist" is a tag plus an automation.
 
@@ -76,4 +76,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `a13590fbff81`
+Clickmax skill revision: `2f946ae45dc1`

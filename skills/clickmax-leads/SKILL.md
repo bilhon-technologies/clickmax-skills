@@ -1,6 +1,6 @@
 ---
 name: clickmax-leads
-description: Use when the user wants to create, find, inspect, filter, verify the e-mail of, or compare CRM leads and their commercial context inside Clickmax.
+description: Use when the user wants to create, find, deduplicate, inspect (including a contact's Raio-X), filter, verify the e-mail of, or compare CRM leads and their commercial context inside Clickmax, or to check whether a contact import/export finished.
 ---
 
 ## When this applies
@@ -24,6 +24,8 @@ Not this skill:
 - e-mail status lives on the lead (`emailStatus`, `emailValidatedAt`, `emailInvalidReason`) and comes back in BOTH `mcp__plugin_clickmax_clickmax__leads_search` rows and `mcp__plugin_clickmax_clickmax__leads_get`: `pending` = not verified yet | `valid` | `invalid` (bounces; fix or exclude) | `risky` (deliverable but disposable/catch-all/role address; sending is still allowed, the user decides). Reading it costs nothing — do not verify just to read it
 - `valid` from the automatic background pass only confirms the DOMAIN; `mcp__plugin_clickmax_clickmax__leads_validate_email` asks for a mailbox-level check. Editing a contact e-mail already resets it to `pending` and triggers a check by itself
 - `mcp__plugin_clickmax_clickmax__leads_validate_email` is a PAID provider lookup (1 credit per address), synchronous, limited to 10 calls/min, and repeating it for the same lead within 1 hour just returns the stored verdict. It is for one specific contact, never a base-wide sweep
+- `mcp__plugin_clickmax_clickmax__leads_create` needs `name` + at least one of `email`/`telephone`/`instagram`. Same e-mail = 409; same phone (normalized, BR mobile with/without 9th digit) = NO new contact: the oldest match's id comes back and only `tagIds` are applied to it, the rest of the request is dropped silently; Instagram is not deduplicated on create
+- `mcp__plugin_clickmax_clickmax__leads_xray` money fields are redacted without sales permission (0 / empty / null), so 0 LTV there is not "never bought"; its `summary` is only a cached one (24h, per language), null is normal
 - `suspectedFraud` (+ `suspectedFraudReasons` `email`/`document`) is a read-time warning of card testing, true only when BOTH the e-mail has no relation to the name AND the document is suspect (empty, all zeros, or not 11/14 digits). Nothing is stored or blocked; fixing the e-mail or document clears it. It is a filter field like any other, so it also works in segments
 
 ## Thought process
@@ -39,11 +41,13 @@ Not this skill:
 - Search cohorts with `mcp__plugin_clickmax_clickmax__leads_search`, passing the required `filters` array (`[]` when unfiltered) plus optional paging and sort fields. Use this for discovery, comparison, and broad CRM filtering.
 - Inspect one known lead with `mcp__plugin_clickmax_clickmax__leads_get`, passing the lead id. Treat this as the main enriched lead view.
 - Add commercial context with `mcp__plugin_clickmax_clickmax__leads_payments`, `mcp__plugin_clickmax_clickmax__leads_invoices`, and `mcp__plugin_clickmax_clickmax__leads_common_products` only when payments, billing status, or bought-product patterns materially change the answer. Unlike its siblings, `mcp__plugin_clickmax_clickmax__leads_common_products` requires `filter` (not optional) — always pass a filter, even a broad one.
-- Use `mcp__plugin_clickmax_clickmax__leads_exists_by_email` for duplicate-check questions, not enrichment.
+- Duplicate check before creating: `mcp__plugin_clickmax_clickmax__leads_check_duplicates` with every identifier you have (e-mail, phone, Instagram) → one oldest match per channel. A match = offer to use/update that contact instead of creating. `mcp__plugin_clickmax_clickmax__leads_exists_by_email` only answers yes/no for an e-mail.
+- "Raio-X" / "is this contact ready to buy, when do I reach them": `mcp__plugin_clickmax_clickmax__leads_xray` (intent level + top 3 signals, LTV/ticket/pending, channels with opt-in and last reply, best 2h slot in São Paulo time, 14-day activity). Use `leads_context` instead when full history or pagination is needed.
+- "Did my import/export finish?": `mcp__plugin_clickmax_clickmax__leads_bulk_jobs_history` (newest first; `jobName` `crm.leads.import-csv` / `crm.leads.export-csv`…). Import counts are in `result.meta.details` (created/updated/duplicated); an export's file link is in `result.meta.output.url`. Starting an import needs a file upload in the app — not possible here.
 - E-mail health of a cohort: filter `mcp__plugin_clickmax_clickmax__leads_search` with a filter item on field `emailStatus`, operator `equals`, `valueString` = `invalid` | `risky` | `pending` | `valid` (add `negation: true` for "anything but"). Fraud signals: a filter item on field `suspectedFraud`, operator `equals`, `valueBool` = true. Report the count (`meta.countItens`) before rows.
 - Verify one contact's e-mail with `mcp__plugin_clickmax_clickmax__leads_validate_email`, passing the lead id: it returns the new `emailStatus` right away. A `pending` result after a failure (provider error / inconclusive) is not a verdict — the automatic job retries later; do not retry in a loop. A lead without e-mail cannot be verified.
 - "How many contacts do I have in total?" -> `mcp__plugin_clickmax_clickmax__analytics_resource_counts` (`contacts`, merged contacts excluded) is one cheap call; use `leads_search` `meta.countItens` when the count must respect filters.
-- Create one contact with `mcp__plugin_clickmax_clickmax__leads_create` — only `name` is required; pass `email`/`telephone` when known and check `mcp__plugin_clickmax_clickmax__leads_exists_by_email` first to avoid duplicates. It also accepts `tagIds`/`customFieldValues` inline, so a lead can be created pre-tagged/pre-classified in the SAME call instead of a separate tagging step afterward. It returns the new lead id. To seed a pipeline, create each contact here then add them as opportunity cards via `clickmax-pipelines` (`cards_create` needs the returned lead ids). For several contacts, call `leads_create` once per contact.
+- Create one contact with `mcp__plugin_clickmax_clickmax__leads_create` — `name` plus at least one of `email`/`telephone`/`instagram`; run `mcp__plugin_clickmax_clickmax__leads_check_duplicates` first. It also accepts `tagIds`/`customFieldValues` inline, so a lead can be created pre-tagged/pre-classified in the SAME call instead of a separate tagging step afterward. It returns `{ leadId }` (for a phone match, the EXISTING contact's id). To seed a pipeline, create each contact here then add them as opportunity cards via `clickmax-pipelines` (`cards_create` needs the returned lead ids). For several contacts, call `leads_create` once per contact.
 - Use `mcp__plugin_clickmax_clickmax__leads_origins`, `mcp__plugin_clickmax_clickmax__leads_sub_origins`, and `mcp__plugin_clickmax_clickmax__leads_origins_tree` for source taxonomy and breakdown questions.
 - Use `mcp__plugin_clickmax_clickmax__leads_payments_utm_autocomplete` when the user needs help discovering UTM values before filtering or diagnosing acquisition patterns.
 - Preferred order: cohort question -> `mcp__plugin_clickmax_clickmax__leads_search`; single lead question -> `mcp__plugin_clickmax_clickmax__leads_get` -> supporting projections only if needed; origin or UTM exploration -> origin or UTM helper first -> lead search only when matching contacts are also required.
@@ -61,6 +65,7 @@ Not this skill:
 - Do not guess filter fields or operators.
 - Do not treat lead payments or invoices as if they were the lead record itself.
 - `mcp__plugin_clickmax_clickmax__leads_exists_by_email` answers existence, not ownership or enrichment.
+- Never report a `leads_create` call as "contact created" without checking duplicates: a phone match returns an old contact id silently.
 - Do not present `suspectedFraud` as a verdict on the person: it is a heuristic signal, and a missing document alone does not trigger it.
 
 ## Anti-patterns
@@ -72,4 +77,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `2f946ae45dc1`
+Clickmax skill revision: `58919835e9a0`

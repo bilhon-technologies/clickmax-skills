@@ -29,7 +29,9 @@ Not this skill:
 - files with `origin != upload` and folders with `systemOrigin` = platform-filed: cannot be renamed/moved/trashed from the Drive
 - quota is per workspace (`quotaBytes` from `drive_storage_usage`, never assume a number). Bytes are decimal strings. `level`: ok | warning >=80% | critical >=95% | exceeded. Google-backed files are `externalBytes`, outside quota
 - Drive menu may be hidden in the web app for accounts where it is not released yet; the tools work regardless -> tell the user to contact support, do not try to "enable" it
-- `userId` for members/shares: `user.id` from `mcp__plugin_clickmax_clickmax__drive_spaces_members_list`, or `personId` (NOT the attendant `id`) from `mcp__plugin_clickmax_clickmax__attendants_list`. No tool lists every workspace member; if the person is neither a member nor an attendant, say so instead of guessing
+- `userId` for members/shares/person card: `id` from `mcp__plugin_clickmax_clickmax__workspace_members_list` (every person of the workspace; find by `search` = name or e-mail), `user.id` from `mcp__plugin_clickmax_clickmax__drive_spaces_members_list`, or `personId` (NOT the attendant `id`) from `mcp__plugin_clickmax_clickmax__attendants_list`. Shares and space membership need an `active` person; a `pending` invitation cannot receive access yet
+- Google-backed space health = `connectionHealth` on space rows: `connected` | `read_only` (opens/downloads, but folder creation and uploads fail) | `disconnected` (connection gone or authorization revoked). Fixing either = the person who connected Google reconnects in the web app. A folder created in a Google-backed space is created in Google first; a Google refusal saves nothing in Clickmax
+- person card numbers (`mcp__plugin_clickmax_clickmax__drive_people_get`) are what the CALLER can see, never a workspace total of that person
 
 ## Thought process
 
@@ -43,6 +45,7 @@ Not this skill:
 - Overview / discovery: `mcp__plugin_clickmax_clickmax__drive_overview` returns spaces (with `myRole`), counters, storage and the 6 latest recents in one call. Use `mcp__plugin_clickmax_clickmax__drive_spaces_list` when only spaces are needed.
 - Find: `mcp__plugin_clickmax_clickmax__drive_search` (`q`, optional `type`, `ownerId`, `spaceId`, `from`/`to`). Each row has `location` (space + folder path) to tell the user where it lives. `mcp__plugin_clickmax_clickmax__drive_search` and `mcp__plugin_clickmax_clickmax__drive_favorites_list` are paginated (`page`/`perPage`, see `meta`): before concluding an item does not exist, picking "the" match or validating a result, read every page `meta` reports (finding one candidate is not a reason to stop); page 1 alone is enough only for a preview the user asked for, and then say more pages exist. For "what did I use lately" -> `mcp__plugin_clickmax_clickmax__drive_recents_list` (not paginated, `limit` up to 100); starred -> `mcp__plugin_clickmax_clickmax__drive_favorites_list`.
 - Navigate: `mcp__plugin_clickmax_clickmax__drive_files_browse` with `spaceId` (+ `folderId`; omit for the root). For an item that came through a share, take `location.spaceId` from the share/search row. `mcp__plugin_clickmax_clickmax__drive_folders_path` = breadcrumb.
+- Before building a tree in a Google-backed space, read `connectionHealth` (`mcp__plugin_clickmax_clickmax__drive_spaces_get`): anything other than `connected` -> tell the user to reconnect Google first instead of attempting creates.
 - Build a tree top-down: `mcp__plugin_clickmax_clickmax__drive_folders_create` with `spaceId` and no `parentId` for level 1, then pass each returned `id` as `parentId`. Never fire sibling creates before checking existing folders.
 - Organize: `mcp__plugin_clickmax_clickmax__drive_files_update` / `mcp__plugin_clickmax_clickmax__drive_folders_update` with `name` and/or `folderId` / `parentId` (`null` = root, omitted = unchanged).
 - Share one item: resolve `userId` -> `mcp__plugin_clickmax_clickmax__drive_shares_create` with exactly one of `folderId` / `fileId` and the role. Check the result with `mcp__plugin_clickmax_clickmax__drive_items_access`. Revoke with `mcp__plugin_clickmax_clickmax__drive_shares_revoke` (`shareId`; only entries with `inherited = false`). Inherited access is changed in the space (`mcp__plugin_clickmax_clickmax__drive_spaces_members_update` / `mcp__plugin_clickmax_clickmax__drive_spaces_members_remove`) or in the parent share.
@@ -51,6 +54,7 @@ Not this skill:
 - Free space: `mcp__plugin_clickmax_clickmax__drive_storage_usage` -> `mcp__plugin_clickmax_clickmax__drive_trash_list` -> show what goes (name, size, deleted by/when) -> confirmation -> `mcp__plugin_clickmax_clickmax__drive_trash_purge` per item, or `mcp__plugin_clickmax_clickmax__drive_trash_empty` only when the user wants everything they can delete gone. Trashing alone frees nothing.
 - Link for the user to open a file: `mcp__plugin_clickmax_clickmax__drive_files_download_url` (300 s, credential-like: hand it only to the requester, never store it). It is not a way to share with others.
 - Google Drive: `mcp__plugin_clickmax_clickmax__drive_spaces_google_capabilities` (own connection) or `mcp__plugin_clickmax_clickmax__drive_spaces_google_connections` (all) -> only a `canWrite` connection and only an EMPTY team space (even trashed items count) -> `mcp__plugin_clickmax_clickmax__drive_spaces_connect_google`. One-way; connecting/reconnecting the Google account itself happens in the web app.
+- "What does Ana have in the Drive?": resolve her `userId` -> `mcp__plugin_clickmax_clickmax__drive_people_get` (role, totals, team spaces in common, 4 newest files); for the full list, `mcp__plugin_clickmax_clickmax__drive_search` with `ownerId`.
 - Comments: `mcp__plugin_clickmax_clickmax__drive_comments_list` / `mcp__plugin_clickmax_clickmax__drive_comments_add` (commenter+). Activity of an item: `mcp__plugin_clickmax_clickmax__drive_items_activity` (not per-person views/downloads).
 
 ## Report
@@ -81,4 +85,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `2f946ae45dc1`
+Clickmax skill revision: `58919835e9a0`

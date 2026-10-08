@@ -13,6 +13,7 @@ Not this skill:
 - writing a custom-field value on many opportunities -> `clickmax-pipelines`
 - form/quiz questions that fill fields -> `clickmax-forms-quizzes`
 - segmenting contacts by a custom field -> `clickmax-list-segments`
+- fields of a CUSTOM OBJECT (Imóveis, Contratos…; `entityType = objects` + `objectId`) and their records -> `clickmax-custom-objects`
 
 ## Key assumptions
 
@@ -68,4 +69,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `2f946ae45dc1`
+Clickmax skill revision: `58919835e9a0`

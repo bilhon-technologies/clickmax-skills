@@ -28,7 +28,8 @@ Not this skill:
 |Blast radius|any settings/rule save re-scores the whole base asynchronously (seconds to minutes); the write returns the saved config, not the new numbers|
 |Automations|a Temperature settings save can make contacts change band and fire temperature-triggered automations in bulk; a Score settings/rule re-score fires nothing|
 |Permissions|reads = any role; writes = workspace admin/editor or coordinator attendant|
-|Not exposed|the six preset models are read-only; no tool enumerates the event catalog (names come from `temperature_lead_explain`); the settings-screen live preview is browser-side only|
+|Previews|model switch → `temperature_model_impact` (bands now vs after, ≤400 active contacts re-scored then projected, inactive exact, no hysteresis, uses the TARGET model's own numbers); Score rule → `lead_score_rules_preview` with `points` (+ `ruleId` when editing) = net tier delta from the stored, already clamped Score — approximations, the re-score after saving is the truth|
+|Not exposed|the six preset models are read-only; no tool enumerates the event catalog (names come from `temperature_lead_explain`); the per-slider live preview of the settings screen is browser-side only|
 
 ## Thought process
 
@@ -41,10 +42,12 @@ Not this skill:
 
 - **Why this contact?** Resolve the contact id (`clickmax-leads`), then call `mcp__plugin_clickmax_clickmax__temperature_lead_explain` for Temperature and `mcp__plugin_clickmax_clickmax__lead_score_lead_explain` for Score. Temperature: compare `stored` vs `live` (they differ because R/F decay and the nightly pass only saves 3+ point drifts), name the top events by `weightedPoints`, and offer `missingSignals` as what would raise it. Score: list rules by `status`; `disabled` shows what would have matched, `clampedBy` says if the floor/ceiling hid part of the sum.
 - **State of the base.** `mcp__plugin_clickmax_clickmax__lead_indicators_metrics` with `filters = []` (or a segment-style audience) gives bands, tiers, the matrix and `priority` (hot AND high Score) in one call. `mcp__plugin_clickmax_clickmax__lead_score_distribution` is the Score-only cut. `score.enabled = false` explains an all-`none` Score column.
+- **Switch model ("what if").** `mcp__plugin_clickmax_clickmax__temperature_model_impact` with the candidate `modelId` → compare `current` vs `next` per band (say "estimated" when `estimated: true`). The preview assumes the target model's own thresholds/channels/window/half-lives; the switch only matches it if `temperature_settings_update` sends those same numbers with the new `activeModelId`.
 - **Tune Temperature.** `mcp__plugin_clickmax_clickmax__temperature_settings_get` → change only what was asked → `mcp__plugin_clickmax_clickmax__temperature_settings_update` with EVERY scalar field resent. To adopt a preset wholesale, copy its numbers from `builtInModels` into the same call together with `activeModelId`. To change one event weight, resend the whole stored `eventWeights` with that entry edited (`{}` clears all overrides; omitting the field keeps them).
 - **Saved calibration ("my model").** `mcp__plugin_clickmax_clickmax__temperature_custom_models_create` stores a snapshot only; it takes effect after `temperature_settings_update` with its id + its numbers. Update/delete affect just the snapshot; deleting the ACTIVE model is refused, and max 20 per workspace.
-- **Set up Score.** `mcp__plugin_clickmax_clickmax__lead_score_settings_get` → for each rule: `mcp__plugin_clickmax_clickmax__lead_score_rules_preview` (size it) → `mcp__plugin_clickmax_clickmax__lead_score_rules_create` → finally `mcp__plugin_clickmax_clickmax__lead_score_settings_update` with `enabled: true` if it is still off (confirm `thresholdHigh` > `thresholdMedium` and ≤ `maxScore`).
-- **Edit/disable a rule.** `mcp__plugin_clickmax_clickmax__lead_score_rules_update` is a full replace: omitted `enabled` becomes true, `description` null, `sortOrder` 0, criteria replaced. Read the rule first and resend everything that should stay. Prefer `enabled: false` over `mcp__plugin_clickmax_clickmax__lead_score_rules_delete`, which is permanent.
+- **Set up Score.** `mcp__plugin_clickmax_clickmax__lead_score_settings_get` → for each rule: `mcp__plugin_clickmax_clickmax__lead_score_rules_preview` with `points` (size + tier shift + 3 examples) → `mcp__plugin_clickmax_clickmax__lead_score_rules_create` → finally `mcp__plugin_clickmax_clickmax__lead_score_settings_update` with `enabled: true` if it is still off (confirm `thresholdHigh` > `thresholdMedium` and ≤ `maxScore`).
+- **Pause/resume a rule.** `mcp__plugin_clickmax_clickmax__lead_score_rules_set_enabled` flips only `enabled` (re-scores the base). Before switching ON, preview with the rule's `filters` + `points`. Prefer it over `mcp__plugin_clickmax_clickmax__lead_score_rules_delete`, which is permanent.
+- **Edit a rule.** Preview the change with `mcp__plugin_clickmax_clickmax__lead_score_rules_preview` passing new `filters`, `points` AND the `ruleId` (so today's contribution is subtracted). `mcp__plugin_clickmax_clickmax__lead_score_rules_update` is a full replace: omitted `enabled` becomes true, `description` null, `sortOrder` 0, criteria replaced. Read the rule first and resend everything that should stay.
 - Nudging one contact's Temperature from an automation is the flow action "Warm up or cool down contact" (signal: light warm, warm, cool, strong cool) → `clickmax-flows`; it records a signal that fades like any activity, it does not write a number.
 
 ## Report
@@ -52,6 +55,7 @@ Not this skill:
 - Lead with the indicator (Temperature or Score) and the job: explanation, base audit, or configuration change.
 - Explanation: the number and band first, then at most 5 contributing events/rules ordered by impact (`+N more`), then what would move it. Say "not calculated yet" for null, never 0.
 - Base audit: totals per band/tier, the `priority` count, then the matrix cells with the largest counts.
+- Preview: bands/tiers before → after (or the net delta per tier) plus the examples; label it an estimate.
 - Configuration change: the before → after of each changed field, then the blast-radius note (whole base re-scored, may take minutes; automations may fire for Temperature). Never quote new contact counts before a re-read confirms them.
 - Follow-up mutations are opt-in only.
 
@@ -67,10 +71,11 @@ Not this skill:
 
 - Sending a partial settings body or a partial rule update (both are full replaces).
 - Assuming a preset switch loaded that preset's thresholds and channel weights.
-- Deleting a rule to pause it.
+- Deleting a rule, or resending it whole through update, just to pause it.
+- Switching model without sending the target model's numbers, then expecting the previewed bands.
 - Creating rules and reporting success while the Score is still disabled.
 - Reporting a re-scored count right after the write, before the background job finished.
 
 ---
 
-Clickmax skill revision: `2f946ae45dc1`
+Clickmax skill revision: `58919835e9a0`

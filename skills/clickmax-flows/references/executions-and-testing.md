@@ -16,6 +16,8 @@ Execution = one contact's run through one flow. Tool contracts (filters, fields,
 |Redo a failed run / all runs of one error|`flows_execution_retry` / `flows_executions_retry_by_error`|
 |Stop one run|`flows_execution_cancel`|
 |Stop new contacts entering|`flows_close` (not a cancel)|
+|Only the executions of one manual run|`flows_executions_list` with `runId` — runs themselves: [manual runs and cadences](runs-and-cadences.md)|
+|What did the AI SDR step find out / why did it exit?|`flows_execution_get` → that step's `aiSdr`|
 
 ## Diagnose a failure
 

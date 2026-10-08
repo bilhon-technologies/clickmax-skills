@@ -151,7 +151,7 @@ or a constraint `field` name (`offerId`, `projectId`, `tagId`, …); those are i
 
 ### Manual start (pseudo-event — valid `eventName` value but not a real AMQP event)
 
-- `manual` — "Início manual": the flow reacts to nothing; a published flow is run on demand ("Executar" in the editor) for an audience chosen at that moment (contacts, list, tag or segment), now or scheduled. No scopes/config on the trigger — the audience belongs to the run, not the trigger. (Replaced the old `manual`+listId / `manual-tag` / `scheduled` / `scheduled-tag` mass-send triggers.)
+- `manual` — "Início manual": the flow reacts to nothing; a published flow is run on demand ("Executar" in the editor, `flows_run_start` here) for an audience chosen at that moment (contacts, list, tag or segment), now or scheduled — see [manual runs](runs-and-cadences.md). No scopes/config on the trigger — the audience belongs to the run, not the trigger. (Replaced the old `manual`+listId / `manual-tag` / `scheduled` / `scheduled-tag` mass-send triggers.)
 
 ## Notes
 

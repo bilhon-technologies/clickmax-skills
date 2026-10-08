@@ -11,7 +11,8 @@ Not this skill:
 
 - lead search and identity -> `clickmax-leads`
 - manual tagging or segment/list membership -> `clickmax-tags` / `clickmax-list-segments`
-- building or reading a saved Insights dashboard of opportunities BI -> `clickmax-insights-dashboards`
+- building or reading a saved Insights dashboard (opportunities, sales, messaging…) -> `clickmax-insights-dashboards`
+- follow-up tasks and multi-step follow-up cadences on a card -> `clickmax-activities`
 
 ## Key assumptions
 
@@ -66,6 +67,8 @@ Not this skill:
 
 - Cross-pipeline mass move: `mcp__plugin_clickmax_clickmax__opportunities_bulk_transfer` with `targetPipelineId` + `targetStageId`; say beforehand what happens to roles and commissions, it is not undoable by transferring back.
 
+- Brief an attendant before a call ("Raio-X da oportunidade") with `mcp__plugin_clickmax_clickmax__cards_insights`: deal snapshot, linked contacts with Temperature/Score, last 8 timeline entries (+ total). Its purchase numbers are the PRIMARY contact's only (zeros without sales permission); purchases list, funnels, messaging and members area are not there — use `leads_context` / `leads_xray` on the contact (`clickmax-leads`).
+
 - Inspect card behavior with `mcp__plugin_clickmax_clickmax__cards_get` for one card, `mcp__plugin_clickmax_clickmax__cards_list_by_lead` for a lead's pipeline presence, `mcp__plugin_clickmax_clickmax__cards_history` for move/change history, and `mcp__plugin_clickmax_clickmax__cards_at_risk` for cards currently flagged as operational risk.
 
 - Update structure only after resolving the exact target object: to add a stage to an EXISTING pipeline, use `mcp__plugin_clickmax_clickmax__stages_create` with `id` = that pipeline's id (not a `pipelineId` field, and not the new stage's id — the stage has no id yet); `mcp__plugin_clickmax_clickmax__stages_update`/`mcp__plugin_clickmax_clickmax__stages_delete` instead take `id` = the STAGE's own id, since those two target one stage directly. Use `mcp__plugin_clickmax_clickmax__stages_reorder` (`id` = pipeline id) to resequence. Use `mcp__plugin_clickmax_clickmax__pipelines_create`, `mcp__plugin_clickmax_clickmax__pipelines_update`, or `mcp__plugin_clickmax_clickmax__pipelines_delete` for pipeline changes.
@@ -89,7 +92,7 @@ Not this skill:
 - Importing from lists/segments (and add-to-pipeline by default) skips contacts that already have a card in the pipeline, whatever its status.
 - `opportunities_bulk_assign_attendants` REPLACES roles and drops their commissions; re-set commission per card with `cards_attendant_commission_update`.
 - A sync/async bulk answer for `opportunities_bulk_create_list` still carries the `listId` of a list that may be only partly filled until the job ends.
-- If `leads_create` (or any write here) returns an empty/unexpected result for a contact you need the id of, do not silently skip it or fabricate an id — call `leads_exists_by_email`/`leads_search` (see `clickmax-leads`) to recover the real id before using it in `cards_create`, or surface the failure instead of creating a card with no lead.
+- If `leads_create` (or any write here) returns an empty/unexpected result for a contact you need the id of, do not silently skip it or fabricate an id — call `leads_check_duplicates`/`leads_search` (see `clickmax-leads`) to recover the real id before using it in `cards_create`, or surface the failure instead of creating a card with no lead.
 
 ## Anti-patterns
 
@@ -99,4 +102,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `2f946ae45dc1`
+Clickmax skill revision: `58919835e9a0`

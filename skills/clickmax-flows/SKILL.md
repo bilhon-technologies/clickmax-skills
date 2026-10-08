@@ -1,11 +1,11 @@
 ---
 name: clickmax-flows
-description: Use when the user wants to create, inspect, change, validate, test, debug (executions, failures, retry), or activate/archive a Clickmax automation flow and its step graph — including any request to send/create an email (or SMS/WhatsApp) message to leads, even one mentioning a checkout button or a custom visual/dark style (the flow email step's own template options, never a page).
+description: Use when the user wants to create, inspect, change, validate, test, debug (executions, failures, retry), run for a list/tag/segment (manual runs), or activate/archive a Clickmax automation flow and its step graph, or asks which automation message a contact is on — including any request to send/create an email (or SMS/WhatsApp) message to leads, even one mentioning a checkout button or a custom visual/dark style (the flow email step's own template options, never a page).
 ---
 
 ## When this applies
 
-Use this skill when the user wants to operate a Clickmax automation flow: list/find one, inspect its graph, create/edit/connect/delete steps, configure entry events, validate, test it with a real contact, investigate its executions (who is stuck/failed and why), retry or stop runs, see which other automations are linked to a tag/stage/message, or change lifecycle mode. A one-off "create/send an email to my leads" request is this skill too — build a minimal flow with a `trigger` + `flows_send_email` step. Do NOT reinterpret it as a landing page: a checkout button, dark theme, or urgency tone the user asks for are the email template's CTA/colors/font (`flows_send_email`'s style params), never page markup.
+Use this skill when the user wants to operate a Clickmax automation flow: list/find one, inspect its graph, create/edit/connect/delete steps, configure entry events, validate, test it with a real contact, investigate its executions (who is stuck/failed and why), retry or stop runs, run a published flow for a list/tag/segment/contacts now or on a date (manual run) and follow or cancel that run, answer which message of which automation a contact is on and what comes next, see which other automations are linked to a tag/stage/message, or change lifecycle mode. A one-off "create/send an email to my leads" request is this skill too — build a minimal flow with a `trigger` + `flows_send_email` step. Do NOT reinterpret it as a landing page: a checkout button, dark theme, or urgency tone the user asks for are the email template's CTA/colors/font (`flows_send_email`'s style params), never page markup.
 
 Not this skill:
 
@@ -34,6 +34,7 @@ Not this skill:
 - Read [WhatsApp templates](references/whatsapp-templates.md) before writing a WhatsApp step — free-form text only reaches contacts inside the 24h window, so every other trigger needs an approved template.
 - Read [trigger events](references/trigger-events.md) when mapping user intent to flow entry events + constraints.
 - Read [executions, testing and links](references/executions-and-testing.md) before running a test, retrying/stopping executions, diagnosing a failed or stuck run, or answering "which automations react to / feed this tag, stage or message".
+- Read [manual runs and cadences](references/runs-and-cadences.md) before sending a published flow to a list/tag/segment/contacts, scheduling or cancelling that send, or answering where a contact is in an automation's messages.
 - Read [examples](references/examples.md) when you need a concrete build/branch/inspect pattern.
 
 ## Thought process
@@ -46,6 +47,7 @@ Not this skill:
 6. Activate only after validation passes and the user explicitly wants the flow running on real contacts.
 7. To prove a draft works, run it once for the user's own contact (`flows_test_run_start`) instead of activating: a test is a REAL run for one contact, activation opens the flow to everyone.
 8. To investigate what happened, go list (`flows_executions_list`) → one run (`flows_execution_get`) → fix the cause → only then retry.
+9. "Send this automation to list/tag/segment X" on a published flow = a manual run: `flows_run_estimate` → confirm audience (and cooldown choice) with the user → `flows_run_start` → follow with `flows_runs_list`. Never activate a draft just to reach a list, and never build a new flow for a one-off send when a published one already does it.
 
 ## Execute guide
 
@@ -104,6 +106,7 @@ Not this skill:
 - Message personalization uses single-brace lead tokens — `{name}`, `{email}`, `{telephone}` — never `{{name}}` or `{{lead.name}}`; an unknown/misformatted key is delivered to the lead literally. Use them as fact, do not ask the user which format applies (GupShup/WhatsApp templates are the only exception: positional `{{...}}` `paramMapping`). See [step types](references/step-types.md).
 - Never echo a raw UUID to the user. Step inputs store tags/lists/products by id; resolve them to names via the `flows3.builder` `labels` map (or the matching `clickmax-tags`/list/product lookup tool when an id is absent from `labels`). A UUID in your reply is a bug — report "the tag **Black Friday**", not its id.
 - `flows_test_run_start` is NOT a dry run: it sends real messages, applies tags, spends credits and counts in the flow's metrics. Only with the user's explicit go-ahead, naming the recipient; default to the user's own contact
+- `flows_run_start` is a REAL mass send to the whole audience; cancelling the run (`flows_run_cancel`) only stops what has not gone out — contacts already reached keep going through the flow. Confirm the audience size before starting and never start a second run to "retry" a run that is still `running`
 - `flows_execution_retry` / `flows_executions_retry_by_error` re-run the failed node INCLUDING its side effect (the message is sent again, possibly to many contacts); retrying without fixing the cause fails again. `flows_execution_cancel` is permanent for that run
 - Never wire a step's output (a `connect` op, `flows_step_connect`, or an inline `target`) back to the flow's `trigger` step id. The trigger is the entry point only; any step pointing back at it makes the worker reprocess the automation from the start forever (infinite loop). The backend rejects this with a 400 — treat that error as confirmation the graph you were building was wrong, not something to retry.
 
@@ -124,9 +127,10 @@ Not this skill:
 - Hand-setting a flow's `funnelId` (or hand-crafting funnel triggers) to "link" it to a funnel — an embedded automation is linked from the funnel's `workflow` node via `funnels_workflow_flow_set` (funnels skill); `funnelId` alone leaves an orphan (badge shows, funnel canvas empty)
 - Connecting any step's output back to the `trigger` step id — infinite loop, always rejected by the backend
 - Presenting a test run as a simulation, or retrying/stopping executions without saying how many contacts are affected
+- Starting a manual run without first showing the user the audience size from `flows_run_estimate`, or quoting its cost as exact
 - Retrying failures in bulk before reading the cause (`flows_execution_get`) and fixing it
 - Answering "which automations use this tag" from memory instead of `flows_link_targets_list` / `flows_link_sources_list`
 
 ---
 
-Clickmax skill revision: `2f946ae45dc1`
+Clickmax skill revision: `58919835e9a0`

@@ -14,9 +14,9 @@
 ## Lifecycle tools
 
 - `flows_get_mode` = cheap status check before planning edits or activation
-- `flows_activate` = starts processing real contacts; validate first and ask before calling
-- `flows_close` = pause a running flow without deleting it (also the way to make an `active` flow editable)
-- `flows_archive` = retire the flow from active use
+- `flows_activate` = starts processing real contacts; validate first and ask before calling. Also the resume of a paused (`closed`) flow, managed ones included; releases messages held during the pause. A "Início manual" flow only goes live: nothing is sent until a manual run ([manual runs](runs-and-cadences.md))
+- `flows_close` = pause an `active` flow without deleting it (also the way to make it editable); cancels its live manual run, in-progress executions keep going with their messages held until resume
+- `flows_archive` = retire the flow from active use (no unarchive; cancels the live manual run)
 - `flows_delete` = permanent destructive delete of the flow and every step
 - Per-contact runs (not lifecycle): `flows_test_run_start`, `flows_execution_retry`, `flows_executions_retry_by_error` = real side effects on real contacts (need consent, state the count); `flows_execution_cancel` = permanent for that run. See [executions and testing](executions-and-testing.md)
 

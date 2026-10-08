@@ -1,11 +1,11 @@
 ---
 name: clickmax-insights-dashboards
-description: Use when the user wants to build, change, or read a saved Insights dashboard of opportunities BI in Clickmax — assembling widgets, starting from a template, or asking for the numbers of a dashboard they already have.
+description: Use when the user wants to build, change, or read a saved Insights dashboard in Clickmax (opportunities, contacts, activities, meetings, sales, subscriptions, affiliates, visitors, automations, campaigns, messages, live chat) — assembling widgets, starting from a template, asking for the numbers of a dashboard they already have, or opening the records behind a widget number.
 ---
 
 ## When this applies
 
-Use this skill to create, edit or read a **saved** Insights dashboard: assembling a board of opportunity/activity/lead widgets, starting from a ready-made template, changing a widget's chart or breakdown, reordering the grid, or answering "what do the numbers on my dashboard say".
+Use this skill to create, edit or read a **saved** Insights dashboard: assembling a board of widgets over the CRM (opportunity, activity, lead, meeting) or other modules (sale, subscription, sales/external recovery, external sale, affiliate, visitor, flow, broadcast, message, live chat), starting from a ready-made template, changing a widget's chart or breakdown, reordering the grid, or answering "what do the numbers on my dashboard say".
 
 Not this skill:
 
@@ -37,13 +37,15 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
   |number comparisons|`valueNumber`|number|
   |boolean|`valueBool`|boolean|
 
-- Caps: **25 dashboards** per workspace, **24 widgets** per dashboard — and a section title band spends one of those 24. Both refuse with a permission-style error, not a validation error.
+- Caps: **25 dashboards** per workspace, **40 widgets** per dashboard — and a section title band spends one of those 40. Both refuse with a permission-style error, not a validation error.
 - Filter caps (validation errors): each `filters` list ≤ **100** items (`origins` strings ≤ 255 chars) | `conditions` ≤ **200** nodes, nested ≤ **20** group levels. Filter by the ids that matter instead of pasting the whole workspace.
 - Layout is part of the artifact, not decoration: `size` is `{w,h}` on a **12-column** grid (`w` 3..12, `h` 1..8) and a section title band is a widget entry carrying `heading` instead of a chart. Omit `size` and the card falls back to the default for its `chartType` (KPI 3×2, pie/ranking/list 4×4, bar/line 6×4, table 12×5) — which is why a board of three KPIs assembled one by one leaves a quarter of the screen empty. `compose` closes those rows for you.
 - Result units are not uniform: monetary measures come back in **cents**, `duration`/`stagetime` in **days**, `conversion`/`completion` as a **0..1 rate**. Convert before showing money or percentages.
 - Running a dashboard is **stateless** — the config does not have to be saved. Use it to preview a board before creating it.
 - A widget whose selection cannot run **degrades to an empty result** instead of failing the call — and says so: `status: 'error'` on that widget. Trust the field, never the zero: an all-zero widget with `status: 'ok'` is a real "no results for this cut".
-- Deleting a dashboard removes only the saved view; opportunity data is untouched.
+- Deleting a dashboard removes only the saved view; the underlying data is untouched.
+- Non-CRM widgets need the module's read permission (sales for sale/subscription/recovery/external/affiliate, contacts for visitor, flows, broadcasts for broadcast/message, conversations for live chat). Without it the run returns that widget with `status: 'forbidden'` and an empty result — no access, not "no data". Campaign/send and live-chat numbers are also limited to the connected accounts the user can access.
+- Records behind a number (`analytics_records_drilldown`) exist ONLY for non-CRM entities; CRM entities, the "Outros" slice and unsupported metrics answer 422 `DRILLDOWN_NOT_SUPPORTED`.
 - The shared period must be coherent: a `dateFrom`/`dateTo` that does not parse, or a start after the end, is a 400 on write (`create`/`compose`/`settings_update`). `null` on one end = open window on that side.
 - MEETING widgets (`entity: meeting`) have two people per meeting: who CONDUCTS it (`segmentBy: attendant`) and who BOOKED it (`segmentBy: scheduler`; public booking, automations and calendar sync have no booker and land in an unnamed bucket). `segmentBy: appointmentSchedule` groups by the public agenda the meeting was booked on (no agenda = "no record"). Read the catalog `meetings` group before composing — it already has: who-books × who-conducts table (`meetingHandoff`: booked, for self / for others, held, no-show, still scheduled, show rate), show rate by conductor and by booker, and four self-booking cards. Prefer these presets over hand-built selections.
 - SELF BOOKING = `selfBookedOnly: true` on a meeting widget: only meetings the contact booked alone on the public agenda. It rides on presets (`meetings-self-booked-*`) and is accepted in a raw `widget` selection.
@@ -78,6 +80,8 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 
 - **Read the numbers** with `mcp__plugin_clickmax_clickmax__analytics_dashboards_run`, passing a `config` — take it from `mcp__plugin_clickmax_clickmax__analytics_dashboards_list` for a saved board, or pass a candidate config to preview one before saving. Each widget comes back with `buckets`, `series` and a `summary.total`.
 
+- **Records behind a number** (non-CRM widgets): `mcp__plugin_clickmax_clickmax__analytics_records_drilldown` with `config` = the widget fields + `filters` = the dashboard shared filters (widget scope wins: `scopeAttendantIds` → `attendantIds`, stage widget `pipelineId` → `pipelineIds`) + the dashboard `conditions`; `bucketKey` = the clicked point's `bucketKey` and `segmentKey` = its series `key`, verbatim from the run; neither = the whole headline set. Page with `page`/`perPage` (≤200, default 50); `meta.countItens` should match the number — if it does not, the config differs from the run's.
+
 - **Before creating**, check `meta.count` against `meta.limit` from `mcp__plugin_clickmax_clickmax__analytics_dashboards_list` when the workspace looks crowded, so you can offer to delete one instead of hitting the cap mid-flow.
 
 ## Report
@@ -85,6 +89,8 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 - After creating: name the dashboard, say which template (if any) it came from, and list the sections and the widgets each one has — do not dump the raw config or the sizes.
 - After a widget edit: state what changed on which widget, not the whole board.
 - When reporting numbers: convert cents to currency, rates to percentages, and durations to days before showing them. Lead with the takeaway, then the per-widget values.
+- A widget with `status: 'forbidden'`: say the user lacks access to that module's data; never report its zero.
+- Drill-down rows: count first, then up to 10 rows (title, date, value in currency when `money`, status) and `+N more`.
 - A widget with `status: 'error'`: say the selection failed and offer a catalog alternative — never report its zero as a business result. Zeros with `status: 'ok'` are real, even next to populated siblings.
 - When a widget lists `ignoredFilters`, say which cut did not reach it ("the period does not apply to overdue activities — it is a snapshot of now"). Silently presenting the number as filtered is how the user ends up trusting the wrong figure.
 - Deleting a dashboard is opt-in only; confirm before doing it.
@@ -115,4 +121,4 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 
 ---
 
-Clickmax skill revision: `2f946ae45dc1`
+Clickmax skill revision: `58919835e9a0`

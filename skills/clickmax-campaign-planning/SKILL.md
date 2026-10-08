@@ -59,7 +59,7 @@ Not this skill:
 
 - Do not invent tag names, list names or past results. If a needed tag does not exist, list it under "a criar".
 - Do not promise features the account does not have (a single "opened N of the last M campaigns" filter, waitlist entity, free-form WhatsApp outside the 24h window).
-- A saved segment with a day window is recalculated about once a day, not live: say so when a phase sends to it, and re-measure with `mcp__plugin_clickmax_clickmax__segments_preview_count` right before the send.
+- A saved segment with a day window is recalculated about once a day on screen; a broadcast to it recalculates the audience when created or scheduled. A phase scheduled days ahead freezes the audience at scheduling time: say so, and prefer scheduling close to the send date.
 - Email engagement history before late September 2026 undercounts opens (older data kept only the first open, often a bot's): on long windows, call the number a floor.
 - Do not state a campaign open rate from `mcp__plugin_clickmax_clickmax__messages_metrics`, or a channel rate from one campaign.
 - Tag counts overlap: never add tag counts together — measure the combination with `mcp__plugin_clickmax_clickmax__segments_preview_count`; only if that call fails, show each tag's own count and say the combination was not measured.
@@ -76,4 +76,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `fe9bb7841acc`
+Clickmax skill revision: `5bd656fa7f7c`

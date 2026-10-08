@@ -102,4 +102,4 @@ If a `mcp__plugin_clickmax_clickmax__forms_step_upsert` is rejected, fix that on
 
 ---
 
-Clickmax skill revision: `5bd656fa7f7c`
+Clickmax skill revision: `a13590fbff81`

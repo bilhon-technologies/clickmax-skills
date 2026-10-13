@@ -37,7 +37,7 @@ Not this skill:
 ## Execute guide
 
 1. `mcp__plugin_clickmax_clickmax__account_snapshot` with `windowDays = 90`. Read `unavailable` first — a source listed there was not read; say so, never fill it in. `emailCampaigns.baseline: null` with no `broadcasts` in `unavailable` = the account never sent an email campaign. `emailCampaigns.baseline` covers every email campaign the account ever sent — cite `campaigns` as the sample size.
-2. Brand voice is already in the snapshot as `brand`; call `mcp__plugin_clickmax_clickmax__brand_get` alone only to reread it later. If `brand` is null or its `status` is `draft`, ask one question about tone (or offer to set up the brand) before writing copy angles.
+2. Brand voice is already in the snapshot as `brand`. When `brandChoices` is not empty the workspace has more than one brand: before anything about tone, ask which brand this plan uses (options = the brand names, default one marked "padrão"), then `mcp__plugin_clickmax_clickmax__brand_get` with that `id` — never pick one yourself, not even by matching the product name. Otherwise call `mcp__plugin_clickmax_clickmax__brand_get` alone only to reread it later. Use every filled field of the brand in use, even when `status` is `draft`. Only when `brand` is null or `brand.voiceTone` is null, ask about tone (options: formal, professional, casual, playful, bold) before writing copy angles, and ALWAYS add a second question right after it in the same form: "Salvar esse tom na marca da conta, para os próximos planos já usarem?" with options yes / no. Never ask the tone without that save question. A "yes" is the consent for step 10 — save right after the answers arrive, before writing the plan.
 3. If `emailCampaigns.baseline.campaigns` is below 3, also use `mcp__plugin_clickmax_clickmax__messages_metrics` for the same window to get an automation-inclusive email open rate, and label it as such. Need more than the 10 campaigns in `emailCampaigns.recent`? Use `mcp__plugin_clickmax_clickmax__broadcasts_list` with `channel = email`.
 4. For the best past campaign, use `mcp__plugin_clickmax_clickmax__broadcasts_insights` to extract the best send hours (`opensByHour`) and the most-clicked link (`topLinks`) — reuse them as scheduling and CTA evidence.
 5. Resolve audiences: match the user's words to `tags` from the snapshot (top 15 by size; `mcp__plugin_clickmax_clickmax__tags_list` / `mcp__plugin_clickmax_clickmax__lists_list` for the full set); measure each phase's audience with `mcp__plugin_clickmax_clickmax__segments_preview_count`. Combined audience (tag A AND tag B, tag AND temperature) = one top-level filter item per condition, each with a short label `id` ("a", "b"), `valueUuid` = the real tag id, temperature via `temperatureScore` + `valueNumber` (0-100; hot = `greaterThanOrEqual` the account cutoff, default 60). Engaged audience = `emailEngagement` item with `valueString` `{"engagement":"opened","withinDays":<N>}` (format and recipes in the `segments_preview_count` description; inactive = the same item negated). Report the measured count, not an estimate.
@@ -45,6 +45,7 @@ Not this skill:
 7. Product: the user's product, else `topProducts` from the snapshot or `mcp__plugin_clickmax_clickmax__insights_top_offers`.
 8. Write the full plan with [the plan template](references/plan-template.md) as the reply text. The user sees only the reply text: a plan that stays in your reasoning was never delivered.
 9. Only after the plan is written, offer concrete next actions: create the phase-1 tags and segment, build the phase-1 automation, draft the first email in the brand voice. Only execute after the user says yes.
+10. Saving the brand voice (only after the user agreed — the save question of step 2, or a later "salva o tom"): `mcp__plugin_clickmax_clickmax__brand_save_draft` with `voiceTone` plus anything the user already stated in this conversation (`businessName`, `businessAudience`, `businessUsp`, words to prefer/avoid in `voiceVocabulary`) — never invent fields. Pass the `id` of the brand in use (the one the user chose, else the snapshot's `brand`); omit `id` only when `brand` was null (the brand is created as the account default). The brand stays a draft, which is enough for the next plan to use the tone. Publish with `mcp__plugin_clickmax_clickmax__brand_mark_ready` only if the user asks and the brand has `businessName`. Without permission to change account settings the save fails: say so and keep the tone for this conversation only.
 
 ## Report
 
@@ -52,13 +53,15 @@ Not this skill:
 - Every KPI target shows `baseline -> target` (e.g. "abertura 29,5% -> 33%").
 - Every audience shows how it is built in Clickmax and its measured size.
 - Mark anything not measured as `estimativa` explicitly.
+- Tone chosen in this conversation: say in one line whether it was saved to the brand. If the user declined or was never asked, include "salvar o tom na marca" among the next actions.
 - Keep copy angles in the brand's tone and vocabulary; never use words in `voiceVocabulary.avoid`.
+- Name tones in the user's language, never the raw value (pt-BR: formal, profissional, casual, divertido, ousado for formal, professional, casual, playful, bold) — in questions, options and the plan.
 - Follow the language of the user.
 
 ## Warnings
 
 - Do not invent tag names, list names or past results. If a needed tag does not exist, list it under "a criar".
-- Do not promise features the account does not have (a single "opened N of the last M campaigns" filter, waitlist entity, free-form WhatsApp outside the 24h window).
+- Do not promise features the account does not have (waitlist entity, free-form WhatsApp outside the 24h window).
 - A saved segment with a day window is recalculated about once a day on screen; a broadcast to it recalculates the audience when created or scheduled. A phase scheduled days ahead freezes the audience at scheduling time: say so, and prefer scheduling close to the send date.
 - Email engagement history before late September 2026 undercounts opens (older data kept only the first open, often a bot's): on long windows, call the number a floor.
 - Do not state a campaign open rate from `mcp__plugin_clickmax_clickmax__messages_metrics`, or a channel rate from one campaign.
@@ -76,4 +79,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `58919835e9a0`
+Clickmax skill revision: `5c9f6333464f`

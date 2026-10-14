@@ -45,6 +45,10 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 - A widget whose selection cannot run **degrades to an empty result** instead of failing the call — and says so: `status: 'error'` on that widget. Trust the field, never the zero: an all-zero widget with `status: 'ok'` is a real "no results for this cut".
 - Deleting a dashboard removes only the saved view; the underlying data is untouched.
 - Non-CRM widgets need the module's read permission (sales for sale/subscription/recovery/external/affiliate, contacts for visitor, flows, broadcasts for broadcast/message, conversations for live chat). Without it the run returns that widget with `status: 'forbidden'` and an empty result — no access, not "no data". Campaign/send and live-chat numbers are also limited to the connected accounts the user can access.
+- Recovery has TWO readings that never mix:
+  - `salesRecovery` + `reportType: recovered` (presets `recovered-*`) = money that CAME BACK by message: paid sale ← click on a workspace message (link/button click; email clicks classified as machine excluded) within 7d ← earlier loss of the same buyer on the same offer (declined/canceled/refunded/pending Pix-boleto ≤30d, or abandoned cart). Retry without a click (card declined → paid a minute later) does NOT count. Always ≤ paid revenue. Segments: `channel` | `flow` | `broadcast` (last click) | `recoveryKind` | `product`; `viewBy` = which loss was recovered (`created` = all). Answer "quanto a campanha recuperou" with this.
+  - `salesRecovery`/`externalRecovery` + `performance` = what is still TO RECOVER (open loss, abandoned carts + refunds included, minus losses the buyer paid later) — can exceed revenue, NEVER "recovered". Title with "recuperado/recuperada/recuperou/recovered" outside `recovered` = 400 on `compose`/`widget_add`/`widget_update`.
+  - No per-campaign filter: segment `recovered` by `flow`/`broadcast`. Message/broadcast widgets count EVERY send in the period, not one campaign. External platforms have no recovered reading.
 - Records behind a number (`analytics_records_drilldown`) exist ONLY for non-CRM entities; CRM entities, the "Outros" slice and unsupported metrics answer 422 `DRILLDOWN_NOT_SUPPORTED`.
 - The shared period must be coherent: a `dateFrom`/`dateTo` that does not parse, or a start after the end, is a 400 on write (`create`/`compose`/`settings_update`). `null` on one end = open window on that side.
 - MEETING widgets (`entity: meeting`) have two people per meeting: who CONDUCTS it (`segmentBy: attendant`) and who BOOKED it (`segmentBy: scheduler`; public booking, automations and calendar sync have no booker and land in an unnamed bucket). `segmentBy: appointmentSchedule` groups by the public agenda the meeting was booked on (no agenda = "no record"). Read the catalog `meetings` group before composing — it already has: who-books × who-conducts table (`meetingHandoff`: booked, for self / for others, held, no-show, still scheduled, show rate), show rate by conductor and by booker, and four self-booking cards. Prefer these presets over hand-built selections.
@@ -117,8 +121,9 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 - Hand-computing `dateFrom`/`dateTo` when the ask is "this month"/"last 7 days": send `periodPreset` and let the run resolve it.
 - Switching a widget to `segmentBy: customField|tag|cardTag` without sending `customFieldId`/`tagIds` in the same call.
 - Sending `meetingAttendantField`, `distinctByOpportunity`, `leadTimeDateFrom/To` or `businessDaysOnly` through `widget_add`/`widget_update`/`compose` and reporting them as applied.
+- Answering "quanto a campanha recuperou" with the `performance` recovery total (open loss, can exceed revenue) instead of `reportType: recovered`.
 - Answering "how many meetings did X schedule" with a conductor filter (the default) — that is the closer agenda.
 
 ---
 
-Clickmax skill revision: `f399e8c2a2fe`
+Clickmax skill revision: `b8294822a4d6`

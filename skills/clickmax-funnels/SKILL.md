@@ -143,4 +143,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `d57ee15e6306`
+Clickmax skill revision: `f8a53c0c42cf`

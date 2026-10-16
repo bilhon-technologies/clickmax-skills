@@ -90,4 +90,4 @@ Use this skill for product-catalog identity: create a product (which also mints 
 
 ---
 
-Clickmax skill revision: `d57ee15e6306`
+Clickmax skill revision: `f8a53c0c42cf`

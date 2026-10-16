@@ -16,7 +16,7 @@ Not this skill:
 ## Key assumptions
 
 - A playbook is an independent entity, not a pipeline setting. Pipelines only SUGGEST one when a meeting is booked; whoever books can pick another playbook or none. Suggestion applies only when the booking does not choose (public booking pages, automations, AI bookings, or a `scheduled_calls_create` that omits `playbookId`).
-- Effect is limited to the `meeting` scope: the Click Meeting room panel (Roteiro column + AI copilot briefing) and the voice-call window. `whatsapp`, `livechat`, `flows` scopes are shown as "coming soon" and are rejected on save; only `["meeting"]` is valid.
+- Effect follows the `scopes`: `meeting` is the Click Meeting room panel (Roteiro column + AI copilot briefing) and the voice-call window; `livechat` is the playbook block of the LiveChat lead cockpit (progress kept per conversation, `playbooks_list` with `scope: "livechat"` lists the eligible ones). `whatsapp` and `flows` are shown as "coming soon" and are rejected on save.
 - Structure: stages (title, objective, talk track, watch-out, questions = the meeting checklist) · tones (name, when, delivery) · keyword triggers ("deixas") · attachments (existing http(s) URLs) · guardrails (what the copilot must never suggest). Limits: 20 stages, 30 questions/stage, 12 tones, 40 triggers, 12 terms/trigger, 30 attachments, 20 guardrails.
 - Save is WHOLE-DOCUMENT (`playbooks_update` = PUT). Omitted collections are wiped, attachments included, and they cannot be re-uploaded through this surface. Always read-modify-write from `playbooks_get`.
 - Ids (stage, question, tone, trigger) are authored by the caller (1-40 chars). Questions must be unique across the WHOLE playbook, not per stage: the room marks a question as covered by id. Keep existing ids stable on edits; a changed id is a different item.
@@ -66,10 +66,10 @@ Not this skill:
 - Treating the playbook as a pipeline setting, or trying to create one per lead.
 - Regenerating ids on every edit.
 - Writing prices, discounts or deadlines into stages or triggers that the user never provided.
-- Marking `whatsapp`/`livechat`/`flows` scopes.
+- Marking `whatsapp`/`flows` scopes.
 - Looping the simulator to "optimize" the text without the user asking.
 - Setting the pipeline's default copilot agent as a side effect of linking a playbook.
 
 ---
 
-Clickmax skill revision: `d57ee15e6306`
+Clickmax skill revision: `f8a53c0c42cf`

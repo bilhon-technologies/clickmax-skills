@@ -11,6 +11,7 @@ A funnel `page` node is only a graph slot — it has no content until a page is 
 |A ready-made Clickmax design, no authored content|`mcp__plugin_clickmax_clickmax__pages_templates_list` → `mcp__plugin_clickmax_clickmax__pages_create` with `templateId`|
 |A page with real copy, sections, and a working form|The authoring pipeline in `clickmax-pages`, ending in `mcp__plugin_clickmax_clickmax__pages_import_html_draft`|
 |A blank page to fill in by hand in the editor|`mcp__plugin_clickmax_clickmax__pages_create` with no `templateId` — only when the user explicitly asked for that|
+|A route of a Max Design site (code, not builder)|[Max Design site pages](#max-design-site-pages)|
 
 `pages_create` on its own never passes through recipe validation, because there is no authored HTML to validate. Content written on the spot always goes through the draft import.
 
@@ -36,6 +37,16 @@ When the step sells through the workspace's Whop, Hotmart, Stripe or Pagar.me ac
 4. Tell the user Whop, Stripe and Pagar.me sales are tied to the page once the funnel/page is published (Stripe and Pagar.me do not charge before that); revenue shows in the funnel's results.
 
 Never fall back to a page node without checkout, or to another platform, when the integration is missing.
+
+## Max Design site pages
+
+When the funnel's pages are routes of a Max Design site:
+
+1. Create the funnel and its nodes first, one `page` node per route.
+2. Build every route of the funnel in ONE Max Design project that belongs to the funnel's Clickmax project (`projectId`): `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` refuses a page from another project.
+3. Publish the site (the user approves it). A route becomes a Clickmax page only once the publication is live; an unpublished route has no page id and cannot be linked. Live route pages show up in `mcp__plugin_clickmax_clickmax__pages_list`.
+4. `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` each route's page on its OWN node, then route triggers and validate as below. Never `mcp__plugin_clickmax_clickmax__pages_create` or `mcp__plugin_clickmax_clickmax__pages_create_external` for a route.
+5. Checkout is not part of a Max Design site: the checkout step stays a Clickmax checkout page (above) or an external checkout step, and the site's purchase buttons link to that checkout's URL.
 
 ## Linking and routing
 

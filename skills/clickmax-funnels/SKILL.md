@@ -83,6 +83,7 @@ Common flows:
 - Template funnel = use `mcp__plugin_clickmax_clickmax__funnels_create`, then `mcp__plugin_clickmax_clickmax__funnels_sequence_create`, then `mcp__plugin_clickmax_clickmax__funnels_validate`, then publish only if the user asked for it.
 - Custom funnel = use `mcp__plugin_clickmax_clickmax__funnels_node_create`, then the correct connection tool for that node family, then `mcp__plugin_clickmax_clickmax__funnels_structure_get`, then `mcp__plugin_clickmax_clickmax__funnels_validate`.
 - Go live with existing pages = use `mcp__plugin_clickmax_clickmax__funnels_node_connect_page`, then `mcp__plugin_clickmax_clickmax__funnels_validate`, then `mcp__plugin_clickmax_clickmax__funnels_publish`.
+- Pages built as a Max Design site = funnel + one page node per route -> all routes in one Max Design project of the funnel's Clickmax project -> site published and live -> `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` per route. Unpublished routes cannot be linked; checkout stays outside the site. See [pages and checkout](references/pages-and-checkout.md#max-design-site-pages).
 - Page WITH a checkout = `mcp__plugin_clickmax_clickmax__pages_templates_list` (`type: ["checkout"]`, pick `canUse: true`), then `mcp__plugin_clickmax_clickmax__pages_create` (`type: "checkout"` + `templateId` + `offerId` + `funnelId`) so the offer is auto-bound to the checkout, then `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` to link it. See [pages and checkout](references/pages-and-checkout.md).
 - Step that sells through the workspace's Whop, Hotmart, Stripe or Pagar.me account = an `external_checkout` node (`config.provider` `whop`|`hotmart`|`stripe`|`pagarme`) + a page built with `externalCheckout` of the same provider, linked with `mcp__plugin_clickmax_clickmax__funnels_node_connect_page`. Start with `mcp__plugin_clickmax_clickmax__external_checkout_accounts_list`; its `setup` not null (not connected / incomplete) → relay the instructions and stop before creating the node. See [pages and checkout](references/pages-and-checkout.md#whop-or-hotmart-checkout-step).
 - Funnel step is an EXTERNAL page (the user gives a URL hosted OUTSIDE Clickmax — their own site/domain/landing) = compose these granular tools in order (NEVER `pages_create` — that makes an empty INTERNAL page):
@@ -143,4 +144,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `e3ffbecc2d6d`
+Clickmax skill revision: `c40fdd3dc26c`

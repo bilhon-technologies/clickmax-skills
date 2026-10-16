@@ -7,7 +7,7 @@ description: Use when the user wants to connect an external page/site to Clickma
 
 Use this skill for external pages: a page hosted outside the Clickmax builder that needs Clickmax tracking, capture/forms, or script installation guidance.
 
-DOES NOT APPLY inside a Max Design (AI Builder) session bound to a repository: pages built there get the Clickmax script injected and are registered as external pages AUTOMATICALLY on publish — never call `pages_create_external` for them, and "criar uma página" in that session means a new route file in the project (`sandbox.*`), governed by the session playbook.
+DOES NOT APPLY to the routes of a Max Design site: publishing the site injects the Clickmax script and registers each route as a page AUTOMATICALLY, so never call `pages_create_external` for them; linking them to a funnel follows `clickmax-funnels`.
 
 CLASSIFICATION RULE (external vs builder): a page is EXTERNAL whenever it already lives at a URL on a domain the user has NOT connected in Clickmax (Framer, Webflow, their own site, any third-party host). Register it with `pages_create_external` (real URL) — NEVER `pages_create`. Creating a builder page for a URL you did not build yields an empty Clickmax-hosted page and breaks the capture-script setup (the app opens the visual editor instead of the script/redirect flow). If you have the live URL and still call `pages_create`, pass it as `sourceUrl`: the server rejects non-Clickmax hosts and tells you to switch to `pages_create_external`.
 
@@ -73,4 +73,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `e3ffbecc2d6d`
+Clickmax skill revision: `c40fdd3dc26c`

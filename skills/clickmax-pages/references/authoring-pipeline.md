@@ -73,7 +73,7 @@ The first eight are fixed by rewriting the HTML. The last two are fixed by chang
 
 ## Configuration and publication
 
-- `mcp__plugin_clickmax_clickmax__pages_update` — name, path, type.
+- `mcp__plugin_clickmax_clickmax__pages_update` — name, description, path, type, domainId.
 - `mcp__plugin_clickmax_clickmax__pages_update_config` — page-level settings.
 - `mcp__plugin_clickmax_clickmax__pages_publish` / `mcp__plugin_clickmax_clickmax__pages_unpublish` — always a separate, explicitly approved action.
 - `mcp__plugin_clickmax_clickmax__checkout_get` — reads which offer this page's checkout is bound to (`null` when none).

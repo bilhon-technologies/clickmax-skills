@@ -148,6 +148,7 @@ or a constraint `field` name (`offerId`, `projectId`, `tagId`, …); those are i
 - `hermes.telegram.message.received.v1` — Telegram message received from a contact · `[telegramBotId]`
 - `crm.conversation.started.v1` — new conversation on any connected channel · `[channelInstanceId, channel]`
 - `crm.conversation.contact-silent.v1` — conversation contact silent for a set time · `[channel, offset]` (note the HYPHEN in `contact-silent`, not a dot — a guessed `crm.conversation.contact.silent.v1` is wrong and silently never fires)
+- `crm.conversation.human-takeover.v1` — team member took over the conversation (assumed, assigned, or received from AI SDR escalation); main use = EXIT trigger of a follow-up cadence · `[channel, channelInstanceId]` (both optional = any account)
 
 ### Manual start (pseudo-event — valid `eventName` value but not a real AMQP event)
 

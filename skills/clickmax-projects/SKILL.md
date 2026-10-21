@@ -66,4 +66,4 @@ Project is the top-level container. Almost every build starts "in project X", so
 
 ---
 
-Clickmax skill revision: `30bc1243c2ed`
+Clickmax skill revision: `b4f62eef81c8`

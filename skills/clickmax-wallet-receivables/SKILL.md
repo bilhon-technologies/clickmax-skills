@@ -15,7 +15,8 @@ Not this skill:
 ## Key assumptions
 
 - Clickmax processes payments natively; there is NO external gateway (Stripe, PayPal, Mercado Pago, etc.) to configure to receive sales — never suggest one
-- "ready to sell and receive" = `sellerStatus: enabled` AND `bankAccountStatus: approved`
+- "ready to sell" = `sellerStatus: enabled`; "ready to withdraw" also needs `bankAccountStatus: approved` (bank account is a withdraw-only requirement; sales made before it stay in the wallet)
+- `bankAccountStatus` = best of the pix/bank accounts (`approved` if either was accepted); `bankAccountReason` + `bankAccountReasonReceiverType` name the rejected one even when the status is `approved`
 - balances and "a receber" come from the wallet statement, not the sales dashboard
 - raw bank account numbers, pix keys, ids, and transaction hashes are never surfaced to the user
 
@@ -28,7 +29,7 @@ Not this skill:
 ## Execute guide
 
 - For "am I ready to sell/receive" or "are my bank details approved", use `mcp__plugin_clickmax_clickmax__sellers_status` and interpret:
-  - `sellerStatus: enabled` + `bankAccountStatus: approved` -> ready to sell and receive
+  - `sellerStatus: enabled` -> ready to sell; + `bankAccountStatus: approved` -> also ready to withdraw
   - `pending` / `pending_correction` -> still under review; explain the `reason` and point to completing or correcting data in the wallet ("Carteira")
   - `reproved` / `blocked` / `disabled` -> blocked; explain the `reason` and the wallet correction step
 - For balances and movement history (saldo disponível, a receber, em análise, antecipável, extrato), use `mcp__plugin_clickmax_clickmax__wallet_statement`; use `page`/`perPage` to browse.
@@ -53,4 +54,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `30bc1243c2ed`
+Clickmax skill revision: `b4f62eef81c8`

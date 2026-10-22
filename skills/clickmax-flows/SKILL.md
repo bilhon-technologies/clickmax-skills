@@ -21,7 +21,7 @@ Not this skill:
 - The graph is steps connected by each step output `target`; there is no separate edge object. Each visible step lists its `outputs[]` (`handle` + `target`) — handle vocabulary in [step types](references/step-types.md#output-handles)
 - A message that waits for a reply (or a timeout) owns hidden helper steps; never target them — address the message's `invalid`/`timeout` handles instead
 - The entry is a single `trigger` step; a flow has at most one trigger step
-- Trigger start/exit events live at flow level (`triggerStart` / `triggerExit`), not inside arbitrary step fields
+- Entry events live at flow level (`triggerStart`), not inside arbitrary step fields. Exit events became the flow **goal** ("Objetivo": OR of AND-groups of criteria, remove-or-keep on reach, conversion rate) — read-only for you (`triggerExit` on reads); the user configures it in the editor header
 - Standalone flows use flow-level trigger events; funnel-embedded flows (`funnelId` set) are started/exited by funnel workflow nodes instead
 - Two ways an automation relates to a funnel. (1) EMBEDDED — the funnel's `workflow` node owns it: link/create it from the funnel side with `funnels_workflow_flow_set`, which syncs the funnel's triggers onto the flow and makes it show in the funnel canvas. This is what "an automation linked to the funnel" means — build it from the funnels skill (create the funnel workflow node BEFORE the flow, then link). (2) STANDALONE SCOPED — an ordinary flow whose trigger is narrowed by a `funnelId`/`pageId` constraint; it reacts to that funnel's events but is NOT part of the funnel graph. Never hand-set a flow's `funnelId` or hand-craft funnel triggers — the funnel workflow node's link tool does that; setting `funnelId` alone leaves an orphan (list badge shows, funnel canvas empty)
 - Step ids are server-generated; always read real ids from create output or `flows_structure_get`
@@ -64,7 +64,7 @@ Not this skill:
 - Read the valid `action` names and their `input` fields from `mcp__plugin_clickmax_clickmax__flows_actions_catalog`, and a `conditional`'s valid `statements[].type` and its fields from `mcp__plugin_clickmax_clickmax__flows_conditionals_catalog`, BEFORE writing any non-message step. These are the only authoritative sources for those shapes — the catalogs also mark `comingSoon` actions that cannot be used yet. Never guess an `action`, a `statement.type`, or an `input` key. An invented key inside an otherwise valid `input` is not rejected — it is simply never read by the engine (`removeFromOtherPipelines` on `assignOpportunity` is exactly this, written by the flows3 drawer and consumed by nobody), so the step reports created and configures nothing. The shapes worth memorizing (and the `assignOpportunity` `opportunityId` trap) are in [step types](references/step-types.md).
 
 - Read the valid entry/exit events from `mcp__plugin_clickmax_clickmax__flows_triggers_catalog` before suggesting or setting a trigger — it returns each event's friendly `label`, `description`, and the `scopes` it can be narrowed by; pick the exact `eventName` and never invent one. See [trigger events](references/trigger-events.md).
-- Change entry events with the `setTriggers` op (or `mcp__plugin_clickmax_clickmax__flows_step_triggers_set`), and send the complete `triggerStart` / `triggerExit` arrays that should remain on the flow.
+- Change entry events with the `setTriggers` op (or `mcp__plugin_clickmax_clickmax__flows_step_triggers_set`), sending the complete `triggerStart` array that should remain. Writing `triggerExit` is rejected: if the user wants an exit/goal, tell them to set it in the editor (button "Objetivo" in the header).
 - For a flow linked to a funnel workflow node, keep flow-level trigger arrays empty unless the user is intentionally converting it into a standalone automation; wire entry/exit from the funnel skill instead.
 - Use `mcp__plugin_clickmax_clickmax__flows_list` to find candidate flows by name before asking for confirmation on ambiguous matches.
 - Use `mcp__plugin_clickmax_clickmax__flows_structure_get` as the canonical graph view before connecting, deleting, or diagnosing steps — each step's `outputs[].handle` is the exact vocabulary `flows_graph_apply` accepts.
@@ -98,7 +98,7 @@ Not this skill:
 - `flows_update` is metadata-only and does not edit the graph
 - `flows_delete` removes the flow and all steps permanently
 - `delay` / `timeout` numeric `when` values are hours, not minutes or days
-- `flows_step_triggers_set` edits the entry/exit events independently: send only the side you are changing (`triggerStart` or `triggerExit`) and omit the other to keep it; an explicit `[]` clears a side, and the array you do send replaces that side. Use the exact `eventName` from the [trigger events](references/trigger-events.md) catalog — an unknown/guessed name silently never fires. Scope with the entity id the catalog lists for that event (e.g. `tagId`, `offerId`)
+- `flows_step_triggers_set` edits the entry events: send `triggerStart` (the array replaces the current entries; `[]` clears them). Never send `triggerExit` — exits are the flow goal and that write is rejected. Use the exact `eventName` from the [trigger events](references/trigger-events.md) catalog — an unknown/guessed name silently never fires. Scope with the entity id the catalog lists for that event (e.g. `tagId`, `offerId`)
 - Conditional, `collect`, and `timeout` branches depend on correct `handle` wiring; missing branch targets usually show up as dangling targets or orphaned paths
 - Unknown `action` names or wrong `input` shapes are rejected; fix the payload, do not assume partial success
 - `gupshup_templates_submit` sends the template to Meta for review — external and practically irreversible (a rejected or low-quality submission affects the number's quality rating). Confirm the exact final copy with the user before calling it; never submit content you authored on your own, and never submit "to see if it passes".
@@ -133,4 +133,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `6587b8e90799`
+Clickmax skill revision: `415bd6b1f8ee`

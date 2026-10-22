@@ -1,8 +1,9 @@
 # Flow trigger events and constraints
 
-Flow entry/exit is driven by **events** matched against **constraints**. Set them
-inline when creating the trigger step (`triggerStart` / `triggerExit`) or later
-via `flows_step_triggers_set` (which replaces the whole list). A flow has at most
+Flow entry is driven by **events** matched against **constraints**. Set them
+inline when creating the trigger step (`triggerStart`) or later via
+`flows_step_triggers_set` (which replaces the whole list). Exits became the flow
+goal ("Objetivo"), configured by the user in the editor — `triggerExit` is read-only. A flow has at most
 one trigger step; the events live at flow level, not in arbitrary step fields.
 
 ## Live catalog + labels
@@ -33,9 +34,9 @@ or a constraint `field` name (`offerId`, `projectId`, `tagId`, …); those are i
 
 `{ field, op, valueType, value<Type>, caseSensitive? }` — max **5** constraints per trigger.
 
-- `op` ∈ `EQ` `NEQ` `GT` `GTE` `LT` `LTE` `EXISTS` `IN` `CONTAINS` `NOT_CONTAINS` `STARTS_WITH` `REGEX` `WORD_MATCH`
+- `op` ∈ `EQ` `NEQ` `GT` `GTE` `LT` `LTE` `EXISTS` `IN` `NOT_IN` `CONTAINS` `NOT_CONTAINS` `STARTS_WITH` `REGEX` `WORD_MATCH`
 - `valueType` ∈ `STRING` `NUMBER` `BOOLEAN` `DATE` `UUID` — put the value in the matching field:
-  `valueString` / `valueNumber` / `valueBoolean` / `valueDate` / `valueUuid`. For `IN` (and list matches) use `valueJson` with an array.
+  `valueString` / `valueNumber` / `valueBoolean` / `valueDate` / `valueUuid`. For `IN`/`NOT_IN` (and list matches) use `valueJson` with an array. `NOT_IN` (STRING/UUID only) matches when the event value is none of the list (array payload: no overlap); a missing field never matches.
 - `caseSensitive` (text ops only): omitted = case-insensitive.
 - Field → `valueType`: any `*Id` field is `UUID` (except `productIds` on Hubla/Hotmart events, which is `STRING` — the platform's own external id, not a Clickmax UUID); `channel`/`status` are `STRING`; `offset` (inactivity-window minutes) is `NUMBER`.
 - `ownerId` is NEVER a settable scope/constraint field on any event — it is injected by the matcher outside the catalog (`packages/flows-elements/src/triggers/catalog.ts` comment: "ownerId é injetado pelo matcher, fora do catálogo"). Do not offer it as something the user can narrow by.
@@ -156,6 +157,6 @@ or a constraint `field` name (`offerId`, `projectId`, `tagId`, …); those are i
 
 ## Notes
 
-- `flows_step_triggers_set` edits each side independently: omit `triggerStart` or `triggerExit` to keep that side untouched; send `[]` to clear it; the array you send replaces only that side. So a "change the entry trigger" request needs `triggerStart` only — the exit stays intact.
+- `flows_step_triggers_set` edits the entry side only (`triggerStart`; `triggerExit` writes are rejected — exits are the flow goal); send `[]` to clear it; the array you send replaces only that side. So a "change the entry trigger" request needs `triggerStart` only — the exit stays intact.
 - Use the exact `eventName` from this catalog; an unknown name silently never fires.
 - No scopes for an event (e.g. `crm.lead.created.v1`) means `constraints: []` is the only valid shape — there is nothing to narrow it by.

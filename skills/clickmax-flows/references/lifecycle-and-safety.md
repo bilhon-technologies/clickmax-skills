@@ -26,7 +26,7 @@ Before `flows_activate`:
 
 1. confirm the user wants the automation live on real contacts
 2. ensure the entry trigger exists and has an output (`triggerWithoutOutput = false`)
-3. ensure triggerStart / triggerExit are configured
+3. ensure triggerStart is configured (the goal/exit is the user's call in the editor)
 4. run `flows_validate`
 5. report any remaining structural problems (`orphanStepIds`, `danglingTargets`), including `incompleteChannelSteps` — message steps (email/telegram/WhatsApp) missing a real sender id. Resolve it with `email_sender_signatures_list` / `channel_instances_list` and `flows_step_update` before activating, rather than retrying `flows_activate` unchanged: a channel step without a real sender id fails every send no matter what activation itself currently checks
 

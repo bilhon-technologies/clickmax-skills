@@ -27,7 +27,7 @@
   - a PARALLEL side-effect off a page trigger, NOT a visitor step. Target only, no outgoing edge: it fires its linked Flow, it does NOT forward the visitor to a next page — never give it an outgoing edge or a `flow_completed`/`page_viewed` exit to "continue" the funnel
   - embeds an automation Flow via `flowId`; link/swap/unlink with `funnels_workflow_flow_set` (resolve `flowId` with `flows_list` or create one with `flows_create`; `flowId: null` unlinks) — or pass `config.flowId` at `funnels_node_create` time
   - connect a page trigger INTO it with `funnels_triggers_connect` (target = workflow id): with a linked flow this records the link in the workflow's `inputTriggers` (a real FlowTrigger, mapped event + constraints) and LEAVES the trigger's `connectedTo` (page route) intact — so the SAME trigger sends the visitor to a page AND starts the automation. Shows in `funnels_structure_get` as an edge `via: "workflow_input"`; disconnecting (`target: null`)/deleting removes it, relinking re-syncs
-  - the exit event (`funnels_workflow_exit_trigger_set`) ENDS the lead's membership in the flow (a conversion/goal) — it is NOT a page-navigation edge
+  - the flow's goal ("Objetivo": criteria that count a conversion and optionally remove the lead from the flow) belongs to the linked flow and is set by the user on the node — it is NOT a page-navigation edge
   - a workflow without `flowId` is flagged by `funnels_validate.workflowsMissingFlow`
 
 - `notes`

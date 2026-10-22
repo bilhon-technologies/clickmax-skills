@@ -121,7 +121,7 @@ Common flows:
 - `funnels_node_connect_page` rules, all refused server-side: target = `page`/`draft` node ONLY (never `ab_test`/`conditional`/`workflow`/`traffic_source`/`quiz` — connect THOSE to a page node instead) | page and funnel in the SAME project | one page per node, so a second call REPLACES the first and returns the swapped-out page in `replacedPageId` — read it before reporting two pages as linked
 - `funnels_validate.nodesWithUnusedPage` = node carrying a page its type never serves (legacy link); the visitor never reaches that page
 - "Lead doesn't reach the next page" / next step on an unexpected address → compare `pages_get.domainName` of each funnel page with the funnel domain before touching triggers; fix = align the domain (`pages_update` `domainId` or the funnel's domain) + republish, only with user approval
-- For a `workflow` node, link its flow (`funnels_workflow_flow_set`, resolving `flowId` via `flows_list`/`flows_create`) and set its exit event (`funnels_workflow_exit_trigger_set`); a workflow without a linked flow does not fire automation and is flagged by `funnels_validate.workflowsMissingFlow`
+- For a `workflow` node, link its flow (`funnels_workflow_flow_set`, resolving `flowId` via `flows_list`/`flows_create`) — its goal ("Objetivo", the conversion that can end the lead's stay) is configured by the user on the node or in the flow editor, not by a tool; a workflow without a linked flow does not fire automation and is flagged by `funnels_validate.workflowsMissingFlow`
 - For a `workflow` node, configure entry/exit from the funnel side; flow-level start events are for standalone automations, not funnel-embedded flows
 - Creating nodes without connecting them leaves a broken-looking graph: no routed edges and stacked nodes
 - When the target project, product, or offer is ambiguous, ask the user to choose an existing entity or explicitly request a new one before mutation.
@@ -144,4 +144,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `6587b8e90799`
+Clickmax skill revision: `415bd6b1f8ee`

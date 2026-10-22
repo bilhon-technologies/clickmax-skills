@@ -5,7 +5,7 @@
 - `trigger`
   - entry point
   - `input = { type: 'event' }`
-  - flow-level events live in `triggerStart` / `triggerExit`
+  - flow-level entry events live in `triggerStart` (exits = flow goal, read-only here)
 
 - `action`
   - requires `action` + action-specific `input`
@@ -109,5 +109,5 @@ Unknown handle → rejected with the step's valid outputs; `flows_structure_get`
 ## Trigger event placement
 
 - Do not put entry/exit events into arbitrary step input fields
-- Use `triggerStart` / `triggerExit` via the `setTriggers` op of `flows_graph_apply` (or `flows_step_triggers_set`)
+- Use `triggerStart` via the `setTriggers` op of `flows_graph_apply` (or `flows_step_triggers_set`); exits are the flow goal, configured by the user in the editor
 - These arrays replace the current lists

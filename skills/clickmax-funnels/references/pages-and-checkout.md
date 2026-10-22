@@ -45,14 +45,14 @@ When the funnel's pages are routes of a Max Design site:
 1. Create the funnel and its nodes first, one `page` node per route.
 2. Build every route of the funnel in ONE Max Design project that belongs to the funnel's Clickmax project (`projectId`): `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` refuses a page from another project.
 3. Publish the site (the user approves it). A route becomes a Clickmax page only once the publication is live; an unpublished route has no page id and cannot be linked. Live route pages show up in `mcp__plugin_clickmax_clickmax__pages_list`.
-4. `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` each route's page on its OWN node, then route triggers and validate as below. Never `mcp__plugin_clickmax_clickmax__pages_create` or `mcp__plugin_clickmax_clickmax__pages_create_external` for a route.
+4. `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` each route's page on its OWN node, then connect triggers and validate as below. Outgoing arrows from these pages are diagram-only: navigation belongs to the site's `<Link>`, `navigate`, handlers or `data-cx-redirect-url` after capture. CTA markers and `form_submit` do not navigate by themselves. Never `mcp__plugin_clickmax_clickmax__pages_create` or `mcp__plugin_clickmax_clickmax__pages_create_external` for a route.
 5. Checkout is not part of a Max Design site: the checkout step stays a Clickmax checkout page (above) or an external checkout step, and the site's purchase buttons link to that checkout's URL.
 
 ## Linking and routing
 
 - Link with `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` after the page exists. A page node with no page linked is a slot the visitor cannot reach.
 - Route the node's outgoing edges with `mcp__plugin_clickmax_clickmax__funnels_triggers_connect`. Creating the node and stopping is an unfinished build.
-- The `form_submit` trigger with no element bound already routes the whole page to the next node. Binding it to a specific element is only needed when the page has more than one form — and a page should not have more than one form.
+- On classic editor and external pages using legacy SDK routing, `form_submit` with no element bound can route the page to the next node. Binding a specific element selects one form when several exist; prefer one capture form per page. Max Design navigation follows the site code, not these edges (above).
 - A CTA only becomes the "button click" exit trigger when the element carries the CTA marker. Styling never implies intent, so an unmarked button renders correctly and still leaves that trigger unavailable on the canvas.
 - A checkout page that needs order bumps gets them after it is linked to its node. The call full-replaces the bump list.
 - The offer bound to a page's checkout can be read and changed after the fact with `mcp__plugin_clickmax_clickmax__checkout_get` / `mcp__plugin_clickmax_clickmax__checkout_set` — no re-import needed just to fix an offer.

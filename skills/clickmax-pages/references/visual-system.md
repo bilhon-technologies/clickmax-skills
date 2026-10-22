@@ -2,9 +2,18 @@
 
 ## Step 1 — resolve a concrete visual base
 
-Priority: explicit user reference → explicitly selected catalog design → bundled default. “Use the platform default” selects the bundled default; it does not skip content discovery.
+Priority: explicit user reference → catalog design (user's pick, else your best fit — say which) → bundled default only when the catalog is empty or nothing fits. Picking a design never skips content discovery.
 
-|Recipe|Read before authoring|
+Catalog path:
+
+1. `mcp__plugin_clickmax_clickmax__page_designs_list` = summary only (`palette`, `fonts`, `tags`, `coverImageUrl`) → pick by tone/product.
+2. `mcp__plugin_clickmax_clickmax__page_designs_get` → full DESIGN.md (`content`: YAML tokens + prose rules). Read the prose: layout, components, do/don't.
+3. Manifest `designIdOrSlug` = that slug, unchanged through context → validate → import. Server saves it on the page.
+4. `pages_generation_context_get` → `tokenCss` = design palette/type mapped onto `--cx-*` + full scales `--cx-design-<color>` · `--cx-radius-<name>` · `--cx-space-<name>`. Style guide keeps only logo + brand name.
+
+Bundled HTML bases below = section spine/composition for the recipe (order, slots, responsive skeleton). With a catalog design, keep the structure and repaint with the design tokens — never the base's own palette.
+
+|Recipe|Structure to read before authoring|
 |-|-|
 |`sales` / `capture`|[Editorial sales HTML](../assets/editorial-sales.html) + [adaptation contract](default-design-course-launch-editorial.md)|
 |`checkout`|[Editorial checkout HTML](../assets/editorial-checkout.html) + [checkout contract](default-design-checkout.md)|
@@ -13,7 +22,7 @@ Priority: explicit user reference → explicitly selected catalog design → bun
 
 Read the actual HTML resource, including CSS; a filename or prose summary is not enough. Resources ship with the skill, so defaults work without a seeded catalog. If the client cannot read companion resources, report the missing installation/resource and retrieve it through the client's supported skill mechanism; do not silently claim to have used the default.
 
-For an explicit catalog choice, use `mcp__plugin_clickmax_clickmax__page_designs_list` / `mcp__plugin_clickmax_clickmax__page_designs_get` and reuse its identifier in the manifest. Bundled defaults have no required catalog ID: omit `designIdOrSlug` rather than invent one. Explicit reference wins over incompatible catalog decoration rules.
+No catalog design (fallback) → omit `designIdOrSlug`, never invent one. Explicit user reference wins over incompatible catalog decoration rules.
 
 The HTML bases own exact default CSS and responsive behavior. Choose variants before filling slots; preserve proportion, whitespace, ticket silhouette and typographic hierarchy. Never ship example business facts, draft notices or pending links as final content.
 
@@ -29,7 +38,7 @@ Rare, and it is not a licence to inherit the project's neutral default. Build a 
 
 ## Step 2 — resolve the effective palette
 
-The server injects inherited tokens before authored CSS. Inspect them before authoring: a fresh guide may conflict with the requested/default design. For the bundled base, resolve one `.ce-page` palette and explicit typography, then reuse it on every funnel page. Do not replace intentional design colors with neutral guide defaults merely to silence `OFF_PALETTE_COLOR`; report the intentional override and correct accidental drift. For a compatible established brand, map design values onto its tokens.
+The server injects the page tokens before authored CSS: design tokens when the manifest has a design, else the inherited style guide. Inspect `tokenCss` before authoring. With a design, `OFF_PALETTE_COLOR` compares against the design palette → a hex outside it is real drift; prefer `var(--cx-design-*)` over raw hex. Without a design (bundled base), resolve one `.ce-page` palette and explicit typography, then reuse it on every funnel page; do not replace intentional colors with neutral guide defaults merely to silence the warning — report the override.
 
 |Token|Role|
 |-|-|
@@ -56,9 +65,9 @@ font-family: var(--cx-font-content, system-ui, sans-serif);
 
 **The token set is deliberately small — it does not carry a neutral ramp.** A page built only from these tokens reads flat, because there is no step between "surface" and "background" to separate a card from the section it sits in. Declare the missing steps locally, derived from the chosen design's palette, and use them consistently.
 
-## Step 3 — the style-guide trap
+## Step 3 — the style-guide trap (no catalog design only)
 
-The project's style guide is a **fresh default** (commonly light mode, a blue/navy palette, a small type scale) until someone changes it, and no tool changes it.
+With a catalog design in the manifest this trap does not apply: the tokens already carry the design. Without one, the project's style guide is a **fresh default** (commonly light mode, a blue/navy palette, a small type scale) until someone changes it, and no tool changes it.
 
 So when the requested look conflicts with that default, `var(--cx-color-...)` alone is not enough — an inherited token resolves back to the default. In that case:
 

@@ -8,7 +8,7 @@
 
 ## Always style with a design, never just recolor
 
-Before authoring ANY email whose content the user supplies (not an explicit "plain default" ask): call `page_designs_list` first, pick one curated visual language (whichever fits the content/tone, or pick randomly if none stands out — never ask the user to choose), then use mode 3 (`customHtml`) to actually reproduce that look. Mode 2's color knobs alone are not a substitute for a real design and will look like a bare recolor.
+Before authoring ANY email whose content the user supplies (not an explicit "plain default" ask): call `page_designs_list` first (summary: `palette`, `fonts`, `tags`), pick one curated visual language (whichever fits the content/tone, or pick randomly if none stands out — never ask the user to choose), read its full DESIGN.md with `page_designs_get`, then use mode 3 (`customHtml`) to actually reproduce that look. Mode 2's color knobs alone are not a substitute for a real design and will look like a bare recolor.
 
 ## Authoring `customHtml`
 

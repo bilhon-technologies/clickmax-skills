@@ -73,6 +73,7 @@ Use the tools in dependency order when later ids come from earlier results.
 - For traffic source nodes, route the output with `mcp__plugin_clickmax_clickmax__funnels_traffic_source_update`.
 - For conditional nodes, route each branch with `mcp__plugin_clickmax_clickmax__funnels_conditional_branches_update`.
 - When real page ids already exist, attach them to the correct page nodes with `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` before publishing.
+- Rename a step (the name its card shows) or move it on the canvas with `mcp__plugin_clickmax_clickmax__funnels_node_update`; read current positions from `mcp__plugin_clickmax_clickmax__funnels_structure_get` to place it next to another step.
 - Validate with `mcp__plugin_clickmax_clickmax__funnels_validate`, passing the `funnelId`, then re-read structure if you need to confirm every intended edge is present.
 - Publish only when the user wants the funnel live: use `mcp__plugin_clickmax_clickmax__funnels_publish` with the `funnelId` and the node ids that should go live.
 - Page-level operations on a linked editor3 page: publish a single page on its own with `mcp__plugin_clickmax_clickmax__pages_publish`, adjust its checkout/settings with `mcp__plugin_clickmax_clickmax__pages_update_config`, or duplicate it with `mcp__plugin_clickmax_clickmax__pages_clone` (e.g. to seed A/B variations from one built page).
@@ -144,4 +145,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `6814f83e1e09`
+Clickmax skill revision: `bd337729084a`

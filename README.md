@@ -60,6 +60,7 @@ Sem esses passos, a cópia local fica parada na versão instalada e a IA segue o
 ## Skills incluídas
 
 - **clickmax-activities** — Use when the user asks about the team's Activities queue (follow-up tasks and booked appointments together), such as what is late, what is scheduled for a day or week, workload per attendant, closing a batch of them, or setting up a multi-step follow-up cadence with automatic WhatsApp steps on an opportunity.
+- **clickmax-ai-sdr-observability** — Use when the user asks why the AI SDR agent answered, stayed silent, handed off or failed with a contact, or how the AI SDR performed in a period, on a number or in a deployment.
 - **clickmax-analytics** — Use when the user asks business/revenue/KPI questions like how much they made, how they are performing, top products, lead counts, funnel performance, or campaign/email open rates over a period.
 - **clickmax-campaign-planning** — Use when the user asks for a multi-week or multi-month marketing plan, campaign sequence, launch calendar or nurture strategy that should be built on the account's own history (open rates, base growth, tags, channels, brand voice) and later executed in Clickmax.
 - **clickmax-classrooms** — Use when the user wants to list, inspect, create, update, link content to, copy members between, or delete classrooms inside Clickmax member portals.

@@ -7,6 +7,9 @@ Priority: explicit user reference → catalog design (user's pick, else your bes
 Catalog path:
 
 1. `mcp__plugin_clickmax_clickmax__page_designs_list` = summary only (`palette`, `fonts`, `tags`, `coverImageUrl`) → pick by tone/product.
+   - Ask the user via `question` `{ type: 'pageDesign', label, optional: true, designSlugs }` = 4–6 slugs ranked best first by revenue band, page goal (recipe) and `tags`; one question per page, in the same call as other missing discovery facts.
+   - Skip asking when: user named a design/brand look ("estilo Apple", "igual ao Stripe" → match `slug`/`title`) · existing page already has one · user said "you choose".
+   - Answer = `slug` (title in `details`). Skipped (`""`) → pick the best fit and tell the user which design + why in one line.
 2. `mcp__plugin_clickmax_clickmax__page_designs_get` → full DESIGN.md (`content`: YAML tokens + prose rules). Read the prose: layout, components, do/don't.
 3. Manifest `designIdOrSlug` = that slug, unchanged through context → validate → import. Server saves it on the page.
 4. `pages_generation_context_get` → `tokenCss` = design palette/type mapped onto `--cx-*` + full scales `--cx-design-<color>` · `--cx-radius-<name>` · `--cx-space-<name>`. Style guide keeps only logo + brand name.

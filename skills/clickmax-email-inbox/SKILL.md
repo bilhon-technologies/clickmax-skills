@@ -9,7 +9,7 @@ A company mailbox (IMAP/SMTP, e.g. `vendas@`) connected so its e-mails land in C
 
 Not this skill:
 
-- connecting, disconnecting or changing the password/servers of a mailbox -> only in the web app (mailbox page, Atualizar credenciais); never ask the user for a password
+- connecting, disconnecting or changing the password/servers of a mailbox -> only in the web app (mailbox page, Atualizar credenciais); never ask the user for a password; guiding a first connection (prerequisites + screen) -> `clickmax-integrations`
 - e-mail campaigns/automation e-mails sent through verified sending domains -> `email_sender_signatures_list` + `clickmax-flows`
 - validating a contact's e-mail address -> `clickmax-leads`
 
@@ -58,4 +58,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `1969088faa50`
+Clickmax skill revision: `b154a7f2c55e`

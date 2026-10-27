@@ -55,7 +55,7 @@ Templates (API oficial only):
   1. an existing `approved` template already saying it → reuse, nothing to submit;
   2. generic UTILITY/AUTHENTICATION use (order update, reminder, OTP) → `mcp__plugin_clickmax_clickmax__gupshup_template_library_list` → `mcp__plugin_clickmax_clickmax__gupshup_template_library_create` (submits to Meta immediately → confirm first; `libraryTemplateName` only from the list);
   3. otherwise draft the copy from the user's text (welcome = usually `MARKETING`; `UTILITY` only for transactional) → `mcp__plugin_clickmax_clickmax__gupshup_templates_create` → check `created` (`false` = existing template returned, read its status) → show the exact final copy (name, category, body, sample, buttons) → explicit yes → `mcp__plugin_clickmax_clickmax__gupshup_templates_submit`.
-  - Max: the copy goes in ONE `cx-message channel="whatsapp" template="<elementName>"` card (+ `header`/`footer`/`buttons`); category and sample stay in prose. Attribute values come from the user or the tools → escape `&` `"` `<` `>` as `&amp;` `&quot;` `&lt;` `&gt;`; `|` only separates buttons, so a label containing `|` gets `/` instead. User comments arrive as `<message_selection_context>` → `mcp__plugin_clickmax_clickmax__gupshup_templates_update` the draft (still `draft`/`failed`) → show the revised card → ask again before submitting.
+  - Max: the copy goes in ONE `cx-message channel="whatsapp" template="<elementName>"` card (+ `header`/`footer`/`buttons`); category and sample stay in prose. Attribute values come from the user or the tools → escape `&` `"` `<` `>` as `&amp;` `&quot;` `&lt;` `&gt;`; `|` only separates buttons, so a label containing `|` gets `/` instead. User comments arrive as `<conversation_selection_context>` → `mcp__plugin_clickmax_clickmax__gupshup_templates_update` the draft (still `draft`/`failed`) → show the revised card → ask again before submitting.
 - EVERY templates reply (list, status, create, submit) ends with the templates screen of that number: `connections-whatsapp` lookup → the `whatsappConnections` entry of the chosen number → its `templatesPath`.
 
 ## Report
@@ -85,4 +85,4 @@ Templates (API oficial only):
 
 ---
 
-Clickmax skill revision: `b154a7f2c55e`
+Clickmax skill revision: `bec04ce18dde`

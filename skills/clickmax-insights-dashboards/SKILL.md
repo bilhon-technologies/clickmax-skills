@@ -91,6 +91,7 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 ## Report
 
 - After creating: name the dashboard, say which template (if any) it came from, and list the sections and the widgets each one has — do not dump the raw config or the sizes.
+  - Max: close with `<cx-dashboard dashboard-id="<id returned by the create call>"></cx-dashboard>` — the card is the user's only way to open the board from the chat; never tell them to "open it in Insights" without it. Same card when the user asks where to find a dashboard.
 - After a widget edit: state what changed on which widget, not the whole board.
 - When reporting numbers: convert cents to currency, rates to percentages, and durations to days before showing them. Lead with the takeaway, then the per-widget values.
 - A widget with `status: 'forbidden'`: say the user lacks access to that module's data; never report its zero.
@@ -126,4 +127,4 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 
 ---
 
-Clickmax skill revision: `bec04ce18dde`
+Clickmax skill revision: `4f9e7e2ceee6`

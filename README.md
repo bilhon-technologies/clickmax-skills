@@ -59,6 +59,7 @@ Sem esses passos, a cópia local fica parada na versão instalada e a IA segue o
 
 ## Skills incluídas
 
+- **clickmax-account-suggestions** — Use when the user asks an open question about priorities in their Clickmax account ("what should I do now", "where do I start", "what is worth my time") or before proposing next steps on your own, so the answer comes from the account's ranked suggestions and their real numbers.
 - **clickmax-activities** — Use when the user asks about the team's Activities queue (follow-up tasks and booked appointments together), such as what is late, what is scheduled for a day or week, workload per attendant, closing a batch of them, or setting up a multi-step follow-up cadence with automatic WhatsApp steps on an opportunity.
 - **clickmax-ai-sdr-observability** — Use when the user asks why the AI SDR agent answered, stayed silent, handed off or failed with a contact, or how the AI SDR performed in a period, on a number or in a deployment.
 - **clickmax-analytics** — Use when the user asks business/revenue/KPI questions like how much they made, how they are performing, top products, lead counts, funnel performance, or campaign/email open rates over a period.

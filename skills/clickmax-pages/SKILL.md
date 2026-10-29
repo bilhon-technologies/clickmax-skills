@@ -25,6 +25,7 @@ Scope boundary — pick the right skill first:
 - The project's style guide is a fresh default (commonly light mode, blue/navy palette, small type scale) until someone changes it, and no tool changes it. A dark/accent request that conflicts with it must be satisfied by an explicit local palette applied to every section — never by half-styled markup that lets bare tags inherit the default.
 - Imported author scripts are stripped. Use native HTML/CSS interactions or the documented declarative motion contract.
 - Page created from the Pages list AI box = placeholders: name `Nova página`|`New page`|`Nueva página`, type guessed from the goal chip, path `/rascunho-<id>`, project default domain. After authoring → `mcp__plugin_clickmax_clickmax__pages_update` name|type|description|slug `path` from the content; never change `domainId` (the user picks it in the first-publish review).
+- Images: real asset known → use it; otherwise mark a reserved image slot (`data-cx-image-slot` + hint + kind) from the context's `imageSlots`, never a guessed URL → [components](references/components.md#reserved-image-slots).
 - One capture form per page. Two forms record the lead twice and make the funnel's `form_submit` trigger ambiguous.
 - Missing facts/assets → [content discovery](references/content-discovery.md) before authoring. Explicitly requested fictional samples stay visibly labeled in draft; replace/remove before publication. Never invent actual payment, delivery, contact or access links.
 
@@ -79,4 +80,4 @@ Scope boundary — pick the right skill first:
 
 ---
 
-Clickmax skill revision: `4f9e7e2ceee6`
+Clickmax skill revision: `d38692db58a7`

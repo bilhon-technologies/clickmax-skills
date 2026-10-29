@@ -9,7 +9,7 @@ Every step feeds the next with the **same** manifest object. Changing it mid-fli
 1. `mcp__plugin_clickmax_clickmax__pages_recipes_list` — pick the one recipe compatible with the target page type.
 2. Resolve the [visual base](visual-system.md): read the bundled HTML for the default, or inspect an explicit reference/catalog choice. Only the catalog path needs `mcp__plugin_clickmax_clickmax__page_designs_list` / `mcp__plugin_clickmax_clickmax__page_designs_get`.
 3. Build the manifest: `recipeId` plus the optional `designIdOrSlug` of the design chosen in step 2. Reuse it unchanged from here on.
-4. `mcp__plugin_clickmax_clickmax__pages_generation_context_get` with the manifest and the target — returns the token CSS and token names the page must use.
+4. `mcp__plugin_clickmax_clickmax__pages_generation_context_get` with the manifest and the target — returns the token CSS and token names the page must use, plus `imageSlots` to mark.
 5. Adapt one complete responsive HTML document from the base. Fill slots with verified answers, select composition variants, and follow [content discovery](content-discovery.md) for missing facts.
 6. `mcp__plugin_clickmax_clickmax__pages_validate_html` with the same target, manifest, HTML, and `offerId` when there is a checkout. Writes nothing.
 7. `valid: false` → fix **every** entry in `errors` and revalidate. Read `warnings` too; they are actionable.

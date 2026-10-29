@@ -69,4 +69,4 @@ When the user says "create the webchat with AI" from the builder, the channel AL
 
 ---
 
-Clickmax skill revision: `4f9e7e2ceee6`
+Clickmax skill revision: `d38692db58a7`

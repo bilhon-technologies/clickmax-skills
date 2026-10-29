@@ -270,6 +270,31 @@ Reveal or hide other elements once a timer elapses. Works on a plain YouTube/Pan
 
 ## Images
 
+### Reserved image slots
+
+Real image unknown at authoring time (product photo, logo, person, scene) → MARK the place, never invent a URL:
+
+```html
+<img
+  class="cm-image"
+  alt="Produto em uso"
+  data-cx-image-slot="hero"
+  data-cx-image-hint="Foto do produto, 21:9"
+  data-cx-image-kind="brand"
+/>
+<section data-cx-image-slot="mood" data-cx-image-hint="Escritório com luz natural, 16:9" data-cx-image-kind="ambient">
+  …
+</section>
+```
+
+- `<img>` slot → class `cm-image`, NO `src`, real `alt`. Background slot → same 3 attributes on the element; no `background-image` yet.
+- `data-cx-image-slot` = id from `imageSlots` in the generation context (recipe + design); unique per page. Unmarked → `IMAGE_SLOT_MISSING` warning.
+- `data-cx-image-hint` = what it shows + ratio (`21:9`, `4:3`, `1:1`). It becomes the editor placeholder ("Adicionar imagem · 21:9 · foto do produto") and sizes it.
+- `data-cx-image-kind`: `brand` (logo, product, person — only from the user's library/upload, never stock) | `ambient` (scene/mood — stock search allowed).
+- Empty slot: placeholder in the editor, hidden on the published page, listed in the first-publish review. Fill later in the editor with `codemode.setImageSrc` (see the editor workflow) — never by regenerating the block.
+
+### Images with a real URL
+
 - Use an asset the user supplied, or search a real, license-clear stock photo with `mcp__plugin_clickmax_clickmax__pages_images_search`. Never hand-write or guess a photo URL — a broken image in production is worse than a section with none.
 - Hotlink the returned URL **verbatim** in `<img src>`: never re-host it, never edit its path or query.
 - Search with concrete visual terms in the page's language ("mulher treinando academia"), never marketing abstractions ("sucesso").

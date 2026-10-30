@@ -97,6 +97,7 @@ Sem esses passos, a cópia local fica parada na versão instalada e a IA segue o
 - **clickmax-proposals** — Use when the user wants to find, create, edit, version or consolidate Clickmax proposal templates (slide deck or Word document) and the proposals generated for contacts/opportunities.
 - **clickmax-sales-insights** — Use when the user wants to know what is selling — top offers/products by revenue and quantity, order-bump attach rate, or period-over-period sales trend (revenue, average ticket, sales count) for seller sales analysis in Clickmax.
 - **clickmax-seller-subscriptions** — Use when the user wants to inspect, chart, cancel, or swap cards on customer subscriptions sold through Clickmax.
+- **clickmax-social** — Use when the user wants to connect Instagram, Facebook, TikTok or YouTube accounts, write, schedule, publish, reschedule, cancel or retry social media posts, manage the posting queue, or read social media results in Clickmax.
 - **clickmax-support** — Use when the user asks a how-to, troubleshooting, or "why isn't this working" support question about using Clickmax, and the answer should come from the help center.
 - **clickmax-tags** — Use when the user wants to inspect, X-ray usage of, create, update, delete, clone, or apply CRM tags to leads in Clickmax.
 - **clickmax-team-members** — Use when the user asks who is on the workspace team, how a specific teammate is doing (open opportunities, recent activity, last access), or needs to resolve a person to the right id before acting on their opportunities, tasks, files or shares.

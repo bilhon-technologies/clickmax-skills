@@ -21,7 +21,7 @@ Scope boundary — pick the right skill first:
 
 - A page with real content is authored as **one full HTML document** and imported. `pages_create` alone produces a blank page or a template copy — no copy, no sections, no working form.
 - The authoring path is validated by machine, not by taste: recipe capabilities and every `requiredSections` id are checked before import. Guessing the shape wastes a round trip.
-- **Default design = a catalog design** (`page_designs_list` → `page_designs_get` → slug in manifest `designIdOrSlug`). Its palette/type become the page tokens; the style guide only keeps logo + brand name. New page, no design named → ask with `question` type `pageDesign` (cards + full catalog in the chat); skipped → choose the best fit and say which. Bundled editorial HTML = section structure only, or full fallback when nothing fits → [visual system](references/visual-system.md).
+- **Default design = a catalog design** (`page_designs_list` → `page_designs_get` → slug in manifest `designIdOrSlug`). Its palette/type become the page tokens; the style guide only keeps logo + brand name. New page, no design named, restyle, or the user asks to see/list the designs → `question` type `pageDesign` (cards + full catalog in the chat), never a text list; skipped → choose the best fit and say which. Bundled editorial HTML = section structure only, or full fallback when nothing fits → [visual system](references/visual-system.md).
 - The project's style guide is a fresh default (commonly light mode, blue/navy palette, small type scale) until someone changes it, and no tool changes it. A dark/accent request that conflicts with it must be satisfied by an explicit local palette applied to every section — never by half-styled markup that lets bare tags inherit the default.
 - Imported author scripts are stripped. Use native HTML/CSS interactions or the documented declarative motion contract.
 - Page created from the Pages list AI box = placeholders: name `Nova página`|`New page`|`Nueva página`, type guessed from the goal chip, path `/rascunho-<id>`, project default domain. After authoring → `mcp__plugin_clickmax_clickmax__pages_update` name|type|description|slug `path` from the content; never change `domainId` (the user picks it in the first-publish review).
@@ -80,4 +80,4 @@ Scope boundary — pick the right skill first:
 
 ---
 
-Clickmax skill revision: `a76ae3e6d3e1`
+Clickmax skill revision: `a96306279f5f`

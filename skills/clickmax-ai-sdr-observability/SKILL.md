@@ -12,6 +12,7 @@ Not this skill:
 - the conversation messages themselves → messaging/inbox skills
 - the contact record, tags, fields → `clickmax-leads`
 - Flows automations that are not the AI SDR block → `clickmax-flows`
+- creating/configuring the agent or its deployment (persona, connections, audience, autopilot) → `clickmax-ai-agents`
 
 ## Key assumptions
 
@@ -73,4 +74,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `cee6a983010c`
+Clickmax skill revision: `862a8ca93146`

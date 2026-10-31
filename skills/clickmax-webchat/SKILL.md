@@ -21,7 +21,7 @@ Not this skill:
 - `enabled: false` on the CHANNEL takes the widget offline; `preChatFlow.enabled: false` (or `steps: []`) keeps the widget up but skips the bot and opens live chat directly. They are different switches.
 - Every path of the flow must terminate in `handoff` (a human takes over in LiveChat) or `end`. A path that falls off the array ends silently — the visitor is left without an answer.
 - `capture` is what turns the visitor into a CRM lead; a flow without it can hand off an anonymous visitor.
-- Channels are created disabled. The user embeds the widget on a page; the bot only runs after `enabled: true`.
+- Channels are created ENABLED: the bot answers as soon as the widget is embedded on a page. To build before going live, set `enabled: false` right after creating.
 
 ## Thought process
 
@@ -45,12 +45,12 @@ When the user says "create the webchat with AI" from the builder, the channel AL
 1. `mcp__plugin_clickmax_clickmax__webchat_channel_get` by the given id → read `name`, `welcomeMessage`, `appearance`.
 2. Compose the steps (see [pre-chat flow](references/prechat-flow.md)): `message` greeting → `capture` (name + email, phone optional) → `question` with 2–4 clickable options per qualifying axis → optional `condition`/`ai` branching → `handoff` for hot paths, `end` (or `handoff`) for the rest.
 3. `mcp__plugin_clickmax_clickmax__webchat_channel_update` with `{ channelId, name: <short name from the goal>, welcomeMessage: <one-line greeting>, preChatFlow: { enabled: true, steps } }`.
-4. Report the path(s) and what is still pending (enable, embed).
+4. Report the path(s) and what is still pending (embed on a page; enable if it is off).
 
 ## Report
 
 - Say the channel name, the number of steps, whether the flow captures the lead, and where each path ends (handoff or end).
-- If the channel is disabled, say so and that enabling + embedding is the user's call.
+- Say whether the channel is enabled; embedding on a page (and enabling, if it was turned off) is the user's call.
 - When offering a next-step CTA for the channel just built, point to the concrete builder route: `action="open-page"` with `path="/marketing/webchat/<channelId>"`.
 
 ## Warnings
@@ -69,4 +69,4 @@ When the user says "create the webchat with AI" from the builder, the channel AL
 
 ---
 
-Clickmax skill revision: `cee6a983010c`
+Clickmax skill revision: `862a8ca93146`

@@ -119,4 +119,4 @@ Run in the SAME Code Mode script, same window + filters:
 
 ---
 
-Clickmax skill revision: `cee6a983010c`
+Clickmax skill revision: `862a8ca93146`

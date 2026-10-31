@@ -12,6 +12,7 @@ Not this skill:
 - people who are ALREADY members (progress, disable/enable, extend access, remove from a classroom, send the access link) -> `clickmax-members`
 - portal-level enrollment of known member users -> `clickmax-portal-enrollments`
 - building the audience itself -> `clickmax-list-segments` / `clickmax-leads`
+- creating/organizing a community or managing individual community members -> `clickmax-communities`
 
 ## Key assumptions
 
@@ -53,4 +54,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `cee6a983010c`
+Clickmax skill revision: `862a8ca93146`

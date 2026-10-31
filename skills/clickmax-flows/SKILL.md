@@ -5,11 +5,12 @@ description: Use when the user wants to create, inspect, change, validate, test,
 
 ## When this applies
 
-Use this skill when the user wants to operate a Clickmax automation flow: list/find one, inspect its graph, create/edit/connect/delete steps, configure entry events, validate, test it with a real contact, investigate its executions (who is stuck/failed and why), retry or stop runs, run a published flow for a list/tag/segment/contacts now or on a date (manual run) and follow or cancel that run, answer which message of which automation a contact is on and what comes next, see which other automations are linked to a tag/stage/message, or change lifecycle mode. A one-off "create/send an email to my leads" request is this skill too — build a minimal flow with a `trigger` + `flows_send_email` step. Do NOT reinterpret it as a landing page: a checkout button, dark theme, or urgency tone the user asks for are the email template's CTA/colors/font (`flows_send_email`'s style params), never page markup.
+Use this skill when the user wants to operate a Clickmax automation flow: list/find one, inspect its graph, create/edit/connect/delete steps, configure entry events, validate, test it with a real contact, investigate its executions (who is stuck/failed and why), retry or stop runs, run a published flow for a list/tag/segment/contacts now or on a date (manual run) and follow or cancel that run, answer which message of which automation a contact is on and what comes next, see which other automations are linked to a tag/stage/message, or change lifecycle mode. A one-off "send an email to my leads/list/segment" is a campaign → `clickmax-broadcasts`, not a flow; an email that goes out on an event (signup, purchase, tag) is this skill (`flows_send_email`). Do NOT reinterpret either as a landing page: a checkout button, dark theme, or urgency tone the user asks for are the email's CTA/colors/font, never page markup.
 
 Not this skill:
 
 - Funnel page graph, offers, pages, traffic routing -> `clickmax-funnels`
+- The user asks for a campaign/disparo/broadcast (one send to a list/segment, now or at a date, reviewed before sending) -> `clickmax-broadcasts`
 - A page — even one the user calls "email" — that isn't sent as a message (a landing/sales page, a page to share a link to) -> `clickmax-page-editing`
 - Building the cohort that will feed the flow -> resolve that with the relevant CRM/sales skill first, then come back to wire the automation
 - Channel copy authoring in isolation -> create the message content first, then reference real ids here
@@ -133,4 +134,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `cee6a983010c`
+Clickmax skill revision: `862a8ca93146`

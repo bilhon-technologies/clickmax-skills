@@ -12,6 +12,7 @@ Not this skill:
 - pipeline board, stages, cards, pipeline settings -> `clickmax-pipelines`
 - lead search / identity -> `clickmax-leads`
 - an AI agent's own persona/knowledge -> not exposed here; this skill only picks an existing agent by id
+- what an AI SDR agent asks or how it qualifies -> NOT a playbook: the agent never reads one (Settings › Meus agentes, persona + Flows block; no tool here edits it)
 
 ## Key assumptions
 
@@ -69,7 +70,8 @@ Not this skill:
 - Marking `whatsapp`/`flows` scopes.
 - Looping the simulator to "optimize" the text without the user asking.
 - Setting the pipeline's default copilot agent as a side effect of linking a playbook.
+- Creating a playbook to configure an AI SDR agent, or saying a playbook was linked/associated to an agent: no such link exists. `defaultCopilotAgentId` only picks the meeting copilot; say so, and point to the agent persona for what it should ask.
 
 ---
 
-Clickmax skill revision: `a96306279f5f`
+Clickmax skill revision: `cee6a983010c`

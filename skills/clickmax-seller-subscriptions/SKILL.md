@@ -1,11 +1,11 @@
 ---
 name: clickmax-seller-subscriptions
-description: Use when the user wants to inspect, chart, cancel, or swap cards on customer subscriptions sold through Clickmax.
+description: Use when the user wants to inspect, chart, or cancel customer subscriptions sold through Clickmax.
 ---
 
 ## When this applies
 
-Use this skill for seller-side recurring subscriptions: inspect one subscription, filter/chart cohorts, swap the customer's billing card, or cancel one subscription.
+Use this skill for seller-side recurring subscriptions: inspect one subscription, filter/chart cohorts, or cancel one subscription. There is no tool to swap the customer's billing card; the customer changes it on the gateway side.
 
 Mutations here are always single-subscription: there is no bulk cancel and no renew. Reactivating a canceled subscription means the customer subscribes again through checkout.
 
@@ -16,7 +16,6 @@ Not this skill:
 ## Key assumptions
 
 - this is about end-customer subscriptions the workspace sells, not the workspace's own SaaS plan
-- update-card is idempotent for the same card choice, but it is not a low-stakes edit: it repoints a live recurring charge, so the next renewal bills whoever owns the new card. Treat it as a money action and confirm the target subscription and card before calling
 - cancel is permanent at the processor and applies to exactly one subscription
 - a cohort can be listed and charted, but not mutated in one call; acting on many subscriptions means one call per subscription, each confirmed
 
@@ -30,13 +29,12 @@ Not this skill:
 - Use `mcp__plugin_clickmax_clickmax__subscriptions_get` with `id = subscription id` to inspect one subscription.
 - Use `mcp__plugin_clickmax_clickmax__subscriptions_list` with `page`, `perPage`, and the needed filters such as `searchText`, `subscriptionStatus`, `productIds`, `column`, and `order` to find one customer or a cohort.
 - Use `mcp__plugin_clickmax_clickmax__subscriptions_chart` with `transactionStatus` and `membershipPeriod.from/to` for counts and trend views inside a billing or membership window.
-- Use `mcp__plugin_clickmax_clickmax__subscriptions_update_card` with `id` and `cardId` to swap the billing card for one subscription, after the user confirmed which subscription and which card.
 - Use `mcp__plugin_clickmax_clickmax__subscriptions_cancel` with `id`, `cancellationReason`, and optional `cancellationReasonDescription` to cancel one subscription.
 
 - Default order:
   1. inspect or list first when the user did not provide an exact subscription id
   2. use `subscriptions_chart` for counts/trends, not record-by-record inspection
-  3. use `subscriptions_update_card` or `subscriptions_cancel` on one subscription at a time
+  3. use `subscriptions_cancel` on one subscription at a time
 
 ## Report
 
@@ -59,4 +57,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `862a8ca93146`
+Clickmax skill revision: `d9bc7f7bfbe4`

@@ -5,7 +5,7 @@ description: Use when the user wants to inspect, compare, preview cancellation o
 
 ## When this applies
 
-Use this skill for the workspace's own Clickmax SaaS billing plan: inspect current plan/usage, compare upgrades, view invoice or plan transaction history, preview cancellation impact, cancel the current plan, or manage the cards the workspace pays Clickmax with.
+Use this skill for the workspace's own Clickmax SaaS billing plan: inspect current plan/usage, compare upgrades, view invoice or plan transaction history, preview cancellation impact, or cancel the current plan.
 
 Not this skill:
 
@@ -36,7 +36,8 @@ Not this skill:
 - Cancel with `mcp__plugin_clickmax_clickmax__plans_cancel_current_plan` (requires a structured `reason`; `reasonDescription` is mandatory when the reason is `other`; `type` picks keep-account vs delete-account). Always targets the caller's own current plan, and only after the user clearly asked to cancel.
 - After cancelling, state the effective date from `scheduledFor` and that the plan stays usable until then. Saying "cancelled" flat out is wrong while the window is open.
 - Before any cancellation path, check pending changes so you do not stack a new mutation on top of an already-scheduled one.
-- Manage the workspace's own SaaS-billing cards (the cards paying for THIS Clickmax plan, not a customer's checkout card — different domain, do not confuse with `clickmax-transaction-operations`/checkout buyers): `mcp__plugin_clickmax_clickmax__buyers_cards_list` to see saved cards, `mcp__plugin_clickmax_clickmax__buyers_card_set_default` to promote one (it decides which card Clickmax charges next and unsets the previous default — confirm the card with the user first), `mcp__plugin_clickmax_clickmax__buyers_purchases_list` to check active commitments before deleting a card, then `mcp__plugin_clickmax_clickmax__buyers_card_delete` only when removal is explicit.
+- `mcp__plugin_clickmax_clickmax__buyers_purchases_list` = active plan + addon purchases of the workspace.
+- No tool lists, swaps, deletes or sets a default card. To pay the plan with another card, the user pays the next invoice via "Pagar agora" on `/settings/plan` (shown when the charge is overdue or due within 7 days).
 
 ## Report
 
@@ -50,7 +51,6 @@ Not this skill:
 
 - Do not use customer subscription tools here.
 - The cancel tool is destructive and self-scoped to the caller's own workspace plan — there is no separate admin/cross-workspace variant to reach for.
-- `buyers_card_delete` is destructive; check `buyers_purchases_list` first and confirm before deleting a card backing an active commitment.
 
 ## Anti-patterns
 
@@ -60,4 +60,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `862a8ca93146`
+Clickmax skill revision: `d9bc7f7bfbe4`

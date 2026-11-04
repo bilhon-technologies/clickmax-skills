@@ -37,7 +37,7 @@ Scope boundary — pick the right skill first:
 4. Resolve account facts and ask the unanswered [content discovery](references/content-discovery.md) questions. A request for the default design does not skip discovery.
 5. Pick the recipe, read its bundled HTML base (or the explicit reference), then select composition variants and map verified content into slots. Reuse the funnel palette.
 6. Author, validate, fix every error, import as draft.
-7. Publication is always a separate, explicitly approved step.
+7. Publication is always a separate, explicitly approved step (approval card, or the user's written "pode publicar" in the latest message).
 
 ## Execute guide
 
@@ -80,4 +80,4 @@ Scope boundary — pick the right skill first:
 
 ---
 
-Clickmax skill revision: `54d81bd18cd3`
+Clickmax skill revision: `e96df46b6701`

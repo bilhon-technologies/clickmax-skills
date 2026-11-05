@@ -77,4 +77,4 @@ Rule of thumb for "object or field?": object when the thing has its OWN identity
 
 ---
 
-Clickmax skill revision: `70cba7aeb1c6`
+Clickmax skill revision: `13cdeda60f43`

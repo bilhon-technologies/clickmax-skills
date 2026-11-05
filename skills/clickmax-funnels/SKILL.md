@@ -29,6 +29,8 @@ For AI-authored pages, read [AI funnel creation](references/ai-funnel-creation.m
 - Never end the turn with page nodes whose triggers still have no `target`: unrouted triggers show up as loose, disconnected nodes with no edges in the editor.
 - Multi-node builds should do create + connect as one continuous workflow, not in stop-and-go calls that might stop before the connect step.
 - Before reporting done: call `funnels_structure_get`, confirm every intended route has an edge, then call `funnels_validate`; if there are leftover `disconnectedTriggers` or `orphanNodeIds`, surface them instead of silently finishing.
+- Missing offer (no product/price yet) = a gap to report, never a reason to stop the build: author + connect every page that does not need it (capture, sales, thank-you); checkout = `mcp__plugin_clickmax_clickmax__pages_create` from a checkout template WITHOUT `offerId`, linked to its node, offer bound later with `mcp__plugin_clickmax_clickmax__checkouts_set`. Price, offer name and other commercial facts stay as visible "a confirmar" placeholders, never invented. User said "fill as a confirmar and continue" = that IS the skip: do not pause for it.
+- Ending the turn still needing user data (offer name/price, a missing link…) = ask it with the `question` tool, never only as the last line of the report; a plan phase left `in_progress` with the turn over reads as a stalled build.
 
 ## Key assumptions
 
@@ -136,6 +138,7 @@ Common flows:
 - Creating page nodes and stopping before `funnels_triggers_connect`, leaving loose unrouted nodes in the editor
 - Splitting create and connect across separate incomplete steps so the build stops before routing is finished
 - Deleting a funnel when the user only wants it offline or paused
+- Stopping before the pages because the offer is missing and leaving every page node empty — build the pages that do not depend on it and bind the offer later (`checkouts_set`)
 - Creating a BLANK page when the user wanted a checkout/sales page — start from a template (`pages_templates_list`) and pass `offerId` so the checkout is bound, instead of leaving an empty page
 - Building an `ab_test` and pointing every variant's `connectedTo` at the SAME page (all the percentages bound to one page) — that splits traffic to one destination and tests nothing; clone the base page (`pages_clone`) once per variant and give each variant a distinct page node
 - Connecting two pages to the SAME node and reporting both as added — the second silently replaced the first (`replacedPageId` says which); one node per page
@@ -145,4 +148,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `70cba7aeb1c6`
+Clickmax skill revision: `13cdeda60f43`

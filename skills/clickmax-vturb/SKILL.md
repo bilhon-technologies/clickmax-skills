@@ -11,7 +11,7 @@ Questions about the performance of a VSL hosted on **Vturb** (the video player C
 
 - revenue/sales totals, top products, funnel steps -> `clickmax-analytics`
 - payment/transaction cohorts -> `clickmax-payments-dashboard-analysis`
-- building or editing the page that hosts the video -> `clickmax-funnels` (page building)
+- adding the video to a page or adjusting its block -> `clickmax-pages` (needs the embed code the user pastes, not the integration)
 
 ## Key assumptions
 
@@ -100,4 +100,4 @@ The Clickmax Vturb block supports **"Revelação progressiva"**: reveal or hide 
 
 ---
 
-Clickmax skill revision: `e96df46b6701`
+Clickmax skill revision: `9809609d8981`

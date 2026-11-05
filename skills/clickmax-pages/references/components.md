@@ -247,12 +247,16 @@ An `<iframe>` from YouTube or Vimeo is the only plain embed that survives import
 ### VTurb
 
 ```html
-<div data-cx-vturb="<videoId>"></div>
+<div data-cx-vturb="<videoId>" data-cx-vturb-script="<player.js url>"></div>
 ```
 
+- Source = embed code the user pastes (Vturb panel → `</>` next to the video). No snippet in the conversation → ask for it; never invent, guess or rebuild ids/URLs
+- `videoId` = `id` of its `<vturb-smartplayer>` (or legacy `<div id="vid_...">`), copied as is | `data-cx-vturb-script` = its `https://scripts.converteai.net/.../player.js` `src`
 - server resolves the marker into the real `<vturb-smartplayer>`; the published page loads its player script on its own
-- `videoId` must already exist as a VTurb player on this workspace
+- without `data-cx-vturb-script` → `videoId` must exist on the workspace's connected Vturb account (`vturb_players_list`), else the marker is dropped with a `VTURB_PLACEHOLDER_WARNING`
 - a hand-written `<script>` for VTurb is always stripped — it never boots the player; the marker is the only working path
+- one Vturb video per page: the same `videoId` twice leaves the second player empty
+- page open in the editor → mounted `editor` `codemode.setVturbVideo(...)`, never re-import: add = `targetId`+`position`+`embedCode`; adjust = `componentId` (optional with ONE block) + only what changes — `embedCode` (swap video) | `css` (wrapper: max-width, width, margin, border-radius, border, padding, box-shadow; keep aspect-ratio) | `timerSeconds` (0 = off) + `showIds`/`hideIds` (`[]` clears). Move/remove the block = `moveComponent`/`removeComponent`; its content is protected from `editComponent`/`setComponentStyle`
 
 ### Watch-gate (optional)
 

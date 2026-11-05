@@ -7,22 +7,22 @@ Execution = one contact's run through one flow. Tool contracts (filters, fields,
 |Question|Tool|
 |-|-|
 |How many runs / stuck / failed? Top failure reasons? Did contact X go through?|`flows_executions_list`|
-|Where did this run stop and why? Which branch did it take?|`flows_execution_get`|
-|Does the flow work end to end?|`flows_test_run_start` → `flows_execution_get`|
+|Where did this run stop and why? Which branch did it take?|`flows_executions_get`|
+|Does the flow work end to end?|`flows_test_runs_start` → `flows_executions_get`|
 |What did the trigger event carry?|`flows_trigger_samples_list`|
 |What is this id in the run data?|`flows_entity_refs_resolve`|
 |Which other automations start from what this step does?|`flows_link_targets_list`|
 |Which automations feed this trigger?|`flows_link_sources_list`|
-|Redo a failed run / all runs of one error|`flows_execution_retry` / `flows_executions_retry_by_error`|
-|Stop one run|`flows_execution_cancel`|
+|Redo a failed run / all runs of one error|`flows_executions_retry` / `flows_executions_retry_by_error`|
+|Stop one run|`flows_executions_cancel`|
 |Stop new contacts entering|`flows_close` (not a cancel)|
 |Only the executions of one manual run|`flows_executions_list` with `runId` — runs themselves: [manual runs and cadences](runs-and-cadences.md)|
-|What did the AI SDR step find out / why did it exit?|`flows_execution_get` → that step's `aiSdr`|
+|What did the AI SDR step find out / why did it exit?|`flows_executions_get` → that step's `aiSdr`|
 
 ## Diagnose a failure
 
 1. `flows_executions_list` with `status: 'failed'` (add `stepId` for one node, `q` for one contact): read `counts` and `topErrors`.
-2. `flows_execution_get` on one failed run: `steps[].error` on the failing node, `haltReason`.
+2. `flows_executions_get` on one failed run: `steps[].error` on the failing node, `haltReason`.
 3. Translate the cause to plain words (dead WhatsApp number, unapproved template, deleted tag/stage…). Resolve raw ids with `flows_entity_refs_resolve`; never show a UUID.
 4. Fix the cause (a running flow's steps are locked: see [lifecycle and safety](lifecycle-and-safety.md)), then offer the retry with the number of contacts.
 
@@ -30,13 +30,13 @@ Defaults that mislead: `kind` omitted = production only (test runs hidden; `kind
 
 Production runs have no per-step trace, only step order and the failing step's error. The full trace (branch evaluation, effect, input/output) exists for test runs only, so to explain "why did it take the false branch" for a real contact, reproduce with a test run for that contact.
 
-## Test run (`flows_test_run_start`)
+## Test run (`flows_test_runs_start`)
 
 - REAL run: sends messages, applies tags, moves cards, spends credits, honors waits, counts in metrics. Not a simulation and not activation.
 - Runs the saved graph for ONE contact, no published flow needed, no same-contact debounce (repeat freely).
 - Starts at the start step: it does not prove the real trigger event fires the flow.
 - Payload is deduced from the trigger's scope (offer/pipeline/stage); send `payload` only to fill or override; a real one comes from `flows_trigger_samples_list`.
-- Returns immediately; poll `flows_execution_get` (a wait step holds the run for its whole duration).
+- Returns immediately; poll `flows_executions_get` (a wait step holds the run for its whole duration).
 - Confirm before running, naming the recipient; default to the user's own contact.
 
 ## Retry / stop

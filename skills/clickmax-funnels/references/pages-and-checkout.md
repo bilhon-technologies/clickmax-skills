@@ -21,7 +21,7 @@ The fastest path when the user explicitly wants a ready-made Clickmax checkout r
 
 1. `mcp__plugin_clickmax_clickmax__pages_templates_list` with `type: ["checkout"]` — or `["sales"]` for a sales page that embeds a checkout. Pick one whose `canUse` is `true`.
 2. `mcp__plugin_clickmax_clickmax__pages_create` with `type: "checkout"`, that `templateId`, the `offerId` to sell, plus `name`, `path`, `projectId`, and `funnelId`. The backend copies the template and **auto-binds the offer** into the page's checkout block — no manual editing.
-3. `mcp__plugin_clickmax_clickmax__funnels_node_create` a `page` node, or reuse the existing checkout node, then `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` with the returned `pageId`.
+3. `mcp__plugin_clickmax_clickmax__funnels_nodes_create` a `page` node, or reuse the existing checkout node, then `mcp__plugin_clickmax_clickmax__funnels_nodes_connect_page` with the returned `pageId`.
 4. `mcp__plugin_clickmax_clickmax__funnels_triggers_connect`, then `mcp__plugin_clickmax_clickmax__funnels_validate`, then publish only when asked.
 
 When the checkout should carry the funnel's own visual identity instead of the template's, author it through `clickmax-pages` with the `checkout` recipe and connect it the same way from step 3.
@@ -31,9 +31,9 @@ When the checkout should carry the funnel's own visual identity instead of the t
 When the step sells through the workspace's Whop, Hotmart, Stripe, Pagar.me or PagBank account (not a Clickmax offer):
 
 0. `mcp__plugin_clickmax_clickmax__external_checkout_accounts_list` for that platform FIRST. `setup` not null → relay `setup.instructions` (connect or complete the integration in Integrações) and stop: no node, no page.
-1. `mcp__plugin_clickmax_clickmax__funnels_node_create` with `type: "external_checkout"` and `config: { provider: "whop" | "hotmart" | "stripe" | "pagarme" | "pagbank" }` — always pass the provider. Omit `triggers`: the node gets `purchase_approved` (+ accept fallbacks). Whop/Hotmart/Stripe never emit `purchase_declined`, `cart_abandoned`, pix or boleto; Pagar.me and PagBank can also take `card_declined`, `pix_generated` and `boleto_generated` (add them with `mcp__plugin_clickmax_clickmax__funnels_node_triggers_update` when the user wants those paths). Its triggers cannot go to a `workflow` node.
+1. `mcp__plugin_clickmax_clickmax__funnels_nodes_create` with `type: "external_checkout"` and `config: { provider: "whop" | "hotmart" | "stripe" | "pagarme" | "pagbank" }` — always pass the provider. Omit `triggers`: the node gets `purchase_approved` (+ accept fallbacks). Whop/Hotmart/Stripe never emit `purchase_declined`, `cart_abandoned`, pix or boleto; Pagar.me and PagBank can also take `card_declined`, `pix_generated` and `boleto_generated` (add them with `mcp__plugin_clickmax_clickmax__funnels_nodes_triggers_update` when the user wants those paths). Its triggers cannot go to a `workflow` node.
 2. Author the page in `clickmax-pages` (its external-checkout reference): catalog walk → `mcp__plugin_clickmax_clickmax__pages_import_html_draft` with `externalCheckout` of the SAME provider and the funnel's `projectId`/`funnelId`.
-3. `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` on that node, then route `purchase_approved` to the next step (thank-you/upsell) with `mcp__plugin_clickmax_clickmax__funnels_triggers_connect`.
+3. `mcp__plugin_clickmax_clickmax__funnels_nodes_connect_page` on that node, then route `purchase_approved` to the next step (thank-you/upsell) with `mcp__plugin_clickmax_clickmax__funnels_triggers_connect`.
 4. Tell the user Whop, Stripe, Pagar.me and PagBank sales are tied to the page once the funnel/page is published (Stripe, Pagar.me and PagBank do not charge before that); revenue shows in the funnel's results.
 
 Never fall back to a page node without checkout, or to another platform, when the integration is missing.
@@ -43,19 +43,19 @@ Never fall back to a page node without checkout, or to another platform, when th
 When the funnel's pages are routes of a Max Design site:
 
 1. Create the funnel and its nodes first, one `page` node per route.
-2. Build every route of the funnel in ONE Max Design project that belongs to the funnel's Clickmax project (`projectId`): `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` refuses a page from another project.
+2. Build every route of the funnel in ONE Max Design project that belongs to the funnel's Clickmax project (`projectId`): `mcp__plugin_clickmax_clickmax__funnels_nodes_connect_page` refuses a page from another project.
 3. Publish the site (the user approves it). A route becomes a Clickmax page only once the publication is live; an unpublished route has no page id and cannot be linked. Live route pages show up in `mcp__plugin_clickmax_clickmax__pages_list`.
-4. `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` each route's page on its OWN node, then connect triggers and validate as below. Outgoing arrows from these pages are diagram-only: navigation belongs to the site's `<Link>`, `navigate`, handlers or `data-cx-redirect-url` after capture. CTA markers and `form_submit` do not navigate by themselves. Never `mcp__plugin_clickmax_clickmax__pages_create` or `mcp__plugin_clickmax_clickmax__pages_create_external` for a route.
+4. `mcp__plugin_clickmax_clickmax__funnels_nodes_connect_page` each route's page on its OWN node, then connect triggers and validate as below. Outgoing arrows from these pages are diagram-only: navigation belongs to the site's `<Link>`, `navigate`, handlers or `data-cx-redirect-url` after capture. CTA markers and `form_submit` do not navigate by themselves. Never `mcp__plugin_clickmax_clickmax__pages_create` or `mcp__plugin_clickmax_clickmax__pages_create_external` for a route.
 5. Checkout is not part of a Max Design site: the checkout step stays a Clickmax checkout page (above) or an external checkout step, and the site's purchase buttons link to that checkout's URL.
 
 ## Linking and routing
 
-- Link with `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` after the page exists. A page node with no page linked is a slot the visitor cannot reach.
+- Link with `mcp__plugin_clickmax_clickmax__funnels_nodes_connect_page` after the page exists. A page node with no page linked is a slot the visitor cannot reach.
 - Route the node's outgoing edges with `mcp__plugin_clickmax_clickmax__funnels_triggers_connect`. Creating the node and stopping is an unfinished build.
 - On classic editor and external pages using legacy SDK routing, `form_submit` with no element bound can route the page to the next node. Binding a specific element selects one form when several exist; prefer one capture form per page. Max Design navigation follows the site code, not these edges (above).
 - A CTA only becomes the "button click" exit trigger when the element carries the CTA marker. Styling never implies intent, so an unmarked button renders correctly and still leaves that trigger unavailable on the canvas.
 - A checkout page that needs order bumps gets them after it is linked to its node. The call full-replaces the bump list.
-- The offer bound to a page's checkout can be read and changed after the fact with `mcp__plugin_clickmax_clickmax__checkout_get` / `mcp__plugin_clickmax_clickmax__checkout_set` — no re-import needed just to fix an offer.
+- The offer bound to a page's checkout can be read and changed after the fact with `mcp__plugin_clickmax_clickmax__checkouts_get` / `mcp__plugin_clickmax_clickmax__checkouts_set` — no re-import needed just to fix an offer.
 
 ## A checkout is an offer's checkout
 

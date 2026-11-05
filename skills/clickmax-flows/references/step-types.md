@@ -62,7 +62,7 @@
 - `send_message`
   - Inside a `flows_graph_apply` change set, a message is an `add` op with the raw shape below. For one message alone, the channel-specific tools (`flows_send_email` | `flows_send_sms` | `flows_send_whatsapp` | `flows_send_voice` | `flows_send_telegram` | `flows_send_instagram`, each accepting `after: {step, handle?}`) take a precise per-channel schema (just `content`, plus `subject` for email) and set `message.type` for you.
   - Email has three body-authoring modes (plain text / recolored default template / fully custom HTML) — see [email authoring](email-authoring.md) before writing one, especially before styling it.
-  - Raw shape (`add` op / `flows_step_create`): channel via `input.type`: `email` | `sms` | `gupshup` (WhatsApp) | `telegram` | `voice` | `instagram`
+  - Raw shape (`add` op / `flows_steps_create`): channel via `input.type`: `email` | `sms` | `gupshup` (WhatsApp) | `telegram` | `voice` | `instagram`
   - `message` is REQUIRED and channel-specific; the free-text body lives in `message.content`. `message.type` is REQUIRED — set it per channel: sms/telegram/instagram → `text`; gupshup → `text` (free-form) or `template` (approved template — see below, matches `format`); voice → `audio`; email → `html` (or `text`) AND email also needs `message.subject`. (If you omit `message.type` the server backfills the channel default, but always send it.)
   - **WhatsApp is template-first**: `format: 'text'` is rejected unless `numberStrategy: 'context'` — free-form text only delivers inside the 24h customer-care window. See [WhatsApp templates](whatsapp-templates.md) for how to pick, author, and submit one.
   - **GupShup `content` with `format: 'template'` is NOT the message body** — it holds the approved template's `elementName`, and the actual copy comes from the template itself (personalized via `paramMapping`, below). Writing prose into `content` in this mode breaks the builder (`templateNotFound` — it looks the node up by that exact name) and is exactly the case `gupshupTemplateId` (below) exists to pin down instead of leaving the send to guess. Resolve the real template first with `gupshup_templates_list`/`gupshup_templates_get` and pass its `elementName` as `content` + its id as `gupshupTemplateId`.
@@ -109,5 +109,5 @@ Unknown handle → rejected with the step's valid outputs; `flows_structure_get`
 ## Trigger event placement
 
 - Do not put entry/exit events into arbitrary step input fields
-- Use `triggerStart` via the `setTriggers` op of `flows_graph_apply` (or `flows_step_triggers_set`); exits are the flow goal, configured by the user in the editor
+- Use `triggerStart` via the `setTriggers` op of `flows_graph_apply` (or `flows_steps_triggers_set`); exits are the flow goal, configured by the user in the editor
 - These arrays replace the current lists

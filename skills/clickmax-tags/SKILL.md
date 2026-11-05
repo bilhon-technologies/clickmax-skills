@@ -37,11 +37,11 @@ Not this skill:
 - Use `mcp__plugin_clickmax_clickmax__tags_insights` (by `tagId`) for one manual tag: coverage of the base, last 30 days applied, 6-month trend, 14-day daily series, and the NAMED consumers (`references`, capped at 100 per kind; `referencesTotal` is the real total). Not valid for system tags.
 - Use `mcp__plugin_clickmax_clickmax__tags_system_insights` (by `eventName` taken from `tags_system_list`) for one system tag: reach, 7/30-day pace, first-time firers, weekday/hour pattern, top contacts, events that tend to come with it (`coOccurring` is measured over a sample of the 500 most recent contacts — say "in a recent sample"), and the automations listening to it. Unknown `eventName` = not found.
 - Use `mcp__plugin_clickmax_clickmax__tags_get` before changing a specific tag so manual vs system status is explicit.
-- Use `mcp__plugin_clickmax_clickmax__tags_create` for new manual tags. If the user also wants the new tag applied immediately, create first, then use `mcp__plugin_clickmax_clickmax__crm_tags_apply_to_leads` with the returned tag id.
+- Use `mcp__plugin_clickmax_clickmax__tags_create` for new manual tags. If the user also wants the new tag applied immediately, create first, then use `mcp__plugin_clickmax_clickmax__tags_apply_to_leads` with the returned tag id.
 - Use `mcp__plugin_clickmax_clickmax__tags_update`, `mcp__plugin_clickmax_clickmax__tags_clone`, and `mcp__plugin_clickmax_clickmax__tags_delete` only for manual tags. Before `tags_delete`, read `mcp__plugin_clickmax_clickmax__tags_insights`: if `references` is not empty, name the automations/segments/forms/boards that will lose the tag and get an explicit go-ahead.
 - Cloned tags are named from the original with a numeric suffix, such as `<original name> (1)`; rename after cloning if the user needs a business-friendly label.
-- Use `mcp__plugin_clickmax_clickmax__crm_tags_remove_from_leads` when the tag definition should stay but specific leads should lose the assignment.
-- Use `mcp__plugin_clickmax_clickmax__crm_tags_batch_apply_to_leads` only for intentional bulk cohort changes across many leads. When the result needs validation, inspect membership changes with `mcp__plugin_clickmax_clickmax__tags_manual_leads_timeline`.
+- Use `mcp__plugin_clickmax_clickmax__tags_remove_from_leads` when the tag definition should stay but specific leads should lose the assignment.
+- Use `mcp__plugin_clickmax_clickmax__tags_batch_apply_to_leads` only for intentional bulk cohort changes across many leads. When the result needs validation, inspect membership changes with `mcp__plugin_clickmax_clickmax__tags_manual_leads_timeline`.
 - Preferred order: inspect tag type -> inspect current definition, usage or membership when relevant -> mutate the tag or assignments -> verify updated state for high-impact changes.
 
 ## Report
@@ -70,4 +70,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `9809609d8981`
+Clickmax skill revision: `70cba7aeb1c6`

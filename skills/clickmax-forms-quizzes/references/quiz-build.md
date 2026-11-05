@@ -2,7 +2,7 @@
 
 Source of truth = the live quiz schema accepted by `mcp__plugin_clickmax_clickmax__forms_*` connector operations. This
 reference documents the EXACT product shape so you never guess a block/step field — guessing is what
-makes `mcp__plugin_clickmax_clickmax__forms_step_upsert` reject and loop.
+makes `mcp__plugin_clickmax_clickmax__forms_steps_upsert` reject and loop.
 
 ## Terminating build flow (anti-loop)
 
@@ -15,7 +15,7 @@ schema and re-try on rejection.
 2. `mcp__plugin_clickmax_clickmax__forms_get` by the returned `id` → read `schema.steps[].id`, `schema.theme`,
    `schema.settings`, and `updatedAt`. Real step/block ids come from here; you need them for
    `goto`/`next`/`displayRule` targets.
-3. Add or edit one step at a time with `mcp__plugin_clickmax_clickmax__forms_step_upsert`:
+3. Add or edit one step at a time with `mcp__plugin_clickmax_clickmax__forms_steps_upsert`:
    - omit `stepId` → creates a step (optional `index` sets position; default append).
    - pass `stepId` → edits that step; `blocks` REPLACES that one step's block list (send the full
      list for that step, not the whole quiz). `name`/`next` optional.
@@ -26,7 +26,7 @@ schema and re-try on rejection.
 5. Publish with `mcp__plugin_clickmax_clickmax__forms_update` `{ status: 'active' }`. `paused` takes it offline.
    `mcp__plugin_clickmax_clickmax__forms_update` CANNOT touch `schema`, so it can never clobber quiz content.
 
-Rule: one `forms_step_upsert` per step, built on the seed. If a call is rejected, FIX that one
+Rule: one `forms_steps_upsert` per step, built on the seed. If a call is rejected, FIX that one
 payload against the shapes below — do NOT recreate the quiz or re-emit the whole schema. A second
 `forms_create` after an error just leaves a duplicate half-built quiz.
 
@@ -37,7 +37,7 @@ define both what renders and how it branches. `next` = default-next step id when
 option/button/loading target applies (linear fall-through). Every block shares
 `{ id, displayRule? }` (`displayRule` gates visibility, see Conditions).
 
-`forms_step_upsert` body = `{ stepId?, name?, next?, blocks?, index?, expectedUpdatedAt? }`. It only
+`forms_steps_upsert` body = `{ stepId?, name?, next?, blocks?, index?, expectedUpdatedAt? }`. It only
 carries step-level fields — theme/settings/qualification/formulas are NOT settable here (use
 `forms_replace_schema`).
 

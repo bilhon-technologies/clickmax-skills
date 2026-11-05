@@ -53,7 +53,7 @@ Templates (API oficial only):
 - List / "foram aprovados?": `mcp__plugin_clickmax_clickmax__gupshup_templates_list` with `channelInstanceId` (+ `status` filter when asked) → real status per template; `rejected` / `paused` → `reason` + offer to fix (`mcp__plugin_clickmax_clickmax__gupshup_templates_update` only on `draft`/`failed`; a rejected one is re-created under a new name).
 - Create, cheapest path first:
   1. an existing `approved` template already saying it → reuse, nothing to submit;
-  2. generic UTILITY/AUTHENTICATION use (order update, reminder, OTP) → `mcp__plugin_clickmax_clickmax__gupshup_template_library_list` → `mcp__plugin_clickmax_clickmax__gupshup_template_library_create` (submits to Meta immediately → confirm first; `libraryTemplateName` only from the list);
+  2. generic UTILITY/AUTHENTICATION use (order update, reminder, OTP) → `mcp__plugin_clickmax_clickmax__gupshup_templates_library_list` → `mcp__plugin_clickmax_clickmax__gupshup_templates_library_create` (submits to Meta immediately → confirm first; `libraryTemplateName` only from the list);
   3. otherwise draft the copy from the user's text (welcome = usually `MARKETING`; `UTILITY` only for transactional) → `mcp__plugin_clickmax_clickmax__gupshup_templates_create` → check `created` (`false` = existing template returned, read its status) → show the exact final copy (name, category, body, sample, buttons) → explicit yes → `mcp__plugin_clickmax_clickmax__gupshup_templates_submit`.
   - Max: the copy goes in ONE `cx-message channel="whatsapp" template="<elementName>"` card (+ `header`/`footer`/`buttons`); category and sample stay in prose. Attribute values come from the user or the tools → escape `&` `"` `<` `>` as `&amp;` `&quot;` `&lt;` `&gt;`; `|` only separates buttons, so a label containing `|` gets `/` instead. User comments arrive as `<conversation_selection_context>` → `mcp__plugin_clickmax_clickmax__gupshup_templates_update` the draft (still `draft`/`failed`) → show the revised card → ask again before submitting.
 - EVERY templates reply (list, status, create, submit) ends with the templates screen of that number: `connections-whatsapp` lookup → the `whatsappConnections` entry of the chosen number → its `templatesPath`.
@@ -69,7 +69,7 @@ Templates (API oficial only):
 
 ## Warnings
 
-- `mcp__plugin_clickmax_clickmax__gupshup_templates_submit` and `mcp__plugin_clickmax_clickmax__gupshup_template_library_create` are external and practically irreversible (review queue, number quality rating) → never without the user confirming the exact content in this conversation.
+- `mcp__plugin_clickmax_clickmax__gupshup_templates_submit` and `mcp__plugin_clickmax_clickmax__gupshup_templates_library_create` are external and practically irreversible (review queue, number quality rating) → never without the user confirming the exact content in this conversation.
 - Never invent copy, button URLs or sample values the user did not give; ask for the missing piece.
 - Moving an account from another workspace or connecting a number already in use disconnects the old connection irreversibly → the user confirms it on the screen; do not push them through it.
 - A `find_screen` result `no-permission` → the role cannot open it; suggest asking the workspace owner, no link.
@@ -85,4 +85,4 @@ Templates (API oficial only):
 
 ---
 
-Clickmax skill revision: `9809609d8981`
+Clickmax skill revision: `70cba7aeb1c6`

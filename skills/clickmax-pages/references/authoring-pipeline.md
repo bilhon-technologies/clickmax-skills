@@ -76,8 +76,8 @@ The first eight are fixed by rewriting the HTML. The last two are fixed by chang
 - `mcp__plugin_clickmax_clickmax__pages_update` — name, description, path, type, domainId.
 - `mcp__plugin_clickmax_clickmax__pages_update_config` — page-level settings.
 - `mcp__plugin_clickmax_clickmax__pages_publish` / `mcp__plugin_clickmax_clickmax__pages_unpublish` — always a separate, explicitly approved action.
-- `mcp__plugin_clickmax_clickmax__checkout_get` — reads which offer this page's checkout is bound to (`null` when none).
-- `mcp__plugin_clickmax_clickmax__checkout_set` — binds this page's checkout to an offer, or clears it with `offerId: null`. This is how the offer is corrected **after** the page exists, without re-importing; it also seeds a default checkout config. The offer must belong to the same workspace.
+- `mcp__plugin_clickmax_clickmax__checkouts_get` — reads which offer this page's checkout is bound to (`null` when none).
+- `mcp__plugin_clickmax_clickmax__checkouts_set` — binds this page's checkout to an offer, or clears it with `offerId: null`. This is how the offer is corrected **after** the page exists, without re-importing; it also seeds a default checkout config. The offer must belong to the same workspace.
 - `mcp__plugin_clickmax_clickmax__checkouts_set_order_bump` — order bumps for a checkout page.
 
 ### Order bumps

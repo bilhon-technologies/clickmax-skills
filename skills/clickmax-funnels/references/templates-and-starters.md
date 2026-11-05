@@ -2,7 +2,7 @@
 
 ## Sequence templates
 
-Use `funnels_sequence_create` when the user wants a standard starter graph.
+Use `funnels_sequences_create` when the user wants a standard starter graph.
 
 Supported starters:
 
@@ -38,5 +38,5 @@ Build manually when:
 
 These are different things:
 
-- `funnels_sequence_create` templates (above) scaffold the GRAPH — the nodes and their trigger connections. They do NOT create page content; the page nodes start empty.
+- `funnels_sequences_create` templates (above) scaffold the GRAPH — the nodes and their trigger connections. They do NOT create page content; the page nodes start empty.
 - Clickmax PAGE templates (`pages_templates_list`) are ready-made page designs (including checkout pages). Use them to give a node real content. To create a page with a checkout bound to an offer, see [pages and checkout](pages-and-checkout.md).

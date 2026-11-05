@@ -28,13 +28,13 @@ Not this skill:
 ## Execute guide
 
 - Inspect the current module set before reordering or deleting.
-- List modules for a course with `mcp__plugin_clickmax_clickmax__module_list`, passing the course `contentId`.
-- Inspect one module with `mcp__plugin_clickmax_clickmax__module_get`, passing only the module `id` (no `contentId` — the module's course is not a path/body param on this tool).
-- Create a module with `mcp__plugin_clickmax_clickmax__module_create`, passing the target `contentId`, the module `name`, and the release rule fields that match the requested launch behavior such as `releaseType = FIXED_DATE` with `releaseDate`, or `releaseType = DAYS_AFTER_PURCHASE` with `releaseDays`.
-- Update module metadata or release rules with `mcp__plugin_clickmax_clickmax__module_update`, passing only the module `id` (no `contentId`) and the fields the user wants changed.
-- Reorder modules with `mcp__plugin_clickmax_clickmax__module_organize_positions`, sending the full final module order as `moduleId + position` pairs with 1-based positions.
-- Reorder lessons inside one module with `mcp__plugin_clickmax_clickmax__module_organize_lesson_positions`, passing the module `id` (not `moduleId` — this tool's own param is `id`) plus the full final lesson order as `lessonId + position` pairs.
-- Delete a module with `mcp__plugin_clickmax_clickmax__module_delete` only when removal is explicit, passing only the module `id` (no `contentId`).
+- List modules for a course with `mcp__plugin_clickmax_clickmax__modules_list`, passing the course `contentId`.
+- Inspect one module with `mcp__plugin_clickmax_clickmax__modules_get`, passing only the module `id` (no `contentId` — the module's course is not a path/body param on this tool).
+- Create a module with `mcp__plugin_clickmax_clickmax__modules_create`, passing the target `contentId`, the module `name`, and the release rule fields that match the requested launch behavior such as `releaseType = FIXED_DATE` with `releaseDate`, or `releaseType = DAYS_AFTER_PURCHASE` with `releaseDays`.
+- Update module metadata or release rules with `mcp__plugin_clickmax_clickmax__modules_update`, passing only the module `id` (no `contentId`) and the fields the user wants changed.
+- Reorder modules with `mcp__plugin_clickmax_clickmax__modules_organize_positions`, sending the full final module order as `moduleId + position` pairs with 1-based positions.
+- Reorder lessons inside one module with `mcp__plugin_clickmax_clickmax__modules_organize_lesson_positions`, passing the module `id` (not `moduleId` — this tool's own param is `id`) plus the full final lesson order as `lessonId + position` pairs.
+- Delete a module with `mcp__plugin_clickmax_clickmax__modules_delete` only when removal is explicit, passing only the module `id` (no `contentId`).
 - After any reorder, report the final ordered list back to the user.
 
 ## Report
@@ -56,4 +56,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `9809609d8981`
+Clickmax skill revision: `70cba7aeb1c6`

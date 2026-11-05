@@ -1,7 +1,7 @@
 # Webchat pre-chat flow: exact step shapes and branching
 
-Source of truth = `preChatFlow` accepted by `mcp__plugin_clickmax_clickmax__webchat_channel_update` /
-`mcp__plugin_clickmax_clickmax__webchat_channel_create` (`WebChatPreChatFlowSchema` in the platform models). Guessing a
+Source of truth = `preChatFlow` accepted by `mcp__plugin_clickmax_clickmax__webchat_channels_update` /
+`mcp__plugin_clickmax_clickmax__webchat_channels_create` (`WebChatPreChatFlowSchema` in the platform models). Guessing a
 field is what makes the update reject; use these shapes verbatim.
 
 ## Document

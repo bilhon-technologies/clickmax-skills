@@ -17,7 +17,7 @@ Not this skill:
 
 ## Key assumptions
 
-- One channel = one widget. `preChatFlow` is ONE document ({enabled, steps}); `webchat_channel_update` replaces it whole, there is no step-level upsert.
+- One channel = one widget. `preChatFlow` is ONE document ({enabled, steps}); `webchat_channels_update` replaces it whole, there is no step-level upsert.
 - `enabled: false` on the CHANNEL takes the widget offline; `preChatFlow.enabled: false` (or `steps: []`) keeps the widget up but skips the bot and opens live chat directly. They are different switches.
 - Every path of the flow must terminate in `handoff` (a human takes over in LiveChat) or `end`. A path that falls off the array ends silently — the visitor is left without an answer.
 - `capture` is what turns the visitor into a CRM lead; a flow without it can hand off an anonymous visitor.
@@ -25,26 +25,26 @@ Not this skill:
 
 ## Thought process
 
-1. Find or read the channel first (`webchat_channels_list` → `webchat_channel_get`).
+1. Find or read the channel first (`webchat_channels_list` → `webchat_channels_get`).
 2. Draft the flow as a short script: greeting → capture → 1–3 qualifying questions → handoff/end. Keep it under ~8 steps; a widget is a conversation, not a form.
 3. Give every step a stable, readable id (`s_welcome`, `s_capture`, `q_goal`, `h_sales`) and wire `next` explicitly wherever the array order is not the intended path.
-4. Send the COMPLETE `steps` array in one `webchat_channel_update`. If it is rejected, fix that single payload against the reference shapes — do not create a second channel.
+4. Send the COMPLETE `steps` array in one `webchat_channels_update`. If it is rejected, fix that single payload against the reference shapes — do not create a second channel.
 5. Leave `enabled` as it is unless the user asks to publish; say what is pending (embed on a page, enable).
 
 ## Execute guide
 
 - Use `mcp__plugin_clickmax_clickmax__webchat_channels_list` to find the channel by name/project when the user did not give an id.
-- Use `mcp__plugin_clickmax_clickmax__webchat_channel_get` before any edit; keep the existing widget settings and `appearance` untouched unless asked.
-- Use `mcp__plugin_clickmax_clickmax__webchat_channel_update` with `preChatFlow: { enabled: true, steps: [...] }` to author the bot, and with `name` when the channel still has a generic name.
-- Use `mcp__plugin_clickmax_clickmax__webchat_channel_create` only when the user asks for a NEW channel and none is open in the builder.
+- Use `mcp__plugin_clickmax_clickmax__webchat_channels_get` before any edit; keep the existing widget settings and `appearance` untouched unless asked.
+- Use `mcp__plugin_clickmax_clickmax__webchat_channels_update` with `preChatFlow: { enabled: true, steps: [...] }` to author the bot, and with `name` when the channel still has a generic name.
+- Use `mcp__plugin_clickmax_clickmax__webchat_channels_create` only when the user asks for a NEW channel and none is open in the builder.
 
 ## Build a flow from scratch
 
 When the user says "create the webchat with AI" from the builder, the channel ALREADY EXISTS (empty, generic name). Build INTO it:
 
-1. `mcp__plugin_clickmax_clickmax__webchat_channel_get` by the given id → read `name`, `welcomeMessage`, `appearance`.
+1. `mcp__plugin_clickmax_clickmax__webchat_channels_get` by the given id → read `name`, `welcomeMessage`, `appearance`.
 2. Compose the steps (see [pre-chat flow](references/prechat-flow.md)): `message` greeting → `capture` (name + email, phone optional) → `question` with 2–4 clickable options per qualifying axis → optional `condition`/`ai` branching → `handoff` for hot paths, `end` (or `handoff`) for the rest.
-3. `mcp__plugin_clickmax_clickmax__webchat_channel_update` with `{ channelId, name: <short name from the goal>, welcomeMessage: <one-line greeting>, preChatFlow: { enabled: true, steps } }`.
+3. `mcp__plugin_clickmax_clickmax__webchat_channels_update` with `{ channelId, name: <short name from the goal>, welcomeMessage: <one-line greeting>, preChatFlow: { enabled: true, steps } }`.
 4. Report the path(s) and what is still pending (embed on a page; enable if it is off).
 
 ## Report
@@ -69,4 +69,4 @@ When the user says "create the webchat with AI" from the builder, the channel AL
 
 ---
 
-Clickmax skill revision: `9809609d8981`
+Clickmax skill revision: `70cba7aeb1c6`

@@ -42,7 +42,7 @@ Not this skill:
 
 ## Execute guide
 
-- External page that belongs to a FUNNEL step (most common: "vincular a página externa ao funil") = compose the granular tools in order: `mcp__plugin_clickmax_clickmax__pages_create_external` (get `pageId`) -> `mcp__plugin_clickmax_clickmax__funnels_node_create` (`type: "page"` + `slug` + `triggers`) -> `mcp__plugin_clickmax_clickmax__funnels_node_connect_page` (linking an external page auto-wires `node.config.externalUrl`) -> `mcp__plugin_clickmax_clickmax__funnels_triggers_connect` (route to the next node) -> `mcp__plugin_clickmax_clickmax__pages_get_external_script` (surface the snippets). Full graph guidance -> `clickmax-funnels` (external-page common flow).
+- External page that belongs to a FUNNEL step (most common: "vincular a página externa ao funil") = compose the granular tools in order: `mcp__plugin_clickmax_clickmax__pages_create_external` (get `pageId`) -> `mcp__plugin_clickmax_clickmax__funnels_nodes_create` (`type: "page"` + `slug` + `triggers`) -> `mcp__plugin_clickmax_clickmax__funnels_nodes_connect_page` (linking an external page auto-wires `node.config.externalUrl`) -> `mcp__plugin_clickmax_clickmax__funnels_triggers_connect` (route to the next node) -> `mcp__plugin_clickmax_clickmax__pages_get_external_script` (surface the snippets). Full graph guidance -> `clickmax-funnels` (external-page common flow).
 - Use `mcp__plugin_clickmax_clickmax__pages_list` / `mcp__plugin_clickmax_clickmax__pages_get` to identify existing external page records.
 - Use `mcp__plugin_clickmax_clickmax__pages_create_external` for a standalone external page NOT tied to a funnel node (to plug it into a funnel later, follow the granular sequence above).
 - Use `mcp__plugin_clickmax_clickmax__pages_update` for external page metadata or URL changes.
@@ -73,4 +73,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `9809609d8981`
+Clickmax skill revision: `70cba7aeb1c6`

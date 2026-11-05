@@ -82,7 +82,7 @@ Run in the SAME Code Mode script, same window + filters:
 |"how did my campaigns do" / "what is my open rate"|`mcp__plugin_clickmax_clickmax__broadcasts_list` with `channel = email`, `perPage = 20` (`50` for a baseline)|each campaign's `rates` (open/click/bounce over `sent`) + volume-weighted average across sent campaigns; campaign sends only|
 |"how is email/WhatsApp performing overall in a period" (campaigns + automations)|`mcp__plugin_clickmax_clickmax__messages_metrics` for the window, again for the previous window of the same length; optional `platform` (WhatsApp = `gupshup`)|per-platform `total`, `reached`, `opened`, `failed`, `bounced`, `spamComplaints`, `openRate` / `failureRate` / `bounceRate`, trend vs previous window|
 |"why did this campaign do well/badly" / "when do people open"|`mcp__plugin_clickmax_clickmax__broadcasts_insights` with `broadcastId` from `mcp__plugin_clickmax_clickmax__broadcasts_list`|`opensByHour`, `topLinks`, `devices`, `clients`, `geo`, `engagement` (open/click rate + delta vs previous campaign), `creditCost`|
-|WhatsApp template reads/clicks|`mcp__plugin_clickmax_clickmax__gupshup_template_analytics` with the template `externalId` from `mcp__plugin_clickmax_clickmax__gupshup_templates_list` (only templates submitted to Meta have one)|`sent`, `delivered`, `read`, `clicked`, `readRate` / `clickRate` over delivered|
+|WhatsApp template reads/clicks|`mcp__plugin_clickmax_clickmax__gupshup_templates_analytics` with the template `externalId` from `mcp__plugin_clickmax_clickmax__gupshup_templates_list` (only templates submitted to Meta have one)|`sent`, `delivered`, `read`, `clicked`, `readRate` / `clickRate` over delivered|
 
 - `messages_metrics` `openRate` = opened / reached, first opens only; no clicks there → click rates come from `broadcasts_list`.
 - automation (flow) emails are not in `broadcasts_list` → `messages_metrics` covers campaigns + automations combined.
@@ -119,4 +119,4 @@ Run in the SAME Code Mode script, same window + filters:
 
 ---
 
-Clickmax skill revision: `9809609d8981`
+Clickmax skill revision: `70cba7aeb1c6`

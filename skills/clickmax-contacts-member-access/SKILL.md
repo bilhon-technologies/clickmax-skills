@@ -16,7 +16,7 @@ Not this skill:
 
 ## Key assumptions
 
-- Destinations: `classroomIds` (max 50) and/or `communityId` + `communityRole` (`member`, `moderator`, `mentor`, `instructor`, `owner` = the Administrador role). At least one destination; a community without role is a 400. Ids come from `classroom_list` (per portal) and `communities_list`; never from names.
+- Destinations: `classroomIds` (max 50) and/or `communityId` + `communityRole` (`member`, `moderator`, `mentor`, `instructor`, `owner` = the Administrador role). At least one destination; a community without role is a 400. Ids come from `classrooms_list` (per portal) and `communities_list`; never from names.
 - Audience: `leadIds` OR `allMatching: true` with a `listId` (manual list or the synced list of a segment) or `filters`. A segment is reached through its synced list; a just-created segment may not have one yet.
 - The e-mail is the member login: contacts WITHOUT e-mail are skipped and reported as `skippedWithoutEmail`, everyone else is enrolled (a disabled member is reactivated).
 - Per-contact effects: classroom access follows the classroom's own access time (none = lifetime); courses locked for sale inside the classroom stay locked (purchase-only); in the community a new member gets the chosen role, an existing member is moved to it EXCEPT administrators (never demoted), and blocked/muted members stay blocked/muted.
@@ -31,9 +31,9 @@ Not this skill:
 
 ## Execute guide
 
-- Resolve a classroom with `mcp__plugin_clickmax_clickmax__portals_list` then `mcp__plugin_clickmax_clickmax__classroom_list` (`portalId`); a community with `mcp__plugin_clickmax_clickmax__communities_list` (`search`).
+- Resolve a classroom with `mcp__plugin_clickmax_clickmax__portals_list` then `mcp__plugin_clickmax_clickmax__classrooms_list` (`portalId`); a community with `mcp__plugin_clickmax_clickmax__communities_list` (`search`).
 - Resolve the audience: `mcp__plugin_clickmax_clickmax__lists_list` / `mcp__plugin_clickmax_clickmax__segments_list` for the `listId`, or `leadIds` from `mcp__plugin_clickmax_clickmax__leads_search`.
-- Grant with `mcp__plugin_clickmax_clickmax__leads_bulk_member_access`. Async answer: poll `mcp__plugin_clickmax_clickmax__leads_bulk_job_status` with `jobId` until `state` is `completed` (or `failed`, with `failedReason`).
+- Grant with `mcp__plugin_clickmax_clickmax__leads_bulk_member_access`. Async answer: poll `mcp__plugin_clickmax_clickmax__leads_bulk_jobs_status` with `jobId` until `state` is `completed` (or `failed`, with `failedReason`).
 
 ## Report
 
@@ -54,4 +54,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `9809609d8981`
+Clickmax skill revision: `70cba7aeb1c6`

@@ -2,7 +2,7 @@
 
 Flow entry is driven by **events** matched against **constraints**. Set them
 inline when creating the trigger step (`triggerStart`) or later via
-`flows_step_triggers_set` (which replaces the whole list). Exits became the flow
+`flows_steps_triggers_set` (which replaces the whole list). Exits became the flow
 goal ("Objetivo"), configured by the user in the editor — `triggerExit` is read-only. A flow has at most
 one trigger step; the events live at flow level, not in arbitrary step fields.
 
@@ -153,10 +153,10 @@ or a constraint `field` name (`offerId`, `projectId`, `tagId`, …); those are i
 
 ### Manual start (pseudo-event — valid `eventName` value but not a real AMQP event)
 
-- `manual` — "Início manual": the flow reacts to nothing; a published flow is run on demand ("Executar" in the editor, `flows_run_start` here) for an audience chosen at that moment (contacts, list, tag or segment), now or scheduled — see [manual runs](runs-and-cadences.md). No scopes/config on the trigger — the audience belongs to the run, not the trigger. (Replaced the old `manual`+listId / `manual-tag` / `scheduled` / `scheduled-tag` mass-send triggers.)
+- `manual` — "Início manual": the flow reacts to nothing; a published flow is run on demand ("Executar" in the editor, `flows_runs_start` here) for an audience chosen at that moment (contacts, list, tag or segment), now or scheduled — see [manual runs](runs-and-cadences.md). No scopes/config on the trigger — the audience belongs to the run, not the trigger. (Replaced the old `manual`+listId / `manual-tag` / `scheduled` / `scheduled-tag` mass-send triggers.)
 
 ## Notes
 
-- `flows_step_triggers_set` edits the entry side only (`triggerStart`; `triggerExit` writes are rejected — exits are the flow goal); send `[]` to clear it; the array you send replaces only that side. So a "change the entry trigger" request needs `triggerStart` only — the exit stays intact.
+- `flows_steps_triggers_set` edits the entry side only (`triggerStart`; `triggerExit` writes are rejected — exits are the flow goal); send `[]` to clear it; the array you send replaces only that side. So a "change the entry trigger" request needs `triggerStart` only — the exit stays intact.
 - Use the exact `eventName` from this catalog; an unknown name silently never fires.
 - No scopes for an event (e.g. `crm.lead.created.v1`) means `constraints: []` is the only valid shape — there is nothing to narrow it by.

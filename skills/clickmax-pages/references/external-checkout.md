@@ -93,7 +93,7 @@ The `checkout` recipe accepts an external checkout as its checkout. An inactive 
 - Pagar.me: the card fails until the page's domain is released in Pagar.me (**Configurações > Conta > Domínios**), and each payment method must be active in the Pagar.me account.
 - PagBank: no domain to release (the card is encrypted in the browser); Pix and boleto must be enabled in the PagBank account, and the boleto asks the buyer for the full address.
 - Revenue comes from the platform's webhook. Hotmart's "change country" button cannot be hidden; boleto and other async methods confirm only when the platform notifies, and the funnel does not advance on them.
-- Order bumps and `checkout_set` from the native checkout do not apply; Stripe bumps go in `optionalItems`, Pagar.me bumps in `pagarmeOffer.bumps`, PagBank bumps in `pagbankOffer.bumps`.
+- Order bumps and `checkouts_set` from the native checkout do not apply; Stripe bumps go in `optionalItems`, Pagar.me bumps in `pagarmeOffer.bumps`, PagBank bumps in `pagbankOffer.bumps`.
 - Fine-tuning (Whop accent/radius/custom colors) is done in the editor: select the block and use its side panel.
 
 ## Change the checkout later

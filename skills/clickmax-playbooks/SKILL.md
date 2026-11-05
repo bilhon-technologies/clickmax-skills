@@ -25,7 +25,7 @@ Not this skill:
 - Editing a playbook changes meetings booked AFTER the save and future calls. A booked meeting keeps the script it received; the host refreshes it by re-picking the playbook inside the room.
 - Delete is hard and permanent. Pipelines that suggested it are left with no suggestion; booked meetings keep their room script.
 - Writes (create/update/delete/link/simulate) are for owner/admin/editor; every role can read.
-- The talk track accepts 6000 chars but the meeting panel shows the first 2000. `playbooks_meeting_guide_get` shows the truncated, real version.
+- The talk track accepts 6000 chars but the meeting panel shows the first 2000. `playbooks_meeting_guides_get` shows the truncated, real version.
 - Not available here: audio transcription for the simulator, file upload for attachments, AI-generated playbooks ("Com IA" in the editor), templates gallery (NEPQ, SPIN, BANT, Challenger, consultative diagnosis are editor templates, not API objects).
 
 ## Thought process
@@ -39,10 +39,10 @@ Not this skill:
 
 - Build: draft `stages` (one clear objective each, 3-8 open questions that steer the buyer, a short talk track, a concrete watch-out), 2-5 `tones` for moments such as opening/objection/closing, `keywords` for predictable moments (price, competitor, "preciso pensar") and `guardrails` for hard "never" rules. Then `mcp__plugin_clickmax_clickmax__playbooks_create` with `scopes: ["meeting"]` and `[]` for collections you have nothing for. Generate ids like `stage-1`, `q-1-1`, `tone-1`, `cue-1`.
 - Edit: `mcp__plugin_clickmax_clickmax__playbooks_get` -> change only the intended items -> `mcp__plugin_clickmax_clickmax__playbooks_update` with the full document, ids preserved.
-- Make pipelines follow it: `mcp__plugin_clickmax_clickmax__playbooks_pipelines_list` shows every pipeline with `linked` and `currentPlaybookName`. Attaching replaces the pipeline's current suggestion, so confirm when `currentPlaybookName` is not null. Then `mcp__plugin_clickmax_clickmax__playbooks_pipeline_attach` / `mcp__plugin_clickmax_clickmax__playbooks_pipeline_detach`. From the pipeline side use `mcp__plugin_clickmax_clickmax__pipelines_playbook_get` (returns the playbook and the default copilot agent) and `mcp__plugin_clickmax_clickmax__pipelines_playbook_set`: absent field = untouched, `null` = clear; `defaultCopilotAgentId` is a separate concern from the method and no tool here lists AI agents, so only set it with an id the user gives.
+- Make pipelines follow it: `mcp__plugin_clickmax_clickmax__playbooks_pipelines_list` shows every pipeline with `linked` and `currentPlaybookName`. Attaching replaces the pipeline's current suggestion, so confirm when `currentPlaybookName` is not null. Then `mcp__plugin_clickmax_clickmax__playbooks_pipelines_attach` / `mcp__plugin_clickmax_clickmax__playbooks_pipelines_detach`. From the pipeline side use `mcp__plugin_clickmax_clickmax__pipelines_playbook_get` (returns the playbook and the default copilot agent) and `mcp__plugin_clickmax_clickmax__pipelines_playbook_set`: absent field = untouched, `null` = clear; `defaultCopilotAgentId` is a separate concern from the method and no tool here lists AI agents, so only set it with an id the user gives.
 - One meeting: `mcp__plugin_clickmax_clickmax__playbooks_meeting_guides_list` gives the choices (`ref` is the playbook id); pass it as `playbookId` on `mcp__plugin_clickmax_clickmax__scheduled_calls_create`, or change it with `mcp__plugin_clickmax_clickmax__scheduled_calls_update` (`null` = no playbook, omitted = keep, and creating without it falls back to the pipeline suggestion).
-- Preview: `mcp__plugin_clickmax_clickmax__playbooks_meeting_guide_get` returns what the room receives (panel guide, narrated script, guardrails).
-- Rehearse: `mcp__plugin_clickmax_clickmax__playbooks_simulate` runs the real copilot on a made-up conversation. It has no playbook id: pass the method through `briefing`. For a saved playbook take `script` and `guardrails` from `playbooks_meeting_guide_get`; add `briefing.goal` and `briefing.persona`. Send the whole `turns` list each call (host/guest); a guest line as the last turn mimics how the room wakes the copilot. Vary `reason` (`objection`, `question`, `silence`...) to probe stages. Use 3-6 scenarios at most (each is a real AI call).
+- Preview: `mcp__plugin_clickmax_clickmax__playbooks_meeting_guides_get` returns what the room receives (panel guide, narrated script, guardrails).
+- Rehearse: `mcp__plugin_clickmax_clickmax__playbooks_simulate` runs the real copilot on a made-up conversation. It has no playbook id: pass the method through `briefing`. For a saved playbook take `script` and `guardrails` from `playbooks_meeting_guides_get`; add `briefing.goal` and `briefing.persona`. Send the whole `turns` list each call (host/guest); a guest line as the last turn mimics how the room wakes the copilot. Vary `reason` (`objection`, `question`, `silence`...) to probe stages. Use 3-6 scenarios at most (each is a real AI call).
 - Trigger check: the simulator does not run keyword triggers. To verify one, compare the sample sentence with the trigger terms by hand using the matching rule above and say so.
 - Delete: `mcp__plugin_clickmax_clickmax__playbooks_list` -> read `pipelinesCount` -> state how many pipelines lose their suggestion -> `mcp__plugin_clickmax_clickmax__playbooks_delete` only after explicit confirmation.
 
@@ -74,4 +74,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `9809609d8981`
+Clickmax skill revision: `70cba7aeb1c6`

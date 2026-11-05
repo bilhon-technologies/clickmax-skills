@@ -9,7 +9,7 @@ A flow started by a funnel, tag, schedule, or checkout has no open window, so `f
 ## Choosing a template, cheapest path first
 
 1. `gupshup_templates_list` — an existing `approved` template that already says what the user wants. Nothing to submit, sends today.
-2. `gupshup_template_library_list` + `gupshup_template_library_create` — Meta's own pre-vetted library (`UTILITY`/`AUTHENTICATION` only), for generic use cases: OTP, order update, appointment reminder. Near-instant approval. `libraryTemplateName` must come from the list call, never invented; this tool submits to Meta immediately.
+2. `gupshup_templates_library_list` + `gupshup_templates_library_create` — Meta's own pre-vetted library (`UTILITY`/`AUTHENTICATION` only), for generic use cases: OTP, order update, appointment reminder. Near-instant approval. `libraryTemplateName` must come from the list call, never invented; this tool submits to Meta immediately.
 3. `gupshup_templates_create` — author one. Saves a local draft and validates it against Meta's rules first. Then show the exact copy to the user, get their confirmation, and `gupshup_templates_submit`.
 
 Wire the step with `format: 'template'`, `gupshupTemplateId`, and a `paramMapping` whose LENGTH matches the template's `positionParams`. `content` in this mode is the template's `elementName`, not prose.

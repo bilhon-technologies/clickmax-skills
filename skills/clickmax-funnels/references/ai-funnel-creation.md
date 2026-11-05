@@ -46,8 +46,8 @@ Follow the pipeline in `clickmax-pages` for every page. Two things are specific 
 1. Resolve the real project, product, offer, and usable assets; never guess ids.
 2. Build one blueprint: funnel family, ordered pages, node types, exits, offer/form contracts, the chosen design, and assumptions.
 3. Continue the requested draft after discovery; ask for assembly only if the user requested a blueprint without creation.
-4. Call `mcp__plugin_clickmax_clickmax__funnels_create` exactly once; standard family → `mcp__plugin_clickmax_clickmax__funnels_sequence_create`, custom graph → `mcp__plugin_clickmax_clickmax__funnels_node_create`, never both for the same skeleton.
+4. Call `mcp__plugin_clickmax_clickmax__funnels_create` exactly once; standard family → `mcp__plugin_clickmax_clickmax__funnels_sequences_create`, custom graph → `mcp__plugin_clickmax_clickmax__funnels_nodes_create`, never both for the same skeleton.
 5. Author each planned page through the `clickmax-pages` pipeline, ending in `mcp__plugin_clickmax_clickmax__pages_import_html_draft` with the funnel target described above.
-6. Attach every returned page with `mcp__plugin_clickmax_clickmax__funnels_node_connect_page`; route page triggers with `mcp__plugin_clickmax_clickmax__funnels_triggers_connect` and other node families with their dedicated connection tool.
+6. Attach every returned page with `mcp__plugin_clickmax_clickmax__funnels_nodes_connect_page`; route page triggers with `mcp__plugin_clickmax_clickmax__funnels_triggers_connect` and other node families with their dedicated connection tool.
 7. Call `mcp__plugin_clickmax_clickmax__funnels_structure_get`, verify every intended edge, then `mcp__plugin_clickmax_clickmax__funnels_validate`. Repair the existing funnel/page in place; never restart by creating duplicates.
 8. Report draft ids/paths, mode, assumptions, factual placeholders, visual/motion choices, and validation gaps. Publish only after separate explicit consent and a fresh validation pass.

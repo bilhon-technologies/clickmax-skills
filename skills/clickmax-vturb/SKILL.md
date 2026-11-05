@@ -20,7 +20,7 @@ Questions about the performance of a VSL hosted on **Vturb** (the video player C
 - `vturb_status` is the mandatory first call — every metric tool returns a precondition error when no account is connected.
 - `playerId` only comes from `vturb_players_list`. Never guess or accept an id from prose.
 - **Rates are 0..1 fractions** (`0.42` = 42%). Multiply by 100 before showing.
-- `vturb_player_stats` data is cached ~5 min upstream — it is not real-time.
+- `vturb_players_stats` data is cached ~5 min upstream — it is not real-time.
 - Vturb rate-limits: a `429` means back off, not that the integration is broken.
 
 ## Connecting the account (no tool for this)
@@ -44,9 +44,9 @@ Shortcut while building a page: the **Vturb** block in the page editor (group _M
 1. `vturb_status` — connected? If not, give the connection steps above and stop.
 2. `vturb_players_list` — resolve the video the user means into a `playerId`. If several match the prose, ask which one instead of guessing.
 3. Pick the metric tool:
-   - performance over a period ("está convertendo?", "como foi essa semana") -> `vturb_player_stats` with `startDate`/`endDate`
-   - who is on the page right now ("tem gente assistindo?") -> `vturb_player_live_users`
-   - comparing variants ("qual versão ganhou?") -> `vturb_ab_tests_list` then `vturb_ab_test_stats`
+   - performance over a period ("está convertendo?", "como foi essa semana") -> `vturb_players_stats` with `startDate`/`endDate`
+   - who is on the page right now ("tem gente assistindo?") -> `vturb_players_live_users`
+   - comparing variants ("qual versão ganhou?") -> `vturb_ab_tests_list` then `vturb_ab_tests_stats`
 4. Interpret against `duration` and `pitchTime` from step 2 (see below) and answer with numbers, not adjectives.
 
 ## Reading the metrics
@@ -62,7 +62,7 @@ Shortcut while building a page: the **Vturb** block in the page editor (group _M
 
 `pitchTime` is the second where the offer is made. Market reference: a pitch around 60–75% of `duration` is typical; much later means few viewers ever hear the offer.
 
-For `vturb_player_live_users`: it counts people who **entered the page** in the last `minutes` (default 60). Say "entraram nos últimos N minutos" — not "estão assistindo agora", because it does not prove they stayed.
+For `vturb_players_live_users`: it counts people who **entered the page** in the last `minutes` (default 60). Say "entraram nos últimos N minutos" — not "estão assistindo agora", because it does not prove they stayed.
 
 ## Diagnosing a weak VSL
 
@@ -79,7 +79,7 @@ page loads -> playRate -> engagementRate (até o pitch) -> clicks -> conversions
 
 ## A/B tests (comparison groups)
 
-A Vturb A/B test enrolls 2+ players (variants of the same VSL) and splits traffic between them by percentage. `vturb_ab_tests_list` gives the tests; `vturb_ab_test_stats` compares up to **2 variants per call** (upstream limit — for a 3-variant test, compare in pairs).
+A Vturb A/B test enrolls 2+ players (variants of the same VSL) and splits traffic between them by percentage. `vturb_ab_tests_list` gives the tests; `vturb_ab_tests_stats` compares up to **2 variants per call** (upstream limit — for a 3-variant test, compare in pairs).
 
 **Declaring a winner:**
 
@@ -96,8 +96,8 @@ A Vturb A/B test enrolls 2+ players (variants of the same VSL) and splits traffi
 
 The Clickmax Vturb block supports **"Revelação progressiva"**: reveal or hide page elements at a given second of the video (`data-vturb-timer`). When the user asks when to show the CTA, anchor the recommendation on `pitchTime` from `vturb_players_list` — revealing the button around the pitch instead of at page load is the common fix for "engaja mas não clica".
 
-> Per-second data is only available for videos enrolled in an A/B test, via `retentionCurve` in `vturb_ab_test_stats`. For any other video do not claim to know the exact drop-off second — reason from `pitchTime`, `engagementRate` and `finishes`.
+> Per-second data is only available for videos enrolled in an A/B test, via `retentionCurve` in `vturb_ab_tests_stats`. For any other video do not claim to know the exact drop-off second — reason from `pitchTime`, `engagementRate` and `finishes`.
 
 ---
 
-Clickmax skill revision: `9809609d8981`
+Clickmax skill revision: `70cba7aeb1c6`

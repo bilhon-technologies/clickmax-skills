@@ -24,13 +24,13 @@ Not this skill:
 
 1. Find the template: `mcp__plugin_clickmax_clickmax__proposal_templates_list` (`kind`, `status`, `search`; `library: true` adds system templates).
 2. Read it with `mcp__plugin_clickmax_clickmax__proposal_templates_get` before any edit or consolidation.
-3. Slide deck edits → `mcp__plugin_clickmax_clickmax__proposal_templates_page_upsert` (one slide per call). Document → only metadata here; content changes are the user's, in the editor.
+3. Slide deck edits → `mcp__plugin_clickmax_clickmax__proposal_templates_pages_upsert` (one slide per call). Document → only metadata here; content changes are the user's, in the editor.
 4. Consolidate for a concrete opportunity (preferred) or contact.
 
 ## Execute guide
 
 - `mcp__plugin_clickmax_clickmax__proposal_templates_create` with `kind: "document"` creates an EMPTY Word template; tell the user to open it and write/import the text — then it can be consolidated after the first save.
-- `mcp__plugin_clickmax_clickmax__proposal_templates_document_versions_list` to answer "who changed the contract and when"; `mcp__plugin_clickmax_clickmax__proposal_templates_document_version_restore` only when the user explicitly asks to go back to a version (it becomes the current one for FUTURE proposals).
+- `mcp__plugin_clickmax_clickmax__proposal_templates_document_versions_list` to answer "who changed the contract and when"; `mcp__plugin_clickmax_clickmax__proposal_templates_document_versions_restore` only when the user explicitly asks to go back to a version (it becomes the current one for FUTURE proposals).
 - Before consolidating a document, check `config.document.variables` against the list above: a typo, a name with spaces (`{ lead.name }`) or a custom field that does not exist comes out blank — warn the user instead of consolidating silently.
 - Consolidation fails with `PROPOSAL_DOCUMENT_MALFORMED_VARIABLE` when the Word text has a `{` never closed: tell the user to find and close it in the editor (body, header or footer), save, then consolidate again. Retrying unchanged fails the same way.
 - `mcp__plugin_clickmax_clickmax__proposals_consolidate` with `templateId` + `opportunityId` (and/or `leadId`). Share the public link `/proposals/p/<slug>`; for a document it shows the filled Word with download and print buttons.
@@ -51,4 +51,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `9809609d8981`
+Clickmax skill revision: `70cba7aeb1c6`

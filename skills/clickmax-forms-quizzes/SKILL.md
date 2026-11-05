@@ -34,8 +34,8 @@ Not this skill:
 
 - Use `mcp__plugin_clickmax_clickmax__forms_list` to find candidate forms/quizzes by kind/status/search.
 - Use `mcp__plugin_clickmax_clickmax__forms_get` before edits; keep the returned step ids, schema shape, theme/settings, and update timestamp in mind.
-- Use `mcp__plugin_clickmax_clickmax__forms_step_upsert` for a single new/changed step; this is the default safe path for incremental quiz editing.
-- Use `mcp__plugin_clickmax_clickmax__forms_step_delete` only when removing that step is explicit, then check whether any branching target pointed to it.
+- Use `mcp__plugin_clickmax_clickmax__forms_steps_upsert` for a single new/changed step; this is the default safe path for incremental quiz editing.
+- Use `mcp__plugin_clickmax_clickmax__forms_steps_delete` only when removing that step is explicit, then check whether any branching target pointed to it.
 - Use `mcp__plugin_clickmax_clickmax__forms_replace_schema` only when the desired result is a complete replacement; send the full schema and protect stale writes with the known update timestamp when available.
 - Use `mcp__plugin_clickmax_clickmax__forms_update` for metadata/status changes, including publishing or pausing through active state.
 - Use `mcp__plugin_clickmax_clickmax__forms_submissions_list` for response rows and `mcp__plugin_clickmax_clickmax__forms_analytics` for performance summaries.
@@ -55,7 +55,7 @@ Same terminating, incremental flow as the quiz, minus the scoring/branching bloc
 
 1. `mcp__plugin_clickmax_clickmax__forms_create` with `{ name, kind: 'form' }` and NO `schema` → seeded starter (valid `theme`/`settings` + one step).
 2. `mcp__plugin_clickmax_clickmax__forms_get` by that `id` → read the step ids, `theme`, `settings`, `updatedAt`.
-3. Add/edit steps one at a time with `mcp__plugin_clickmax_clickmax__forms_step_upsert`, using only field blocks (`capture`, `text`, `number`, `currency`, `scale`, `measure`, `description`, …) — NO `options.score`/`goto`, `loading`, or `results`. See [quiz build](references/quiz-build.md) for the exact block shapes (a form is those same blocks without the scoring/branching ones).
+3. Add/edit steps one at a time with `mcp__plugin_clickmax_clickmax__forms_steps_upsert`, using only field blocks (`capture`, `text`, `number`, `currency`, `scale`, `measure`, `description`, …) — NO `options.score`/`goto`, `loading`, or `results`. See [quiz build](references/quiz-build.md) for the exact block shapes (a form is those same blocks without the scoring/branching ones).
 4. Publish with `mcp__plugin_clickmax_clickmax__forms_update` `{ status: 'active' }`.
 
 ## Build a quiz from scratch
@@ -64,11 +64,11 @@ Terminating flow — build INCREMENTALLY on the server seed; never hand-author t
 
 1. `mcp__plugin_clickmax_clickmax__forms_create` with `{ name, kind: 'quiz' }` and NO `schema` → returns a complete valid seed (valid `theme`/`settings` + one step). Do not author `theme`/`settings` by hand.
 2. `mcp__plugin_clickmax_clickmax__forms_get` by that `id` → read the seed's step ids, `theme`, `settings`, and `updatedAt` (real ids needed for `goto`/`next`/`displayRule` targets).
-3. Add/edit steps one at a time with `mcp__plugin_clickmax_clickmax__forms_step_upsert` (omit `stepId` to create, pass it to edit; `blocks` = the full list for that ONE step). Wire branching with `options.score`/`options.goto`, `button` `goto`, and `loading.displayRule` over `$score`.
+3. Add/edit steps one at a time with `mcp__plugin_clickmax_clickmax__forms_steps_upsert` (omit `stepId` to create, pass it to edit; `blocks` = the full list for that ONE step). Wire branching with `options.score`/`options.goto`, `button` `goto`, and `loading.displayRule` over `$score`.
 4. For per-answer checkout: give each result step an `offer` block with a REAL `checkoutUrl`/`offerId` (see the anti-loop rule below), reached by score/goto.
 5. Global `theme`/`settings`/`qualification` edits → `mcp__plugin_clickmax_clickmax__forms_replace_schema` (whole document). Publish with `mcp__plugin_clickmax_clickmax__forms_update` `{ status: 'active' }`.
 
-If a `mcp__plugin_clickmax_clickmax__forms_step_upsert` is rejected, fix that one payload against the reference shapes — do NOT recreate the quiz.
+If a `mcp__plugin_clickmax_clickmax__forms_steps_upsert` is rejected, fix that one payload against the reference shapes — do NOT recreate the quiz.
 
 ## Report
 
@@ -81,7 +81,7 @@ If a `mcp__plugin_clickmax_clickmax__forms_step_upsert` is rejected, fix that on
 
 ## Warnings
 
-- Do not reconstruct the whole quiz schema blind and retry on rejection. Build on the seed: `forms_create` (no schema) → `forms_get` → incremental `forms_step_upsert`. Guessing the step/block shape is what makes the call reject and loop — read [quiz build](references/quiz-build.md) for the exact shapes and fix the single failing payload instead.
+- Do not reconstruct the whole quiz schema blind and retry on rejection. Build on the seed: `forms_create` (no schema) → `forms_get` → incremental `forms_steps_upsert`. Guessing the step/block shape is what makes the call reject and loop — read [quiz build](references/quiz-build.md) for the exact shapes and fix the single failing payload instead.
 - Do not reference a checkout/offer that does not exist. The `offer` block's `checkoutUrl`/`offerId` must be real: create the product+offer+checkout page first (`clickmax-products`/`clickmax-offers`/`clickmax-funnels` → `pages_create` → use the page URL) OR ask the user which checkout to use OR build the quiz with a results+capture step and leave the CTA pending. Always TERMINATE with a wired offer, a question, or a documented pending CTA — never loop trying to point at a nonexistent checkout.
 - Branching + per-answer checkout uses `option.score`/`option.goto` + `button goto` + `loading.displayRule` over `$score`, plus an `offer` block in the result step — there is no magic "checkout node".
 - Do not use full schema replacement for a small question edit unless the user explicitly wants a rebuild.
@@ -94,7 +94,7 @@ If a `mcp__plugin_clickmax_clickmax__forms_step_upsert` is rejected, fix that on
 ## Anti-patterns
 
 - Guessing schema field names instead of inspecting the current form (or reading [quiz build](references/quiz-build.md)).
-- Re-emitting the entire schema in a loop, or calling `forms_create` again after an error — it leaves a duplicate half-built quiz. Keep the same quiz id and fix the one rejected `forms_step_upsert`.
+- Re-emitting the entire schema in a loop, or calling `forms_create` again after an error — it leaves a duplicate half-built quiz. Keep the same quiz id and fix the one rejected `forms_steps_upsert`.
 - Looping to wire an `offer` to a checkout/offer that does not exist yet, instead of creating it first, asking the user, or leaving the CTA pending and terminating.
 - Expecting a dedicated "checkout" step type; checkout is an `offer` block with a real `checkoutUrl`, reached by score/goto branching.
 - Recreating an entire quiz when a step-level edit is enough.
@@ -102,4 +102,4 @@ If a `mcp__plugin_clickmax_clickmax__forms_step_upsert` is rejected, fix that on
 
 ---
 
-Clickmax skill revision: `9809609d8981`
+Clickmax skill revision: `70cba7aeb1c6`

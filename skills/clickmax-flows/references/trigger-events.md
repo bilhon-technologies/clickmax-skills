@@ -151,6 +151,11 @@ or a constraint `field` name (`offerId`, `projectId`, `tagId`, …); those are i
 - `crm.conversation.contact-silent.v1` — conversation contact silent for a set time · `[channel, offset]` (note the HYPHEN in `contact-silent`, not a dot — a guessed `crm.conversation.contact.silent.v1` is wrong and silently never fires)
 - `crm.conversation.human-takeover.v1` — team member took over the conversation (assumed, assigned, or received from AI SDR escalation) or the owner replied from the phone (`origin: device`, no attendant, so attendant/team filters never match it); main use = EXIT trigger of a follow-up cadence · `[channel, channelInstanceId]` (both optional = any account)
 
+### Webhook received (scope = `flowWebhookId`)
+
+- `crm.flow_webhook.received.v1` — an external system POSTs JSON to the flow's unique URL · `[flowWebhookId]` (REQUIRED, `valueType: 'UUID'`). Each flow has ONE webhook: `flows_webhook_get` with the `flowId` creates it on first use and returns its `id` (the constraint value) and `publicUrl` (what the integrator calls). Without the constraint the trigger never matches that URL.
+- What the body becomes: top-level contract keys (`email`, `fullName`, `telephone`, `document`, `customFields`, `tags`, `leadId`, …) identify/enrich the contact; every other key is readable in steps as `{{$trigger.<path>}}`. Systems that nest the contact (`customer.email`, `data.buyer.phone`) need a **field mapping**: read real payloads in `flows_webhook_get` → `recentCalls[].payload`, then write `{ fields: { email: 'customer.email' }, customFields: { <ref>: '<path>' } }` with `flows_webhook_field_mapping_set` (replaces the whole mapping; `null` removes it; only affects calls after the change). A call starts no execution while the flow is not active.
+
 ### Manual start (pseudo-event — valid `eventName` value but not a real AMQP event)
 
 - `manual` — "Início manual": the flow reacts to nothing; a published flow is run on demand ("Executar" in the editor, `flows_runs_start` here) for an audience chosen at that moment (contacts, list, tag or segment), now or scheduled — see [manual runs](runs-and-cadences.md). No scopes/config on the trigger — the audience belongs to the run, not the trigger. (Replaced the old `manual`+listId / `manual-tag` / `scheduled` / `scheduled-tag` mass-send triggers.)

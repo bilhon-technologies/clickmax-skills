@@ -20,7 +20,7 @@ Not this skill:
 |`name`|Display name|
 |`description`|Author-facing summary|
 |`category` / `level`|Catalog classification|
-|`isActive`|Whether the pack is listed/importable|
+|`isActive`|Whether the pack is listed/importable; funnels4 activation needs a published snapshot (see lifecycle)|
 |`funnelsEngine`|`funnels3` or `funnels4`; snapshot/drift apply only to `funnels4`|
 |`funnels` / `pages` / `flows`|Contents referenced by the pack|
 |`offers`|Affiliated offers with `commission` and affiliation active state|
@@ -33,6 +33,8 @@ Not this skill:
 - a snapshot is an immutable, versioned copy of the contents taken for sharing
 - a snapshot version carries a gate `status`: `draft` (not validated) | `validating` (gate running) | `valid` (clean) | `warnings` (publishable, with caveats) | `blocked` (errors, not shareable)
 - only `valid` or `warnings` snapshots become the importable (shared) version
+- order for funnels4: `packs_resnapshot` → `packs_snapshot_publish` → poll `packs_snapshot_get` until `valid`/`warnings` (promoted to the published version) → THEN `packs_update` with `isActive: true`; activating before a published version returns 409
+- imports read ONLY the published version (never a newer draft); no published version → import returns 409 "Este pacote ainda não foi publicado pelo produtor"
 - the gate runs asynchronously; reach the status by polling (`packs_snapshot_get`), not synchronously
 
 ## Import resolution (funnels4 snapshot import)
@@ -60,6 +62,7 @@ Not this skill:
 - list + get only return non-deleted packs
 - changing contents (`packs_append`/`packs_remove`) requires a new snapshot (`packs_resnapshot`) before the shared version reflects the change
 - an inactive offer affiliation blocks sharing — the gate reports it as an error
+- funnels4: never activate (`isActive: true`) before the published snapshot reaches `valid`/`warnings`; content changes reach importers only after a new version is published
 - deleting a pack stops it being importable but does not delete the underlying funnels/pages/flows
 - importing is asynchronous and may finish `success`, `partial` (some offers unresolved), or `failed`
 - any own resource the importer supplies for a remap (channel, offer, list, form) must belong to the importer
@@ -75,4 +78,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `bacb5d533b9b`
+Clickmax skill revision: `0ed5158759b4`

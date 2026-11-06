@@ -100,4 +100,4 @@ The Clickmax Vturb block supports **"Revelação progressiva"**: reveal or hide 
 
 ---
 
-Clickmax skill revision: `bacb5d533b9b`
+Clickmax skill revision: `0ed5158759b4`

@@ -16,7 +16,17 @@ Not this skill:
 
 ## Key assumptions
 
-- 1 decision = 1 time the agent was triggered. `trigger`: `inbound` = contact message | `follow_up` = scheduled follow-up | `flow_opening` = Flows block opened the conversation.
+- 1 decision = 1 time the agent was triggered. `trigger`:
+
+  |trigger|meaning|
+  |-|-|
+  |`inbound`|contact message|
+  |`follow_up`|silence follow-up (contact stopped answering)|
+  |`flow_opening`|Flows block opened the conversation|
+  |`commitment`|agent returning on a date agreed in the conversation ("Durante o dia" pendência)|
+  |`routine_morning`|"Abre o dia" answering a contact who wrote outside business hours|
+
+- Routine (deployment → aba Rotina): "Abre o dia" | "Fecha o dia" (suggestions for the team) | "Durante o dia" (pendências). Run summary keys: `reviewed`, `reconciled` (pendências/follow-ups cancelled) | `queued` → `replied` (overnight replies; `queueFailed`, `outsideWindow` = not answered) | `repliesDeferred` = replies wait for business hours to open | `conversations`, `suggestions` (Fecha o dia) | `skipped` = over the run cap, left for later.
 - `outcome` = what it did; `reasonCode` = why. Pairs (UI label in quotes):
 
   |outcome|meaning|common reasonCode|
@@ -74,4 +84,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `13cdeda60f43`
+Clickmax skill revision: `043eb19ecb1d`

@@ -148,4 +148,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `0ed5158759b4`
+Clickmax skill revision: `7defb5ee9c36`

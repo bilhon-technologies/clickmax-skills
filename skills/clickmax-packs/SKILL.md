@@ -39,7 +39,7 @@ Not this skill:
 
 ## Import resolution (funnels4 snapshot import)
 
-- the import preview (`packs_import_preview`) lists what the importer must (or may) remap, because some references point to the author's workspace and cannot be cloned
+- the import preview (`packs_import_preview`) lists what the importer must (or may) remap, because some references point to the author's workspace and cannot be cloned; for funnels4 it reads only the published snapshot (no published version → error)
 - blocking: provider channels (webchat) and non-shared offers — the importer must supply their own before import; otherwise import is rejected
 - optional: pages may embed lists/forms (the preview surfaces them per page); the importer can map each embedded list/form to one of their own, or leave it unmapped to keep the original reference (does not block import)
 - external pages cannot be cloned — the importer supplies a URL per external page
@@ -49,8 +49,9 @@ Not this skill:
 - `mcp__plugin_clickmax_clickmax__packs_list` REQUIRES `projectId` (no default/workspace-wide mode) — resolve the project first (`clickmax-projects`) before listing.
 - `mcp__plugin_clickmax_clickmax__packs_snapshot_get` and `mcp__plugin_clickmax_clickmax__packs_snapshot_publish` both take `{packId, version}` — `version` is NOT optional/latest-implied. Source it from the `{id, version}` returned by the last `mcp__plugin_clickmax_clickmax__packs_resnapshot` call, or from `packs_snapshot_drift`'s `latestVersion`. Never guess a version number.
 - `mcp__plugin_clickmax_clickmax__packs_create` takes `projectId` + `name` (required); `description`/`category`/`level`/`thumbnailUrl`/`funnelsEngine` optional. Add contents afterward with `packs_append` — creation itself is always empty.
-- `mcp__plugin_clickmax_clickmax__packs_import`'s dependency resolution is FOUR separate maps, not one — pass the one matching what the preview flagged as blocking, not the generic-sounding one:
-  - `resolutions` — automation/flow STEP dependencies only (keyed by step, `{type: 'automation', stepsDependencies: [...]}`).
+- `mcp__plugin_clickmax_clickmax__packs_import`'s dependency resolution is FIVE separate maps, not one — pass the one matching what the preview flagged, not the generic-sounding one:
+  - `valueMap` — automation dependencies (preview `dependencies[]`): `{[kind]: {[originId]: ownId | null}}`; one choice per author resource, applied to every step + trigger using it. Missing or `null` → the copy gets the field empty (never the author's id).
+  - `resolutions` — per automation (keyed by preview automation `id`): `{type: 'automation', skip: true}` = don't create it.
   - `offerResolutions` — non-shared offer remap (keyed by the pack's offer reference, `{offerId}` = the importer's own offer).
   - `channelResolutions` — blocking provider channel remap (keyed by the pack's channel reference, `{channelId}` = the importer's own channel).
   - `pageResolutions` — per-page list/form remap (keyed by page, `{listIdMap, formIdMap}`).
@@ -78,4 +79,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `0ed5158759b4`
+Clickmax skill revision: `7defb5ee9c36`

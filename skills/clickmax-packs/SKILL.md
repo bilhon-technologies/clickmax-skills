@@ -77,8 +77,27 @@ Not this skill:
 - page list/form remap is optional — map them to keep imported pages wired to the importer's own audience, or skip to leave the original references
 - a published pack with a `warnings` snapshot is still importable; read the warnings to set expectations
 - track an in-flight import by its returned id (`packs_imported_get`) rather than assuming it completed
-- importing workspaces stay PINNED to whichever snapshot version they imported — a later `packs_resnapshot`/`packs_snapshot_publish` on the source pack does NOT automatically propagate to already-imported workspaces; they'd need to re-import to pick up the change
+- importing workspaces stay PINNED to whichever snapshot version they imported — a later `packs_resnapshot`/`packs_snapshot_publish` on the source pack does NOT automatically propagate to already-imported workspaces; they pick it up with `packs_imported_update_get` → `packs_imported_update_apply` (see "Updating an imported pack")
+
+## After import: "Conecte para ativar"
+
+An import only finishes setup when its account slots are resolved; the imported automations stay without an account until then. `importId` = `id` from `packs_imported_list` (not the `packId`).
+
+- `mcp__plugin_clickmax_clickmax__packs_imported_slots_list` → for each `open` slot with `fillable: true`, fill it with `mcp__plugin_clickmax_clickmax__packs_imported_slots_update` using one of its `candidates[].id` (pre-pick `suggestedId`); several slots of the same `entity` → `applyToSameEntity: true` once. No candidate → the importer must connect that account first (route them to the integration); `resolvedId: null` skips the slot instead.
+- `fillable: false` slots are configured inside the automation editor — tell the user which automations (`locations`) instead of trying to fill them.
+- `gupshupTemplate` slots: the importer needs their own approved WhatsApp templates. With `template.replicable: true` and an official number in `whatsappNumbers`, confirm the list with the user, then `mcp__plugin_clickmax_clickmax__packs_imported_slots_templates_create` (`channelInstanceId` + `slotIds`). Slots go `pending` until Meta approves and fill themselves; report `failed` entries and re-read the list later to see `review.status`/`reason`.
+
+## Updating an imported pack
+
+Imports stay pinned to the version they imported. When the author publishes a new one: `mcp__plugin_clickmax_clickmax__packs_imported_update_get` → if not `upToDate`, show the `items`; for each `ask: true` item ask the user `keep` or `take` (`changed`) / `keep` or `delete` (`removed`), warning when `edited` (their changes are lost on `take`) or `live` → `mcp__plugin_clickmax_clickmax__packs_imported_update_apply` with `decisions` keyed `kind:sourceId`. Never decide for the user. New automations can open new slots → re-run the slots flow above.
+
+## Author: sharing, extra assets and cover
+
+- Before appending funnels/pages, `mcp__plugin_clickmax_clickmax__packs_checkout_offers_preview` (`funnels`/`pages` ids) shows which offers their checkouts sell and whether each is shared; tell the user which products go along.
+- `mcp__plugin_clickmax_clickmax__packs_offer_sharing_update` (`packId` + `offerId` + `isShared`) decides if importers sell the author's offer (`true`) or must bring their own (`false`, blocking in their import preview). Gated: changes what every importer sells. Needs the affiliation-packs feature.
+- `mcp__plugin_clickmax_clickmax__packs_snapshot_assets_list` (`packId` + `version`) lists the extra assets a version carries (quiz, custom fields…) — use it to answer "what goes with the pack".
+- Cover: ask the user to upload the image in the chat (an `image` question), then `mcp__plugin_clickmax_clickmax__packs_cover_set` with `packId` + the uploaded `imageUrl`; `mcp__plugin_clickmax_clickmax__packs_cover_remove` clears it. `packs_create`/`packs_update` do not take a cover URL, and images from other sites are refused.
 
 ---
 
-Clickmax skill revision: `a358a18b585e`
+Clickmax skill revision: `71c815b21e39`

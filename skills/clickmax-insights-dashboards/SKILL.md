@@ -1,6 +1,6 @@
 ---
 name: clickmax-insights-dashboards
-description: Use when the user wants to build, change, or read a saved Insights dashboard in Clickmax (opportunities, contacts, activities, meetings, sales, subscriptions, affiliates, visitors, automations, campaigns, messages, live chat) — assembling widgets, starting from a template, asking for the numbers of a dashboard they already have, or opening the records behind a widget number.
+description: Use when the user wants to save, change, or read a saved Insights dashboard in Clickmax (opportunities, contacts, activities, meetings, sales, subscriptions, affiliates, visitors, automations, campaigns, messages, live chat) — assembling widgets, starting from a template, asking for the numbers of a dashboard they already have, or opening the records behind a widget number.
 ---
 
 ## When this applies
@@ -9,6 +9,7 @@ Use this skill to create, edit or read a **saved** Insights dashboard: assemblin
 
 Not this skill:
 
+- "create a dashboard / panel / overview" or the health of automations, sends, campaigns or pipelines with no ask to SAVE it -> the Max canvas (`canvas_render`), shown next to the chat; save it here only when the user asks to keep it or names Insights
 - one-off revenue/lead/funnel KPI questions with no saved board -> `clickmax-analytics`
 - what is selling: top offers, order-bump attach, sales trend -> `clickmax-sales-insights`
 - payment dashboard browsing and loss/recovery cohorts -> `clickmax-payments-dashboard-analysis`
@@ -127,4 +128,4 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 
 ---
 
-Clickmax skill revision: `f095a837c3ef`
+Clickmax skill revision: `3c8b5bab2412`

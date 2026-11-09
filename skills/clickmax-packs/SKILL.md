@@ -33,7 +33,7 @@ Not this skill:
 - a snapshot is an immutable, versioned copy of the contents taken for sharing
 - a snapshot version carries a gate `status`: `draft` (not validated) | `validating` (gate running) | `valid` (clean) | `warnings` (publishable, with caveats) | `blocked` (errors, not shareable)
 - only `valid` or `warnings` snapshots become the importable (shared) version
-- order for funnels4: `packs_resnapshot` → `packs_snapshot_publish` → poll `packs_snapshot_get` until `valid`/`warnings` (promoted to the published version) → THEN `packs_update` with `isActive: true`; activating before a published version returns 409
+- order for funnels4: new version (the `snapshot` returned by `packs_append`, or `packs_resnapshot` when nothing was appended) → `packs_snapshot_publish` → poll `packs_snapshot_get` until `valid`/`warnings` (promoted to the published version) → THEN `packs_update` with `isActive: true`; activating before a published version returns 409
 - imports read ONLY the published version (never a newer draft); no published version → import returns 409 "Este pacote ainda não foi publicado pelo produtor"
 - the gate runs asynchronously; reach the status by polling (`packs_snapshot_get`), not synchronously
 
@@ -47,8 +47,9 @@ Not this skill:
 ## Execute guide (exact params — avoid live tool-discovery)
 
 - `mcp__plugin_clickmax_clickmax__packs_list` REQUIRES `projectId` (no default/workspace-wide mode) — resolve the project first (`clickmax-projects`) before listing.
-- `mcp__plugin_clickmax_clickmax__packs_snapshot_get` and `mcp__plugin_clickmax_clickmax__packs_snapshot_publish` both take `{packId, version}` — `version` is NOT optional/latest-implied. Source it from the `{id, version}` returned by the last `mcp__plugin_clickmax_clickmax__packs_resnapshot` call, or from `packs_snapshot_drift`'s `latestVersion`. Never guess a version number.
+- `mcp__plugin_clickmax_clickmax__packs_snapshot_get` and `mcp__plugin_clickmax_clickmax__packs_snapshot_publish` both take `{packId, version}` — `version` is NOT optional/latest-implied. Source it from `snapshot.version` of the last `mcp__plugin_clickmax_clickmax__packs_append`, the `{id, version}` of the last `mcp__plugin_clickmax_clickmax__packs_resnapshot`, or from `packs_snapshot_drift`'s `latestVersion`. Never guess a version number.
 - `mcp__plugin_clickmax_clickmax__packs_create` takes `projectId` + `name` (required); `description`/`category`/`level`/`thumbnailUrl`/`funnelsEngine` optional. Add contents afterward with `packs_append` — creation itself is always empty.
+- `mcp__plugin_clickmax_clickmax__packs_append` `funnelModes` (`full` | `skeleton` = structure only, no pages/automations/offers) is stored per funnel and reused by every later version; re-send a funnel already in the pack with the other mode to switch it, omit it to keep its mode.
 - `mcp__plugin_clickmax_clickmax__packs_import`'s dependency resolution is FIVE separate maps, not one — pass the one matching what the preview flagged, not the generic-sounding one:
   - `valueMap` — automation dependencies (preview `dependencies[]`): `{[kind]: {[originId]: ownId | null}}`; one choice per author resource, applied to every step + trigger using it. Missing or `null` → the copy gets the field empty (never the author's id).
   - `resolutions` — per automation (keyed by preview automation `id`): `{type: 'automation', skip: true}` = don't create it.
@@ -61,7 +62,8 @@ Not this skill:
 ## Rules
 
 - list + get only return non-deleted packs
-- changing contents (`packs_append`/`packs_remove`) requires a new snapshot (`packs_resnapshot`) before the shared version reflects the change
+- `packs_append` (funnels4) already generates the new draft version and returns it as `snapshot` → publish THAT version; don't `packs_resnapshot` again. `packs_remove` requires `packs_resnapshot` before the shared version reflects the change
+- a funnel deleted at the source leaves the pack automatically (on delete and on the next version)
 - an inactive offer affiliation blocks sharing — the gate reports it as an error
 - funnels4: never activate (`isActive: true`) before the published snapshot reaches `valid`/`warnings`; content changes reach importers only after a new version is published
 - deleting a pack stops it being importable but does not delete the underlying funnels/pages/flows
@@ -79,4 +81,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `7defb5ee9c36`
+Clickmax skill revision: `a358a18b585e`

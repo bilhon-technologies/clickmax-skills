@@ -58,4 +58,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `7defb5ee9c36`
+Clickmax skill revision: `a358a18b585e`

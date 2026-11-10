@@ -18,4 +18,4 @@
 
 - Link existing pages with `mcp__plugin_clickmax_clickmax__funnels_nodes_connect_page` only after resolving both the funnel node and page.
 - Validate with `mcp__plugin_clickmax_clickmax__funnels_validate` and inspect `mcp__plugin_clickmax_clickmax__funnels_structure_get`.
-- Publish with `mcp__plugin_clickmax_clickmax__funnels_publish` only when the user explicitly wants the funnel live; pass only publishable node ids.
+- Publish with `mcp__plugin_clickmax_clickmax__funnels_publish` only when the user explicitly wants the funnel live; pass the content steps that should go live (pages, quizzes, workflows); A/B tests, conditionals, external links, webchat, calendar and pipeline nodes always go live with the funnel.

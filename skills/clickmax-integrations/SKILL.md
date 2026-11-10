@@ -85,4 +85,4 @@ Templates (API oficial only):
 
 ---
 
-Clickmax skill revision: `bfb1f04473ad`
+Clickmax skill revision: `2c281119c67a`

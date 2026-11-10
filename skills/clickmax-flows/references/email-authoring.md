@@ -20,6 +20,10 @@ Write real transactional-email-safe HTML, not web-page HTML:
 - Same personalization tokens as `content`/the slot fields: `{name}`, `{email}`, `{telephone}`, `{checkout}` / `{checkout:offerId}` — see [step types](step-types.md).
 - Keep it light: one focused design reproducing the chosen catalog style, not a multi-section production.
 
+## Changing an email you already created
+
+To replace the subject or the whole body of an existing email step, call `mcp__plugin_clickmax_clickmax__flows_update_email` with the new `customHtml` (same authoring rules as above). Never write the email body through raw `flows_graph_apply` ops.
+
 ## Sender identity
 
 The email goes out as the USER's business, never as Clickmax. Never put a Clickmax logo, the Clickmax name, or a clickmax.io address in an email body.

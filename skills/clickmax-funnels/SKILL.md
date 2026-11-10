@@ -12,6 +12,7 @@ Not this skill:
 - Funnel step backed by an EXTERNAL page (URL hosted outside Clickmax, e.g. the user's own site/domain) -> STAY here: compose the granular tools (see the external-page common flow below). Never use `pages_create` for an external URL — that makes an empty INTERNAL page.
 - Script-install help for an EXISTING external page (no graph change) -> `clickmax-external-pages`
 - Lead/payment cohort analysis inside a funnel -> solve that with the relevant sales/CRM skill first
+- Overview of how a funnel and its automations are doing ("como está meu funil junto com as automações", where it loses people), no change asked -> the flow canvas (`canvas_render` with the funnel layout); read it with `mcp__plugin_clickmax_clickmax__funnels_structure_get`, `mcp__plugin_clickmax_clickmax__funnels_automations_list` and `mcp__plugin_clickmax_clickmax__funnels_analytics`, never answer it as a table
 - Full AI-authored funnel with responsive page copy/design -> stay here and follow [AI funnel creation](references/ai-funnel-creation.md); load `clickmax-pages` alongside it, because that skill owns everything that happens inside a single page.
 - ONE page, with no funnel graph involved (create, restyle, rebuild, configure, publish a single page) -> `clickmax-pages`
 - Fine-grained visual edits after creation (moving one block or changing one mounted element) -> page editor UI.
@@ -148,4 +149,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `3c8b5bab2412`
+Clickmax skill revision: `31ff6dcc0122`

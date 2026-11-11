@@ -48,7 +48,7 @@ Not this skill:
 
 - `mcp__plugin_clickmax_clickmax__packs_list` REQUIRES `projectId` (no default/workspace-wide mode) — resolve the project first (`clickmax-projects`) before listing.
 - `mcp__plugin_clickmax_clickmax__packs_snapshot_get` and `mcp__plugin_clickmax_clickmax__packs_snapshot_publish` both take `{packId, version}` — `version` is NOT optional/latest-implied. Source it from `snapshot.version` of the last `mcp__plugin_clickmax_clickmax__packs_append`, the `{id, version}` of the last `mcp__plugin_clickmax_clickmax__packs_resnapshot`, or from `packs_snapshot_drift`'s `latestVersion`. Never guess a version number.
-- `mcp__plugin_clickmax_clickmax__packs_create` takes `projectId` + `name` (required); `description`/`category`/`level`/`thumbnailUrl`/`funnelsEngine` optional (`funnelsEngine` omitted = `funnels4`; `funnels3` only for funnels3 funnels — `packs_append` rejects other-engine funnels with 409). Add contents afterward with `packs_append` — creation itself is always empty.
+- `mcp__plugin_clickmax_clickmax__packs_create` takes `projectId` + `name` (required); `description`/`category`/`level`/`funnelsEngine` optional (cover → `packs_cover_set`; `funnelsEngine` omitted = `funnels4`; `funnels3` only for funnels3 funnels — `packs_append` rejects other-engine funnels with 409). Add contents afterward with `packs_append` — creation itself is always empty.
 - `mcp__plugin_clickmax_clickmax__packs_append` `funnelModes` (`full` | `skeleton` = structure only, no pages/automations/offers) is stored per funnel and reused by every later version; re-send a funnel already in the pack with the other mode to switch it, omit it to keep its mode.
 - `mcp__plugin_clickmax_clickmax__packs_import`'s dependency resolution is FIVE separate maps, not one — pass the one matching what the preview flagged, not the generic-sounding one:
   - `valueMap` — automation dependencies (preview `dependencies[]`): `{[kind]: {[originId]: ownId | null}}`; one choice per author resource, applied to every step + trigger using it. Missing or `null` → the copy gets the field empty (never the author's id).
@@ -100,4 +100,4 @@ Imports stay pinned to the version they imported. When the author publishes a ne
 
 ---
 
-Clickmax skill revision: `90e0203bbec0`
+Clickmax skill revision: `0eb698258356`

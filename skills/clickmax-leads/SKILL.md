@@ -1,6 +1,6 @@
 ---
 name: clickmax-leads
-description: Use when the user wants to create, find, deduplicate, inspect (including a contact's Raio-X), filter, verify the e-mail of, or compare CRM leads and their commercial context inside Clickmax, or to check whether a contact import/export finished.
+description: Use when the user wants to create, find, deduplicate, inspect (including a contact's Raio-X), filter, verify the e-mail of, change the message opt-in of, or compare CRM leads and their commercial context inside Clickmax, or to check whether a contact import/export finished.
 ---
 
 ## When this applies
@@ -43,6 +43,7 @@ Not this skill:
 - Add commercial context with `mcp__plugin_clickmax_clickmax__leads_payments`, `mcp__plugin_clickmax_clickmax__leads_invoices`, and `mcp__plugin_clickmax_clickmax__leads_common_products` only when payments, billing status, or bought-product patterns materially change the answer. Unlike its siblings, `mcp__plugin_clickmax_clickmax__leads_common_products` requires `filter` (not optional) — always pass a filter, even a broad one.
 - Duplicate check before creating: `mcp__plugin_clickmax_clickmax__leads_check_duplicates` with every identifier you have (e-mail, phone, Instagram) → one oldest match per channel. A match = offer to use/update that contact instead of creating. `mcp__plugin_clickmax_clickmax__leads_exists_by_email` only answers yes/no for an e-mail.
 - "Raio-X" / "is this contact ready to buy, when do I reach them": `mcp__plugin_clickmax_clickmax__leads_xray` (intent level + top 3 signals, LTV/ticket/pending, channels with opt-in and last reply, best 2h slot in São Paulo time, 14-day activity). Use `leads_context` instead when full history or pagination is needed.
+- Opt-in / "para de mandar mensagem pra ele" / "ele pediu pra sair": `mcp__plugin_clickmax_clickmax__leads_message_preferences_update` with `leadId` + the channels to change (`whatsapp`, `email`, `sms`, `instagram`, `telegram`, `voice`; `false` = stop receiving broadcasts and automations). Read the current state of all six channels first with `mcp__plugin_clickmax_clickmax__leads_get` (`messagePreferences`; the X-ray has no SMS/voice) and state which channels will flip before calling. "Sair de tudo" / "todas" = all six `false`; a request made on one channel without saying "all" = that channel only. Set a channel back to `true` only when the seller says the contact asked to come back — never to unblock a send. "Tira da lista X" = list membership, not this tool (`clickmax-list-segments`); ask which one when unclear. Opting out does not delete the contact.
 - "Did my import/export finish?": `mcp__plugin_clickmax_clickmax__leads_bulk_jobs_history` (newest first; `jobName` `crm.leads.import-csv` / `crm.leads.export-csv`…). Import counts are in `result.meta.details` (created/updated/duplicated); an export's file link is in `result.meta.output.url`. Starting an import needs a file upload in the app — not possible here.
 - E-mail health of a cohort: filter `mcp__plugin_clickmax_clickmax__leads_search` with a filter item on field `emailStatus`, operator `equals`, `valueString` = `invalid` | `risky` | `pending` | `valid` (add `negation: true` for "anything but"). Fraud signals: a filter item on field `suspectedFraud`, operator `equals`, `valueBool` = true. Report the count (`meta.countItens`) before rows.
 - Verify one contact's e-mail with `mcp__plugin_clickmax_clickmax__leads_validate_email`, passing the lead id: it returns the new `emailStatus` right away. A `pending` result after a failure (provider error / inconclusive) is not a verdict — the automatic job retries later; do not retry in a loop. A lead without e-mail cannot be verified.
@@ -77,4 +78,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `0eb698258356`
+Clickmax skill revision: `9181b6a55bdc`

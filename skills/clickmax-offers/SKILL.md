@@ -78,6 +78,7 @@ Not this skill:
 - Never fabricate deliverable content — ask the user for the link, or build a members area; do not invent a URL or auto-generate files.
 - Route images by intent: an image FOR the product ("add an image to product X", "imagem do produto") → `offers_set_product_image`, NEVER the banner. Only use `bannerDesktop`/`bannerMobile` (via `offers_update`) when the user explicitly asks for checkout banner art. A "product image" request must never end up in `offers_update`.
 - Delete can be blocked by transaction history.
+- **Max Design republish warning.** An offer sold on a published Max Design site has its price in the site's HTML, so a visible change (price, installments, name, images, timer, coupon) republishes that site. `offers_update` / `offers_set_product_image` then save nothing and return the warning: relay the sites/pages, say saving republishes them (about 1 minute, then 2 to 5 minutes per site), ask "save and republish, or cancel?", and only on yes repeat the same call with `confirmRepublish: true`. That yes is the approval for this republish (same live code, new offer data); do not ask for a separate publish approval.
 
 ## Anti-patterns
 
@@ -87,4 +88,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `cb8052b1bb12`
+Clickmax skill revision: `90e0203bbec0`

@@ -2,7 +2,7 @@
 
 Use this workflow in any MCP client when the user wants the assistant to research, design, and assemble a complete funnel with connected pages.
 
-**Page authoring lives in the `clickmax-pages` skill.** Load it alongside this one for anything that happens inside a single page: the recipe → validate → draft-import pipeline, the visual system and token mapping, the section spine and copy rules, the form/checkout/CTA/motion contracts, and the missing-proof preview. This document covers only what is funnel-scoped — discovery, the shared brief, the one-design-per-funnel rule, and assembly.
+**Max Design available in the workspace (the client has the Max Design project tools) → pages are routes of one Max Design site**, built per [Max Design site pages](pages-and-checkout.md#max-design-site-pages); discovery, the brief, one design per funnel and assembly below still apply, the builder-specific parts do not. Otherwise, **page authoring lives in the `clickmax-pages` skill.** Load it alongside this one for anything that happens inside a single page: the recipe → validate → draft-import pipeline, the visual system and token mapping, the section spine and copy rules, the form/checkout/CTA/motion contracts, and the missing-proof preview. This document covers only what is funnel-scoped — discovery, the shared brief, the one-design-per-funnel rule, and assembly.
 
 ## Discovery modes
 
@@ -32,9 +32,9 @@ The design is chosen **once, before the first page**, and reused consistently on
 - The server inherits brand tokens through the funnel, but it does **not** control layout. Shared tokens alone do not establish a coherent layout; preserve the same component language while varying composition.
 - The motion level chosen in discovery (`subtle | balanced | expressive`) applies funnel-wide: expressive means at most 1-2 focal moments per viewport, not motion on every block.
 
-## Page authoring inside a funnel
+## Builder page authoring inside a funnel
 
-Follow the pipeline in `clickmax-pages` for every page. Two things are specific to building inside a funnel:
+Only without Max Design. Follow the pipeline in `clickmax-pages` for every page. Two things are specific to building inside a funnel:
 
 - A **new** page carries the funnel: `placement.projectId` + `funnelId`, plus a unique name and path and the node's page type. That is what makes it inherit the funnel's brand tokens.
 - A **re-import** that must keep the funnel style uses `pageId` + `funnelId` — never a `placement` used only to carry the funnel, because its name, type, and path would be silently ignored.
@@ -47,7 +47,7 @@ Follow the pipeline in `clickmax-pages` for every page. Two things are specific 
 2. Build one blueprint: funnel family, ordered pages, node types, exits, offer/form contracts, the chosen design, and assumptions.
 3. Continue the requested draft after discovery; ask for assembly only if the user requested a blueprint without creation.
 4. Call `mcp__plugin_clickmax_clickmax__funnels_create` exactly once; standard family → `mcp__plugin_clickmax_clickmax__funnels_sequences_create`, custom graph → `mcp__plugin_clickmax_clickmax__funnels_nodes_create`, never both for the same skeleton.
-5. Author each planned page through the `clickmax-pages` pipeline, ending in `mcp__plugin_clickmax_clickmax__pages_import_html_draft` with the funnel target described above.
-6. Attach every returned page with `mcp__plugin_clickmax_clickmax__funnels_nodes_connect_page`; route page triggers with `mcp__plugin_clickmax_clickmax__funnels_triggers_connect` and other node families with their dedicated connection tool.
+5. Max Design available → build every planned page as a route of the funnel's Max Design project ([Max Design site pages](pages-and-checkout.md#max-design-site-pages)); its nodes stay unlinked until the user approves publishing the site, so skip `mcp__plugin_clickmax_clickmax__funnels_nodes_connect_page` and report it as a gap. Otherwise author each page through the `clickmax-pages` pipeline, ending in `mcp__plugin_clickmax_clickmax__pages_import_html_draft` with the funnel target described above.
+6. Attach every returned builder page with `mcp__plugin_clickmax_clickmax__funnels_nodes_connect_page`; route page triggers with `mcp__plugin_clickmax_clickmax__funnels_triggers_connect` and other node families with their dedicated connection tool.
 7. Call `mcp__plugin_clickmax_clickmax__funnels_structure_get`, verify every intended edge, then `mcp__plugin_clickmax_clickmax__funnels_validate`. Repair the existing funnel/page in place; never restart by creating duplicates.
 8. Report draft ids/paths, mode, assumptions, factual placeholders, visual/motion choices, and validation gaps. Publish only after separate explicit consent and a fresh validation pass.

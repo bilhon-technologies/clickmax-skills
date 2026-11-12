@@ -128,4 +128,4 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 
 ---
 
-Clickmax skill revision: `0eac798e8149`
+Clickmax skill revision: `14b7a5238c40`

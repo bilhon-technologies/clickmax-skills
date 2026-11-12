@@ -31,7 +31,7 @@ Not this skill:
 
   |outcome|meaning|common reasonCode|
   |-|-|-|
-  |`spoke` "Respondeu"|message reached the contact|`replied`|
+  |`spoke` "Respondeu"|message reached the contact|`replied`, `human_request_held` (held a request for a person to try to resolve first, FLOWS-3070)|
   |`suggested` "Sugeriu ao atendente"|deployment in suggest mode; text left for the attendant|`suggest_mode`|
   |`not_sent` "Redigiu, não enviou"|wrote a reply, it did not go out|`window_closed` (WhatsApp 24h window), `deployment_paused_midturn`, `silenced_midturn` (human stepped in while it wrote), `flow_ended_midturn`, `send_refused` (channel refused)|
   |`closed` "Encerrou a conversa"|agent ended the conversation|`model_closed`, `max_turns`|
@@ -84,4 +84,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `0eac798e8149`
+Clickmax skill revision: `14b7a5238c40`

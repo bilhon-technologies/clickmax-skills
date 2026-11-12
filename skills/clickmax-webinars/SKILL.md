@@ -18,9 +18,9 @@ Not this skill:
 - Lifecycle: `draft` → `published` (registration page + room open) → `archived`. Changing status is `webinars_set_status`, never `webinars_update`.
 - Schedule `mode`: `scheduled` = fixed dates (create sessions), `just_in_time` = one session per registrant after `jitDelayMinutes`, `checkout_triggered` = session after a purchase of `checkoutTriggerProductId`.
 - Sessions: `startsAt` must be in the future (a past time is rejected — it would go on air at once). Only `timing: waiting` can be moved/deleted. Series = N independent sessions (max 52), rerun skips existing times.
-- Offer card: shows at `offerStartSeconds` of the video, button → `checkoutUrl`. Prices are display text; the charge is in the linked checkout. Max 20 offers.
+- Offer card: shows at `offerStartSeconds` of the video. Clickmax product → `productOfferId` (approved offer; fills checkout link, name, prices, image unless sent); external page → `checkoutUrl`. Never both. Prices are display text; the charge is in the linked checkout. Max 20 offers.
 - Room sections (`webinars_room_update`): `audience` (simulated viewer count), `sales` (simulated purchase toasts), `chat` (scripted messages at video seconds), `reactions`, `appearance` (theme, brand, SEO), `endedPage` (replay, offer, community, support after the session). Partial update; arrays replace the whole list. `null` from `webinars_room_get` = defaults.
-- Automations = managed flows on real registrants. Triggers: `registered`, `joined`, `joined_late`, `progress` (+`percent`), `reached_pitch`, `reached_offer`, `offer_clicked`, `session_start` (+`delayMinutes` + `sessionOffset` before/after). Channels: `internal`, `email`, `sms`, `whatsapp` (approved template), `tag`. Saving or turning one on asks the user for approval; `webinars_automations_pause` stops it at once, no approval.
+- Automations = managed flows on real registrants. Triggers: `registered`, `joined`, `joined_late`, `progress` (+`percent`: 25/50/75/90/100 of the video), `watch_time` (+`watchedMinutes`: 5/10/15/20/30/45/60/90/120 summed in the room — "ficou X min"; late joiners count), `reached_pitch`, `reached_offer`, `offer_clicked`, `session_start` (+`delayMinutes` + `sessionOffset` before/after). Channels: `internal`, `email`, `sms`, `whatsapp` (approved template), `tag`. Saving or turning one on asks the user for approval; `webinars_automations_pause` stops it at once, no approval.
 - Hosts are reusable presenter profiles linked by `hostId`.
 
 ## Thought process
@@ -32,7 +32,7 @@ Not this skill:
 
 ## Execute guide
 
-- New: `mcp__plugin_clickmax_clickmax__webinars_check_slug` → `mcp__plugin_clickmax_clickmax__webinars_create` → `mcp__plugin_clickmax_clickmax__webinars_schedule_upsert({ id, mode })` → for `scheduled`: `mcp__plugin_clickmax_clickmax__webinars_sessions_create_series({ id, startDate, time, weekdays, count, timezone })` or `mcp__plugin_clickmax_clickmax__webinars_sessions_create` → `mcp__plugin_clickmax_clickmax__webinars_offers_create` → `mcp__plugin_clickmax_clickmax__webinars_room_update` with the sections asked. Then tell the user to pick the video in the app.
+- New: `mcp__plugin_clickmax_clickmax__webinars_check_slug` → `mcp__plugin_clickmax_clickmax__webinars_create` → `mcp__plugin_clickmax_clickmax__webinars_schedule_upsert({ id, mode })` → for `scheduled`: `mcp__plugin_clickmax_clickmax__webinars_sessions_create_series({ id, startDate, time, weekdays, count, timezone })` or `mcp__plugin_clickmax_clickmax__webinars_sessions_create` → `mcp__plugin_clickmax_clickmax__products_list` → `mcp__plugin_clickmax_clickmax__webinars_offers_create({ id, productOfferId, offerStartSeconds })` → `mcp__plugin_clickmax_clickmax__webinars_room_update` with the sections asked. Then tell the user to pick the video in the app.
 - Presenter: `mcp__plugin_clickmax_clickmax__webinars_hosts_list` → reuse or `mcp__plugin_clickmax_clickmax__webinars_hosts_create` → `mcp__plugin_clickmax_clickmax__webinars_update({ id, hostId })`.
 - Reminders: `mcp__plugin_clickmax_clickmax__webinars_automations_upsert({ id, config: { event: 'session_start', delayMinutes: 40, sessionOffset: 'before', channel: 'whatsapp', gupshupTemplateId } })`; edit with the `recipeKey` from `mcp__plugin_clickmax_clickmax__webinars_automations_list`. On/off: `mcp__plugin_clickmax_clickmax__webinars_automations_pause` / `mcp__plugin_clickmax_clickmax__webinars_automations_activate`.
 - Edit room: `mcp__plugin_clickmax_clickmax__webinars_room_get({ id, sections })` → change → `mcp__plugin_clickmax_clickmax__webinars_room_update`. Sections save one after another: on error, the message lists what was already saved — resend only the rest.
@@ -54,7 +54,8 @@ Not this skill:
 - Publishing right after create without sessions, offer or video.
 - Creating sessions one by one when the user described a recurring pattern (use the series).
 - Putting the offer price only in the card and assuming it changes the checkout price.
+- Converting "ficou X min" into `progress` %: use `watch_time`. A time off the list → nearest option, and say so.
 
 ---
 
-Clickmax skill revision: `95fe370a8648`
+Clickmax skill revision: `501a7b10e37c`

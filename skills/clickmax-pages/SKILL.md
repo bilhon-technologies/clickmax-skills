@@ -80,4 +80,4 @@ Scope boundary — pick the right skill first:
 
 ---
 
-Clickmax skill revision: `a33abcf246fd`
+Clickmax skill revision: `0969c2f8391d`

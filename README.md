@@ -84,7 +84,7 @@ Sem esses passos, a cópia local fica parada na versão instalada e a IA segue o
 - **clickmax-leads** — Use when the user wants to create, find, deduplicate, inspect (including a contact's Raio-X), filter, verify the e-mail of, change the message opt-in of, or compare CRM leads and their commercial context inside Clickmax, or to check whether a contact import/export finished.
 - **clickmax-leads-activity-analysis** — Use when the user wants to inspect CRM activity streams, event timelines, or activity-derived metrics for leads and opportunities.
 - **clickmax-list-segments** — Use when the user wants to create, inspect, update, reload, or use manual lists and dynamic segments to group leads in Clickmax.
-- **clickmax-meetings** — Use when the user wants to book, reschedule, hand over to another attendant, cancel or look up one booked meeting (agendamento) of a contact in Clickmax.
+- **clickmax-meetings** — Use when the user wants to book, reschedule, hand over to another attendant, cancel or look up one meeting (agendamento) of a contact in Clickmax, including finding a meeting that already happened and its recording, transcript or summary.
 - **clickmax-members** — Use when the user wants to inspect, create, update, enable, disable, enroll, or remove member users and their access/progress in Clickmax Members.
 - **clickmax-members-area** — Use when the user wants to build/create a full members area — a portal with classrooms, courses, modules, lessons, students, and login links — end to end in one flow.
 - **clickmax-modules** — Use when the user wants to list, inspect, create, update, reorder, or delete modules and lesson ordering inside a Clickmax Members course.

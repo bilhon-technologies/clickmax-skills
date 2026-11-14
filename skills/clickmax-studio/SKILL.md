@@ -37,19 +37,20 @@ Not this skill:
 - Capture an idea: `mcp__plugin_clickmax_clickmax__studio_ideas_create`. Triage the inbox: `mcp__plugin_clickmax_clickmax__studio_ideas_suggest` -> read `suggestedProjectId` / `suggestedDiscard` -> confirm -> `mcp__plugin_clickmax_clickmax__studio_ideas_promote` (line, date, kind per idea) or discard.
 - Write: `mcp__plugin_clickmax_clickmax__studio_scripts_write` (AI, in the brand voice) or write it yourself and save with `mcp__plugin_clickmax_clickmax__studio_scripts_update` (`aiAuthored: true`). Better opening: `mcp__plugin_clickmax_clickmax__studio_scripts_hooks`, then update the first scene.
 - Copy review: `mcp__plugin_clickmax_clickmax__studio_scripts_transition` `to: review` (+ reviewer from `workspace_members_list`). Changes: `mcp__plugin_clickmax_clickmax__studio_scripts_comments_add` first, then `to: changes`. Approve after the user says yes: `to: approved` (+ who produces).
-- Video: `mcp__plugin_clickmax_clickmax__studio_scripts_produce` (`assignedUserId`, `options`) -> later `mcp__plugin_clickmax_clickmax__studio_scripts_list` (`productionState`: `queued` | `rendering`) -> `produced` -> `mcp__plugin_clickmax_clickmax__studio_scripts_video_url` for the person to watch -> `mcp__plugin_clickmax_clickmax__studio_scripts_video_approve`, or `mcp__plugin_clickmax_clickmax__studio_scripts_video_request_changes` (video only) / `mcp__plugin_clickmax_clickmax__studio_scripts_redo` (copy and video).
+- Video: `mcp__plugin_clickmax_clickmax__studio_scripts_produce` (`assignedUserId`, `options`) -> later `mcp__plugin_clickmax_clickmax__studio_scripts_list` (`productionState`: `queued` + `queuePosition` | `rendering`; jump the queue: `mcp__plugin_clickmax_clickmax__studio_scripts_queue_bump`) -> `produced` -> `mcp__plugin_clickmax_clickmax__studio_scripts_video_url` for the person to watch -> `mcp__plugin_clickmax_clickmax__studio_scripts_video_approve`, or `mcp__plugin_clickmax_clickmax__studio_scripts_video_request_changes` (video only) / `mcp__plugin_clickmax_clickmax__studio_scripts_redo` (copy and video); instruction optional on both.
 - Schedule: `mcp__plugin_clickmax_clickmax__studio_lines_next_slot` -> `mcp__plugin_clickmax_clickmax__social_posts_create` (draft, the script video = Drive file `videoDriveFileId`, the script caption, the line accounts) -> confirm -> `mcp__plugin_clickmax_clickmax__social_posts_schedule` -> `mcp__plugin_clickmax_clickmax__studio_scripts_link_social_post`.
-- Results: `mcp__plugin_clickmax_clickmax__studio_scripts_report` (`brandId`, `month`, optional line). Recreate a hit: `mcp__plugin_clickmax_clickmax__studio_scripts_create_similar` then write it.
+- Results: `mcp__plugin_clickmax_clickmax__studio_scripts_report` (`brandId`, `month`, optional line). Recreate a hit (`performance.tier` = `outlier`): `mcp__plugin_clickmax_clickmax__studio_scripts_create_similar` then write it.
 
 ## Report
 
 - Name scripts by title, with line, planned date and status.
 - After planning: one line per idea (date, kind, title, why).
-- Results: planned / approved / scheduled / published, reach and saves; top and bottom of the ranking with `vsAverage` (1.5 = 50% above the brand average).
+- Results: planned / approved / scheduled / published, `tiers` (outlier/average/flop/smallBase), reach and saves; ranking is by `performance.tier` (CSS = comments+shares+saves vs the account × network 180-day average; `tier` null = account under 30 measured posts), `vsAverage` = reach vs the brand month average.
 
 ## Warnings
 
-- `studio_lines_update` replaces `defaults`, `cadence`, `gates` and `accounts` as a whole: send the full value.
+- `studio_lines_update` replaces `defaults`, `cadence`, `gates`, `rules` and `accounts` as a whole: send the full value.
+- Line `rules` = guard rail (`avoid`, `require`). `studio_scripts_get` → `guardRail.violations` (term + scene, `beatIndex` null = caption): fix before review; with a violation an `auto` copy gate does not approve.
 - A video in `production` only moves when the assigned person opens the Cx Studio app.
 - Scheduling puts content on a PUBLIC profile: confirm caption, video, accounts and time first.
 
@@ -62,4 +63,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `2d3df031680f`
+Clickmax skill revision: `c0569f3d3e67`

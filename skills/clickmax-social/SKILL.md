@@ -1,15 +1,15 @@
 ---
 name: clickmax-social
-description: Use when the user wants to connect Instagram, Facebook, TikTok or YouTube accounts, write, schedule, publish, reschedule, cancel or retry social media posts, manage the posting queue, or read social media results in Clickmax.
+description: Use when the user wants to write, approve, schedule, publish or retry social posts, answer post comments, manage queue, templates, goals or social reports in Clickmax.
 ---
 
 ## When this applies
 
-Use this skill for the Redes sociais module: connected accounts, posts and their per-network targets, the posting queue, the calendar and the results of published posts.
+Use this skill for the Redes sociais module: publishing accounts, posts and their per-network targets, approval, internal notes, the comments inbox, the posting queue, templates/groups, goals, the calendar, results and e-mailed reports.
 
 Not this skill:
 
-- Instagram DMs or comments as conversations -> messaging / live chat
+- Instagram DMs as conversations -> messaging / live chat
 - paid ads in Tráfego -> not covered here
 - social numbers inside an Analytics dashboard -> `clickmax-insights-dashboards` (entity `social`)
 
@@ -18,8 +18,9 @@ Not this skill:
 - POST = one caption + media. TARGET = the post on ONE account (post × account): own status, time, caption override, network options, post type, permalink, error and metrics. Statuses act on targets.
 - target status: `draft` -> `scheduled` -> `publishing` -> `published` | `failed`; `cancelled`. Only `draft`, `scheduled` and `failed` change (time, options, cancel). A cancelled target never comes back: duplicate the post.
 - networks: instagram | facebook | tiktok | youtube. YouTube is beta and may be off for the account. TikTok posts always go to the creator's DRAFTS in the TikTok app (the person finishes there); they never get metrics.
-- account `status = needs_reconnect` -> nothing publishes on it until `mcp__plugin_clickmax_clickmax__social_accounts_reconnect`.
-- connecting is OAuth in the PERSON's browser. The agent cannot log in: it hands over the `url`, then polls the result by `nonce` (session valid 30 minutes).
+- accounts = the Meta Pages (with linked Instagram) and Pinterest accounts connected in Traffic -> Connections. Connecting, reconnecting and disconnecting happen ONLY there, in the person's browser; no tool does it. `blockedReason` on `mcp__plugin_clickmax_clickmax__social_accounts_list` = nothing publishes on it until the person fixes it there.
+- paused account = its scheduled targets wait; resuming publishes what came due during the pause within ~1 minute.
+- approval: `pending_approval` = waiting for someone with manage; approving SCHEDULES the targets (goes live at the time).
 - every write answers the post detail with `issues` = network rules that block scheduling (media required, caption too long, wrong media type…). A rule failure on create/update is a 422 and writes nothing.
 - times are instants (ISO with offset). Never in the past (400). `timezone` = the zone the person works in (IANA).
 - media: Drive files (`source: drive` + `driveFileId`, find them with `mcp__plugin_clickmax_clickmax__drive_search`) or uploads. An upload needs an HTTP PUT of the file bytes to a presigned URL; without file access, use Drive files.
@@ -36,8 +37,12 @@ Not this skill:
 
 ## Execute guide
 
-- Connect an account: `mcp__plugin_clickmax_clickmax__social_accounts_connect` (`network`) -> give the `url` to the person ("abra este link e faça login") -> `mcp__plugin_clickmax_clickmax__social_accounts_connect_result` with the `nonce` until it leaves `pending`. `select_pages` (Facebook) -> `mcp__plugin_clickmax_clickmax__social_accounts_connect_pages` -> ask which pages -> `mcp__plugin_clickmax_clickmax__social_accounts_connect_select_pages`. `failed` -> explain `errorCode`.
-- Reconnect: `mcp__plugin_clickmax_clickmax__social_accounts_reconnect` (account `id`) -> same `url` + `nonce` flow.
+- Connect / reconnect an account: tell the person to open Traffic -> Connections in Clickmax; then `mcp__plugin_clickmax_clickmax__social_accounts_list` again.
+- Pinterest target: board from `mcp__plugin_clickmax_clickmax__social_accounts_boards_list`.
+- Approval flow: `mcp__plugin_clickmax_clickmax__social_posts_request_approval` (`approverId` from `mcp__plugin_clickmax_clickmax__social_posts_approvers_list`, optional `scheduledAt`) -> approver: `mcp__plugin_clickmax_clickmax__social_posts_approve` after confirmation, or `mcp__plugin_clickmax_clickmax__social_posts_request_changes` with a `comment`. Team-only remarks: `mcp__plugin_clickmax_clickmax__social_posts_notes_*`.
+- Reuse: start a post from `mcp__plugin_clickmax_clickmax__social_templates_list`; accounts of a group from `mcp__plugin_clickmax_clickmax__social_account_groups_list`; hashtags from `mcp__plugin_clickmax_clickmax__social_hashtag_groups_list`; campaign names from `mcp__plugin_clickmax_clickmax__social_campaigns_list`.
+- Comments: `mcp__plugin_clickmax_clickmax__social_comments_list` (`status`, `accountId`, page with `cursor`) -> draft the answer (or use `mcp__plugin_clickmax_clickmax__social_saved_replies_list`) -> confirm -> `mcp__plugin_clickmax_clickmax__social_comments_reply`. Handled without answer -> `mcp__plugin_clickmax_clickmax__social_comments_update` `resolved`.
+- Pause / resume an account after confirmation: `mcp__plugin_clickmax_clickmax__social_accounts_pause` / `mcp__plugin_clickmax_clickmax__social_accounts_resume` (check `mcp__plugin_clickmax_clickmax__social_calendar` for overdue targets before resuming).
 - Write a caption: `mcp__plugin_clickmax_clickmax__social_caption_generate` (`generate` from a topic, `rewrite` / `shorten` an existing text; `field: title` for a YouTube title). Mention it uses AI credits.
 - New post: `mcp__plugin_clickmax_clickmax__social_posts_create` with `mode: draft`, one target per account (`accountId`, `postType`, `options.network` = that account's network), optional `defaultScheduledAt` or per-target `scheduledAt`. "Next free queue slot": `mcp__plugin_clickmax_clickmax__social_queue_next_free_slot` -> its `scheduledAt` on the target -> schedule after confirmation.
 - Schedule after confirmation: `mcp__plugin_clickmax_clickmax__social_posts_schedule` (all drafts, or `targetIds`). Publish now after confirmation: `mcp__plugin_clickmax_clickmax__social_posts_publish_now`, then `mcp__plugin_clickmax_clickmax__social_posts_get` a moment later to report `published` / `failed`.
@@ -47,7 +52,8 @@ Not this skill:
 - Failed target: read `errorCode` in `mcp__plugin_clickmax_clickmax__social_posts_get`. `auth_expired` -> reconnect first; `rate_limited` / `provider_unavailable` -> retry later; `media_invalid` / `policy_rejected` -> change media or caption first; then `mcp__plugin_clickmax_clickmax__social_targets_retry` after confirmation.
 - Queue: `mcp__plugin_clickmax_clickmax__social_queue_slots_list` -> `mcp__plugin_clickmax_clickmax__social_queue_slots_replace` with the FULL list (keep the slots the person did not mention). `mcp__plugin_clickmax_clickmax__social_queue_next_free_slot` to propose a time.
 - What is planned: `mcp__plugin_clickmax_clickmax__social_calendar` (`from`/`to`; `truncated: true` -> shorter period). Find a post: `mcp__plugin_clickmax_clickmax__social_posts_list` (paginated: read every page before saying a post does not exist).
-- Results: `mcp__plugin_clickmax_clickmax__social_insights` (`from`, `to`, `timezone`) for totals, per day, per network, best weekday × hour and top posts.
+- Results: `mcp__plugin_clickmax_clickmax__social_insights` (`from`, `to`, `timezone`) for totals, per day, per network, best weekday × hour and top posts. Vs previous period / per campaign: `mcp__plugin_clickmax_clickmax__social_report`. E-mailed reports: `mcp__plugin_clickmax_clickmax__social_report_schedules_*` (confirm recipients and frequency).
+- Goals: `mcp__plugin_clickmax_clickmax__social_goals_list`; `mcp__plugin_clickmax_clickmax__social_goals_replace` = FULL list.
 
 ## Report
 
@@ -58,19 +64,18 @@ Not this skill:
 
 ## Warnings
 
-- Scheduling, publishing now, retrying and editing a target put content on a PUBLIC profile: confirm text, media, networks and time first.
-- Disconnecting an account cancels every target of it that is not published yet.
+- Scheduling, publishing now, approving, retrying, editing a target and replying to a comment put content on a PUBLIC profile: confirm text, media, networks and time first.
 - Deleting or cancelling in Clickmax does NOT remove a post already published on the network.
-- `social_queue_slots_replace` and `social_posts_set_media` replace the whole list.
+- `social_queue_slots_replace`, `social_posts_set_media` and `social_goals_replace` replace the whole list.
 
 ## Anti-patterns
 
 - Scheduling or publishing straight from a request without showing the draft.
-- Trying to log in on the network or "finish" the OAuth for the person.
+- Trying to connect, log in or "finish" the OAuth for the person.
 - Promising TikTok metrics or a TikTok post going live automatically.
 - Recreating a post to change one network's time (use `social_targets_update`).
 - Uploading through `social_media_upload_url` without being able to PUT the file.
 
 ---
 
-Clickmax skill revision: `0db0d512eb69`
+Clickmax skill revision: `ecdd1a426b91`

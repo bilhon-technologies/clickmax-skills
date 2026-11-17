@@ -50,6 +50,7 @@ Not this skill:
 ## Warnings
 
 - `studio_lines_update` replaces `defaults`, `cadence`, `gates`, `rules` and `accounts` as a whole: send the full value.
+- Cadence advice: `mcp__plugin_clickmax_clickmax__studio_lines_recommended_slots` (best weekday × time of the line, empty = too few published posts). Carousel/image scripts: `mcp__plugin_clickmax_clickmax__studio_scripts_images_list` instead of the video link. Templates a flow can fill per contact: `mcp__plugin_clickmax_clickmax__studio_templates_list`.
 - Line `rules` = guard rail (`avoid`, `require`). `studio_scripts_get` → `guardRail.violations` (term + scene, `beatIndex` null = caption): fix before review; with a violation an `auto` copy gate does not approve.
 - A video in `production` only moves when the assigned person opens the Cx Studio app.
 - Scheduling puts content on a PUBLIC profile: confirm caption, video, accounts and time first.
@@ -63,4 +64,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `0db0d512eb69`
+Clickmax skill revision: `ecdd1a426b91`

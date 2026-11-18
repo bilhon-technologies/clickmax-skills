@@ -100,4 +100,4 @@ Imports stay pinned to the version they imported. When the author publishes a ne
 
 ---
 
-Clickmax skill revision: `20a172ea0639`
+Clickmax skill revision: `87fe65b41486`

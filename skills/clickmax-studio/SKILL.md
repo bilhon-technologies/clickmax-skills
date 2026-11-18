@@ -15,15 +15,16 @@ Not this skill:
 
 ## Key assumptions
 
-- BRAND = the client. LINE (editorial line, `studio_lines_*`) belongs to one brand and sets who speaks, instructions, the single deliverable (`outputType`: reel | carousel | image), video defaults, the weekly `cadence` slots, the review `gates` (`visualReview` also `agent`), `automation` (what runs alone) and the social `accounts`. Every script lives in one line.
+- BRAND = the client. LINE (editorial line, `studio_lines_*`) belongs to one brand and sets who speaks, instructions, the single deliverable (`outputType`: reel | carousel | image), video defaults, the weekly `cadence` slots, the review `gates` (both also `agent`), `automation` (what runs alone) and the social `accounts`. Every script lives in one line.
 - LINE `defaults.voice` = fixed narration voice of every video of the line: `clickmax` (AI voice catalog or a voice the workspace trained) or `elevenlabs` (`connectorId` of the ElevenLabs key in Studio connectors + `voice_id`). Absent = the agent picks per video.
 - LINE `automation` (all off by default; runs every 10 min): `autoProduce` → keeps `minBuffer` (default 5) videos in `production`+`produced` by sending the approved scripts an agent ranks by past performance | `evaluate` → weak topic back to `writing` with the reason | `producer` `person` (+`producerUserId`) or `machines` (rotation between online `studio_lines_machines`) | `autoSchedule` → each rendered video in the next free cadence slot | `reviewNotify` approver/people/none. `visualReview: agent` → agent approves, asks video changes (≤ `reviewMaxRounds`, default 2) or redoes copy, else hands to a person. History marks these `auto`.
+- LINE stage owners = the workspace AI agents (`studio_lines_agents`; BYOK, no Clickmax credits; a paused agent or one without a working key fails its first call and the script goes to a person with the reason in the history): `copyAgentId` writes (`studio_scripts_write`) and rewrites rejected copy | `copyReview: agent` + `copyReviewAgentId` + `copyReviewPrompt` → approves or rejects with scene notes; rejected → copy agent rewrites and it is reviewed again, ≤ `copyReviewMaxRounds` (default 2) rejections, then a person reviews (no copy agent → back to the writer in `changes`) | `evaluateAgentId` + `evaluatePrompt` picks/screens for production | `reviewAgentId` does the final review (empty = Clickmax AI). Agent paused/without key → reviews go to a person, and `studio_scripts_write` fails with 422 until the agent is fixed or removed from the line; the production pick falls back to pauta order without screening. Taking a script or video away from an agent ("Revisar eu mesmo") and handing it back are app-only, not MCP tools.
 - INBOX idea (`studio_ideas_*`) = no line and no date yet. Promoting it creates a script.
 - SCRIPT status: `idea` -> `writing` -> `review` ⇄ `changes` -> `approved` -> `production` -> `produced` -> `scheduled` -> `published`; `discarded`. `published` comes from the social post. Board stages inside `produced`: Revisão final (no `videoApprovedAt`) -> Aprovado (approved, no `videoDriveFileId` yet) -> Renderizado.
 - Content is versioned. Editing a script in `review` / `approved` sends it back to `writing`. From `production` on the copy is locked. Every edit needs the `revision` read last (409 = someone saved first: read again).
-- Gates per line: `copyReview` / `visualReview` = `approval` (someone with "Gerenciar" approves) or `auto` (moves on alone). Approving, asking for changes, approving the video and redo need "Gerenciar" on Pauta do Studio (403 otherwise).
+- Gates per line: `copyReview` / `visualReview` = `approval` (someone with "Gerenciar" approves), `auto` (moves on alone) or `agent` (an AI agent reviews). Approving, asking for changes, approving the video and redo need "Gerenciar" on Pauta do Studio (403 otherwise).
 - Final review plays the video in the public-link player (`previewShareId`), WITHOUT rendering. The MP4 is rendered only after `studio_scripts_video_approve`, by the Cx Studio DESKTOP app of the person in `assignedUserId`, only while it is open. The agent queues it; it cannot render. Scheduling needs the MP4 (`videoDriveFileId`).
-- AI tools (`studio_scripts_plan`, `studio_scripts_write`, `studio_scripts_hooks`, `studio_ideas_suggest`) spend workspace AI credits on every call.
+- AI tools (`studio_scripts_plan`, `studio_scripts_write`, `studio_scripts_hooks`, `studio_ideas_suggest`) spend workspace AI credits on every call, except `studio_scripts_write` on a line with `copyAgentId`: then the line's AI agent writes with the account's own provider key.
 - Metrics = the social post readings at 24h and 7d, summed across networks.
 
 ## Thought process
@@ -66,4 +67,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `20a172ea0639`
+Clickmax skill revision: `87fe65b41486`

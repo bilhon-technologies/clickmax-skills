@@ -23,14 +23,17 @@ Project is the top-level container. Almost every build starts "in project X", so
 - `projects_delete` returns `{ deleted }` and cascades cleanup across related project assets (pages, funnels, cloakers)
 - `projects_get` returns dependency counts (pages, funnels, cloakers) useful before delete or as context
 - `projects_list` is paginated with filters (search, active state, import state, ordering); the default project is a workspace-level setting other domains rely on
+- every workspace has "Sem projeto": a hidden project outside the plan's project limit, never listed, renamed or deleted; funnels, pages and flows land there when their create tool gets no `projectId`
+- the plan caps how many projects exist; at the cap `projects_create` fails with `PLAN_LIMIT_REACHED (metric: projects)`
 
 ## Thought process
 
 1. Resolve intent: read/list vs create vs rename vs set-default vs destructive delete.
 2. If the user names a project by label, resolve its `slug` via `projects_list` before acting.
-3. If no project exists yet for the requested work, create it first, then continue the downstream build.
-4. Inspect dependency counts before delete so the cascade impact is explicit.
-5. Confirm destructive delete when intent is not already explicit.
+3. Project is an organizing filter the user picks. User named none for new work → `projects_filters`: no projects → omit `projectId` (lands in "Sem projeto"), no question; has projects → ONE `question` before creating: current/default project first, other projects, "Sem projeto". Never create a project unless the user asks for one.
+4. `projects_create` → `PLAN_LIMIT_REACHED (metric: projects)` → stop, tell the user the plan allows no more projects, then ask ONE question: the current project, another existing one (`projects_list`), or "Sem projeto" (default); upgrade only as the last option. Build nothing before the answer.
+5. Inspect dependency counts before delete so the cascade impact is explicit.
+6. Confirm destructive delete when intent is not already explicit.
 
 ## Execute guide
 
@@ -55,15 +58,17 @@ Project is the top-level container. Almost every build starts "in project X", so
 - `projects_delete` is destructive and cascades across related project assets; require explicit intent and confirm before running.
 - Do not treat `projects_set_default` `applied: false` as a completed change; the slug did not resolve.
 - Do not invent a `slug`; resolve it from `projects_list` or from a prior create response.
+- Do not retry `projects_create` after a projects plan limit, nor create the work anywhere before the user picks the project.
 - Do not rename via delete-and-recreate; renaming changes only the display name and keeps the `slug`, whereas recreate mints a new `slug` and orphans downstream references.
 
 ## Anti-patterns
 
 - Passing a display name where a `slug` is required.
-- Starting a funnel/product/members/flow build without a resolved project.
+- Starting a funnel/product/members/flow build without a resolved project (an omitted `projectId` = "Sem projeto" is a resolved choice).
+- Creating a project only to hold one funnel, page or flow.
 - Deleting a project without inspecting its dependency counts first.
 - Assuming a freshly created project is the default; set it explicitly if needed.
 
 ---
 
-Clickmax skill revision: `ecdd1a426b91`
+Clickmax skill revision: `f2d913e7898d`

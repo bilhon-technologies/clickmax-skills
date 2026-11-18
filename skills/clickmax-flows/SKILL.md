@@ -95,7 +95,7 @@ Not this skill:
 
 ## Warnings
 
-- `flows_create` needs a real `projectId`; resolve it, never invent it
+- `flows_create` `projectId` = a real resolved id, never invented; no project named → follow `clickmax-projects` (ask when the workspace has projects; "Sem projeto" = omit it)
 - `flows_update` is metadata-only and does not edit the graph
 - `flows_delete` removes the flow and all steps permanently
 - `delay` / `timeout` numeric `when` values are hours, not minutes or days
@@ -134,4 +134,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `ecdd1a426b91`
+Clickmax skill revision: `f2d913e7898d`

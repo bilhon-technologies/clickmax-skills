@@ -67,7 +67,7 @@ For AI-authored pages, read [AI funnel creation](references/ai-funnel-creation.m
 
 Use the tools in dependency order when later ids come from earlier results.
 
-- Resolve the target project with `mcp__plugin_clickmax_clickmax__projects_filters` or list funnels with `mcp__plugin_clickmax_clickmax__funnels_list` when the project or funnel is not yet known.
+- Resolve the target project with `mcp__plugin_clickmax_clickmax__projects_filters` or list funnels with `mcp__plugin_clickmax_clickmax__funnels_list` when the project or funnel is not yet known. No project named → follow `clickmax-projects` (ask when the workspace has projects; "Sem projeto" = omit `projectId`); never create a project just for the funnel.
 - Read one funnel with `mcp__plugin_clickmax_clickmax__funnels_get`, passing the `funnelId`.
 - Use `mcp__plugin_clickmax_clickmax__funnels_structure_get`, passing the `funnelId`, as the canonical graph view before wiring, publishing, deleting, or diagnosing.
 - For a standard starter, create the funnel with `mcp__plugin_clickmax_clickmax__funnels_create`, then scaffold the graph with `mcp__plugin_clickmax_clickmax__funnels_sequences_create`. Set `objective` on create to the funnel's obvious goal (`capture` | `sales` | `scheduling` | `diagnosis`); it pre-configures the Analytics metrics. When you scaffold from a template, the objective + metrics are auto-derived — don't re-set them.
@@ -150,4 +150,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `ecdd1a426b91`
+Clickmax skill revision: `f2d913e7898d`

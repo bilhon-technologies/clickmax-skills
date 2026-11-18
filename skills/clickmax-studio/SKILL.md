@@ -15,7 +15,9 @@ Not this skill:
 
 ## Key assumptions
 
-- BRAND = the client. LINE (editorial line, `studio_lines_*`) belongs to one brand and sets who speaks, instructions, the single deliverable (`outputType`: reel | carousel | image), video defaults, the weekly `cadence` slots, the review `gates` and the social `accounts`. Every script lives in one line.
+- BRAND = the client. LINE (editorial line, `studio_lines_*`) belongs to one brand and sets who speaks, instructions, the single deliverable (`outputType`: reel | carousel | image), video defaults, the weekly `cadence` slots, the review `gates` (`visualReview` also `agent`), `automation` (what runs alone) and the social `accounts`. Every script lives in one line.
+- LINE `defaults.voice` = fixed narration voice of every video of the line: `clickmax` (AI voice catalog or a voice the workspace trained) or `elevenlabs` (`connectorId` of the ElevenLabs key in Studio connectors + `voice_id`). Absent = the agent picks per video.
+- LINE `automation` (all off by default; runs every 10 min): `autoProduce` → keeps `minBuffer` (default 5) videos in `production`+`produced` by sending the approved scripts an agent ranks by past performance | `evaluate` → weak topic back to `writing` with the reason | `producer` `person` (+`producerUserId`) or `machines` (rotation between online `studio_lines_machines`) | `autoSchedule` → each rendered video in the next free cadence slot | `reviewNotify` approver/people/none. `visualReview: agent` → agent approves, asks video changes (≤ `reviewMaxRounds`, default 2) or redoes copy, else hands to a person. History marks these `auto`.
 - INBOX idea (`studio_ideas_*`) = no line and no date yet. Promoting it creates a script.
 - SCRIPT status: `idea` -> `writing` -> `review` ⇄ `changes` -> `approved` -> `production` -> `produced` -> `scheduled` -> `published`; `discarded`. `published` comes from the social post. Board stages inside `produced`: Revisão final (no `videoApprovedAt`) -> Aprovado (approved, no `videoDriveFileId` yet) -> Renderizado.
 - Content is versioned. Editing a script in `review` / `approved` sends it back to `writing`. From `production` on the copy is locked. Every edit needs the `revision` read last (409 = someone saved first: read again).
@@ -37,7 +39,7 @@ Not this skill:
 - Capture an idea: `mcp__plugin_clickmax_clickmax__studio_ideas_create`. Triage the inbox: `mcp__plugin_clickmax_clickmax__studio_ideas_suggest` -> read `suggestedProjectId` / `suggestedDiscard` -> confirm -> `mcp__plugin_clickmax_clickmax__studio_ideas_promote` (line, date, kind per idea) or discard.
 - Write: `mcp__plugin_clickmax_clickmax__studio_scripts_write` (AI, in the brand voice) or write it yourself and save with `mcp__plugin_clickmax_clickmax__studio_scripts_update` (`aiAuthored: true`). Better opening: `mcp__plugin_clickmax_clickmax__studio_scripts_hooks`, then update the first scene.
 - Copy review: `mcp__plugin_clickmax_clickmax__studio_scripts_transition` `to: review` (+ reviewer from `workspace_members_list`). Changes: `mcp__plugin_clickmax_clickmax__studio_scripts_comments_add` first, then `to: changes`. Approve after the user says yes: `to: approved` (+ who produces).
-- Video: `mcp__plugin_clickmax_clickmax__studio_scripts_produce` (`assignedUserId`, `options`) -> later `mcp__plugin_clickmax_clickmax__studio_scripts_list` (`productionState`: `queued` + `queuePosition` | `rendering`; jump the queue: `mcp__plugin_clickmax_clickmax__studio_scripts_queue_bump`) -> `produced` -> `/public-videos/<previewShareId>` on the API gateway for the person to watch (`mcp__plugin_clickmax_clickmax__studio_scripts_video_url` only after the render) -> `mcp__plugin_clickmax_clickmax__studio_scripts_video_approve`, or `mcp__plugin_clickmax_clickmax__studio_scripts_video_request_changes` (video only) / `mcp__plugin_clickmax_clickmax__studio_scripts_redo` (copy and video); instruction optional on both.
+- Video: `mcp__plugin_clickmax_clickmax__studio_scripts_produce` (`assignedUserId` or `machines: true`, `options`) -> later `mcp__plugin_clickmax_clickmax__studio_scripts_list` (`productionState`: `queued` + `queuePosition` | `rendering`; jump the queue: `mcp__plugin_clickmax_clickmax__studio_scripts_queue_bump`) -> `produced` -> `/public-videos/<previewShareId>` on the API gateway for the person to watch (`mcp__plugin_clickmax_clickmax__studio_scripts_video_url` only after the render) -> `mcp__plugin_clickmax_clickmax__studio_scripts_video_approve`, or `mcp__plugin_clickmax_clickmax__studio_scripts_video_request_changes` (video only) / `mcp__plugin_clickmax_clickmax__studio_scripts_redo` (copy and video); instruction optional on both.
 - Schedule: `mcp__plugin_clickmax_clickmax__studio_lines_next_slot` -> `mcp__plugin_clickmax_clickmax__social_posts_create` (draft, the script video = Drive file `videoDriveFileId`, the script caption, the line accounts) -> confirm -> `mcp__plugin_clickmax_clickmax__social_posts_schedule` -> `mcp__plugin_clickmax_clickmax__studio_scripts_link_social_post`.
 - Results: `mcp__plugin_clickmax_clickmax__studio_scripts_report` (`brandId`, `month`, optional line). Recreate a hit (`performance.tier` = `outlier`): `mcp__plugin_clickmax_clickmax__studio_scripts_create_similar` then write it.
 
@@ -49,7 +51,7 @@ Not this skill:
 
 ## Warnings
 
-- `studio_lines_update` replaces `defaults`, `cadence`, `gates`, `rules` and `accounts` as a whole: send the full value.
+- `studio_lines_update` replaces `defaults`, `cadence`, `gates`, `rules`, `automation` and `accounts` as a whole: send the full value. `automation` or `visualReview: agent` → needs approve permission and makes the line approve/schedule alone: confirm with the user.
 - Cadence advice: `mcp__plugin_clickmax_clickmax__studio_lines_recommended_slots` (best weekday × time of the line, empty = too few published posts). Carousel/image scripts: `mcp__plugin_clickmax_clickmax__studio_scripts_images_list` instead of the video link. Templates a flow can fill per contact: `mcp__plugin_clickmax_clickmax__studio_templates_list`.
 - Line `rules` = guard rail (`avoid`, `require`). `studio_scripts_get` → `guardRail.violations` (term + scene, `beatIndex` null = caption): fix before review; with a violation an `auto` copy gate does not approve.
 - A video in `production` only moves when the assigned person opens the Cx Studio app.
@@ -64,4 +66,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `f2d913e7898d`
+Clickmax skill revision: `20a172ea0639`

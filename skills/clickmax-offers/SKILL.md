@@ -60,6 +60,7 @@ Not this skill:
     Then re-run `mcp__plugin_clickmax_clickmax__offers_get_incomplete_reason` until empty and `mcp__plugin_clickmax_clickmax__offers_send_to_approval`. If it returns `sellerStatus`, stop and route the user to the Carteira Clickmax to finish payout registration — not fixable here. Offer it with a navigation CTA `action="open-page" path="/sales/wallet"` (the wallet lives at `/sales/wallet`, NEVER `/wallet`).
 - Custom support email (only if the user wants one different from the account's): `mcp__plugin_clickmax_clickmax__offers_create_support_email` → user clicks the link sent to that inbox → confirm via `mcp__plugin_clickmax_clickmax__offers_list_support_emails` (`verifiedAt` set) → attach the id via `mcp__plugin_clickmax_clickmax__offers_update` (`offerSupportEmailId`). `mcp__plugin_clickmax_clickmax__offers_resend_support_email_validation` re-sends the link. The account email already satisfies the gate, so this is optional polish.
 - **Product image:** to set or replace the product's main image, collect the image (ask the user to upload it) and then call `mcp__plugin_clickmax_clickmax__offers_set_product_image` with the offer id + the uploaded image URL. Do NOT use `offers_update` for this, and NEVER `bannerDesktop`/`bannerMobile` (separate checkout banner art). It is a common product pendency worth offering during product creation/completion.
+- **Offer image (one offer only):** when the user wants a different image for ONE offer (a campaign such as Black Friday) without changing the product image, collect the upload and call `mcp__plugin_clickmax_clickmax__offers_set_image` (`offerId` + `imageUrl`). That offer's checkout, thank-you page and delivery emails then show it; the other offers keep the product image. To go back, `offers_update` with `checkoutImageSource: 'product'`. `offers_set_product_image` always writes the PRODUCT image (any offer id of the product works).
 - **Exact param names for the delivery/image tools (call them directly — no need to inspect the schema first):** `offers_set_product_image` takes `offerId` + `imageUrl` (the param is `imageUrl`, not `image`); `offers_add_file_delivery` takes `offerId` + `url` + `title` (+ optional `description`) for a SINGLE file — it is NOT an array and NOT a `files` field; `offers_add_link_delivery` takes `offerId` + `links`, where `links` IS an array of `{ title, url }`; `offers_add_membership_delivery` takes `offerId` + `portalId` + `classroomId`.
 
 ## Report
@@ -88,4 +89,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `87fe65b41486`
+Clickmax skill revision: `94984d83e296`

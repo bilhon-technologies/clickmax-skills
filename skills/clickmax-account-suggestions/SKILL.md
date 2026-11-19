@@ -11,6 +11,7 @@ description: Use when the user asks an open question about priorities in their C
 Not this skill:
 
 - setup checklist progress ("Primeiros passos") -> `clickmax-getting-started`
+- launching soon, or "is my account/funnel ready", "status da conta" -> `clickmax-launch-readiness` (full check with causes and fix links; suggestions are a ranked shortlist, not a readiness check)
 - a specific metric the user named (revenue, failed payments, top offers) -> `clickmax-analytics`, `clickmax-failure-diagnosis`, `clickmax-sales-insights`
 - executing the action of a suggestion -> the domain skill of its `area`
 
@@ -53,4 +54,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `23efdcda186f`
+Clickmax skill revision: `53fac6a70402`

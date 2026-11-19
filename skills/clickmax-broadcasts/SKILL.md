@@ -18,7 +18,7 @@ Not this skill:
 - Lifecycle: `draft` → (`scheduled`) → `queued` → `sending` → `sent` | `failed` | `cancelled`. Only `draft`/`scheduled` are editable.
 - Audience is FROZEN when the draft is created/updated with `audience`. A list/segment that grows later is NOT picked up — re-pass `audience` on `broadcasts_update` right before scheduling a send that is days away. Up to 5 000 `leadIds` and 50 `listIds` per audience; more contacts → a list or segment.
 - Segment = its synced list: `segments_get` → `listId` → `audience.listIds`.
-- Email needs a CONFIRMED sender (`email_sender_signatures_list`, `confirmed: true`) to schedule/send; a draft may skip it.
+- Email needs a CONFIRMED, non-revoked sender (`email_sender_signatures_list`, `confirmed: true` + `revokedAt: null`) to schedule/send; a draft may skip it. Unusable sender → cause via `clickmax-integrations` (domain DNS).
 - WhatsApp campaign = approved template only (free text has no 24h window here). `paramMapping` all or none, one token per `positionParams`: `{{name}}`, `{{email}}`, `{{custom.<key>}}`.
 - Sending costs credits; schedule/send fails upfront (402) without balance, or 409 when the WhatsApp number is blocked or its use in campaigns is off.
 - Pause works only on the new send engine (409 otherwise → cancel is the only stop). Cancel is final.
@@ -63,4 +63,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `23efdcda186f`
+Clickmax skill revision: `53fac6a70402`

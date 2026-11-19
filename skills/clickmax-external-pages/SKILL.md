@@ -48,6 +48,7 @@ Not this skill:
 - Use `mcp__plugin_clickmax_clickmax__pages_update` for external page metadata or URL changes.
 - Use `mcp__plugin_clickmax_clickmax__pages_get_external_script` (by `pageId`) to get step 1 — it returns `headScript` (a string); tell the user to paste it before `</head>`. For steps 2/3 hand them the snippets from [lead capture](references/lead-capture.md) / [redirect](references/redirect.md) + the docs links (no tool call — static).
 - Use `mcp__plugin_clickmax_clickmax__pages_delete` only when the user explicitly wants to remove the Clickmax page record.
+- "Instalei o script?" / external step not advancing → `mcp__plugin_clickmax_clickmax__pages_tracking_status` (`pageIds`, batch every external page of the funnel): `lastPageViewAt: null` = never seen (not installed, other page, or no visit yet → ask the user to open the live URL once, then re-check) | old `lastPageViewAt` + `recentPageViews: 0` = was installed, stopped (removed / site changed).
 
 ## References
 
@@ -68,9 +69,9 @@ Not this skill:
 
 ## Anti-patterns
 
-- Treating a funnel node that references a page as proof the external script is installed.
+- Treating a funnel node that references a page as proof the external script is installed → only `pages_tracking_status` shows it fired.
 - Returning a generic web-tracking answer without using the page-specific script tool.
 
 ---
 
-Clickmax skill revision: `23efdcda186f`
+Clickmax skill revision: `53fac6a70402`

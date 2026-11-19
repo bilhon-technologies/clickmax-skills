@@ -12,6 +12,7 @@ Not this skill:
 - Funnel step backed by an EXTERNAL page (URL hosted outside Clickmax, e.g. the user's own site/domain) -> STAY here: compose the granular tools (see the external-page common flow below). Never use `pages_create` for an external URL — that makes an empty INTERNAL page.
 - Script-install help for an EXISTING external page (no graph change) -> `clickmax-external-pages`
 - Lead/payment cohort analysis inside a funnel -> solve that with the relevant sales/CRM skill first
+- "Is my funnel ready / vou lançar hoje / status do funil / why isn't my funnel working", no change asked -> `clickmax-launch-readiness` (checks the funnel plus receiving, offers, channels, e-mail and automations it depends on); come back here to fix a finding
 - Overview of how a funnel and its automations are doing ("como está meu funil junto com as automações", where it loses people), no change asked -> the flow canvas (`canvas_render` with the funnel layout); read it with `mcp__plugin_clickmax_clickmax__funnels_structure_get`, `mcp__plugin_clickmax_clickmax__funnels_automations_list` and `mcp__plugin_clickmax_clickmax__funnels_analytics`, never answer it as a table
 - Full AI-authored funnel with responsive page copy/design -> stay here and follow [AI funnel creation](references/ai-funnel-creation.md); pages come from the Max Design branch when Max Design is available in the workspace, otherwise load `clickmax-pages` alongside it, because that skill owns everything that happens inside a single builder page.
 - ONE page, with no funnel graph involved (create, restyle, rebuild, configure, publish a single page) -> `clickmax-pages`
@@ -125,6 +126,8 @@ Common flows:
 - Use the correct edge tool for the node family (`funnels_triggers_connect`, `funnels_abtest_variants_update`, `funnels_traffic_source_update`, `funnels_conditional_branches_update`)
 - `funnels_nodes_connect_page` rules, all refused server-side: target = `page`/`draft` node ONLY (never `ab_test`/`conditional`/`workflow`/`traffic_source`/`quiz` — connect THOSE to a page node instead) | page and funnel in the SAME project | one page per node, so a second call REPLACES the first and returns the swapped-out page in `replacedPageId` — read it before reporting two pages as linked
 - `funnels_validate.nodesWithUnusedPage` = node carrying a page its type never serves (legacy link); the visitor never reaches that page
+- `funnels_validate` sales-route warnings (never flip `valid`): `checkoutsMissingOffer` = checkout page without offer → charges nothing (`clickmax-offers` / page editor) | `externalCheckoutIssues` = unknown provider or provider block missing on the page (fix in the page editor) | `stepsWithoutNextStep` = sales CTA / purchase / upsell-downsell accept-decline leading nowhere → ask before connecting, a last step may end on purpose
+- External page node (`externalUrl`) only advances once its head script fires → `pages_tracking_status` (`lastPageViewAt: null` = never seen) → `clickmax-external-pages`
 - "Lead doesn't reach the next page" / next step on an unexpected address → compare `pages_get.domainName` of each funnel page with the funnel domain before touching triggers; fix = align the domain (`pages_update` `domainId` or the funnel's domain) + republish, only with user approval
 - For a `workflow` node, link its flow (`funnels_workflow_flow_set`, resolving `flowId` via `flows_list`/`flows_create`) — its goal ("Objetivo", the conversion that can end the lead's stay) is configured by the user on the node or in the flow editor, not by a tool; a workflow without a linked flow does not fire automation and is flagged by `funnels_validate.workflowsMissingFlow`
 - For a `workflow` node, configure entry/exit from the funnel side; flow-level start events are for standalone automations, not funnel-embedded flows
@@ -150,4 +153,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `23efdcda186f`
+Clickmax skill revision: `53fac6a70402`

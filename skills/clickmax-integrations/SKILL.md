@@ -20,7 +20,8 @@ Not this skill:
 - Status = `mcp__plugin_clickmax_clickmax__channel_instances_list` (archived hidden by default). `channel` → `gupshup` = WhatsApp **API oficial** | `whatsapp_unofficial` = **WhatsApp Web** (QR) | `instagram` | `telegram` | `email` = connected mailbox (IMAP/SMTP).
 - `status` → `live` = working | `pending` / `connecting` = connection started, not finished (wizard shows "Conexão incompleta" → **Continuar conexão**) | `awaiting_takeover_confirmation` = account already connected in another Clickmax workspace, waiting the user's **Mover conta para cá** | `error` / `deactivated` = lost access → reconnect the SAME account (conversations, history and automations come back as they were).
 - Restricted members only see the accounts assigned to them → empty list ≠ "nothing connected" for a non-owner; say so instead of asserting.
-- E-mail has two different things: **sending** (domain + confirmed sender for broadcasts/automations) = `mcp__plugin_clickmax_clickmax__email_sender_signatures_list`, `confirmed: true` = can send | **mailbox** (support e-mails into live chat) = `channel: email` row. No tool returns domain DNS status → `confirmed: false` = "verification not finished on the screen", never a guessed DNS cause.
+- WhatsApp Web live connection ≠ `status`: read `evolution.connectionState` (`open` = connected) or `waha.status` (`WORKING` = connected | `FAILED` + `bannedAt` = banned, `failedReason` = why) | `quotaPausedAt` = sending paused by quota. Open alerts of any WhatsApp number = `mcp__plugin_clickmax_clickmax__channel_instances_alerts_list` (`blocker` = cannot send until fixed); WhatsApp Web delivery health/warm-up = `mcp__plugin_clickmax_clickmax__channel_instances_health_get`.
+- E-mail has two different things: **sending** (domain + confirmed sender for broadcasts/automations) = `mcp__plugin_clickmax_clickmax__email_sender_signatures_list`, `confirmed: true` + `revokedAt: null` = can send (`revokedAt` set = provider stopped accepting a sender that used to send) | **mailbox** (support e-mails into live chat) = `channel: email` row. Domain DNS = `mcp__plugin_clickmax_clickmax__email_domains_list` (`postmarkVerified`, `emailPausedAt`) → `mcp__plugin_clickmax_clickmax__email_domains_dns_get` for which record (DKIM TXT | Return-Path CNAME) is missing + the value to create. Read-only: re-verifying is the user's click on `connections-email`.
 - Prerequisites, in plain words:
   - WhatsApp API oficial: Facebook account that administers the Business Manager + verified business with a WhatsApp number + access to the number to receive the verification code. Needed for Meta templates, broadcast outside the 24h window, verified badge.
   - WhatsApp Web: just the phone with WhatsApp to read the QR. No Meta approval, no templates. Not endorsed by WhatsApp → excessive sending/spam can get the number banned, and a banned number does not come back.
@@ -43,7 +44,7 @@ Not this skill:
 
 Connect / check (target: 1 read + 1 screen lookup, no long codemode):
 
-- WhatsApp / Instagram / Telegram / mailbox: `mcp__plugin_clickmax_clickmax__channel_instances_list` → filter by `channel`. E-mail sending: `mcp__plugin_clickmax_clickmax__email_sender_signatures_list`.
+- WhatsApp / Instagram / Telegram / mailbox: `mcp__plugin_clickmax_clickmax__channel_instances_list` → filter by `channel`. E-mail sending: `mcp__plugin_clickmax_clickmax__email_sender_signatures_list`; sender not usable → `mcp__plugin_clickmax_clickmax__email_domains_list` + `mcp__plugin_clickmax_clickmax__email_domains_dns_get` for the cause.
 - Open the screen with a screen-lookup tool when available (Max: `find_screen`), never a hardcoded route. Ids: `connections-whatsapp` (both WhatsApp options, the wizard asks "Como você quer conectar o WhatsApp?") | `connections-instagram` | `connections-telegram` | `connections-email` (sending domain + senders) | `email-inbox` (mailbox) | `domains` (domain not connected to the workspace yet).
 - User says they finished → read the status again; `live` → confirm + next step (an automation that uses the channel → `clickmax-flows`; Instagram comment/DM automation; first WhatsApp template below).
 
@@ -60,7 +61,7 @@ Templates (API oficial only):
 
 ## Report
 
-- Status, one line per account: name/number/@ → Conectado | Conexão incompleta | Aguardando você mover a conta | Perdeu o acesso (reconecte a mesma conta) | Remetente não verificado.
+- Status, one line per account: name/number/@ → Conectado | Conexão incompleta | Aguardando você mover a conta | Perdeu o acesso (reconecte a mesma conta) | WhatsApp Web desconectado/banido | Remetente não verificado | Remetente revogado | DNS do domínio pendente (qual registro).
 - Not connected → max 3 bullets of prerequisites for the chosen option, then the single screen link.
   - Max: `cx-cta action="open-page"` with the exact `path` from `find_screen` ("Abrir conexões do Instagram"); the wizard steps stay in prose, at most 2–3 lines.
 - Already connected → "Seu Instagram @x já está conectado." + one next-step offer, no reconnect link.
@@ -85,4 +86,4 @@ Templates (API oficial only):
 
 ---
 
-Clickmax skill revision: `23efdcda186f`
+Clickmax skill revision: `53fac6a70402`

@@ -11,6 +11,7 @@ Not this skill:
 
 - The user wants Max to _do_ an operation on their account (create a lead, build a funnel, send messages, analyze sales) -> the matching operational skill (`clickmax-leads`, `clickmax-funnels`, etc.). This skill is ANSWER-ONLY; it never performs account actions.
 - The user asks about their own workspace data (their leads, their orders, their revenue) -> the operational analysis skills. The help center documents the product, not the user's data.
+- "Why isn't my funnel/launch working", "is everything ready to launch" about their own funnel or account -> `clickmax-launch-readiness`: it reads the account's real state; come back here only for how a feature works.
 - The user asks "what changed / what's new" about a release -> use `mcp__plugin_clickmax_clickmax__helpdesk_releases_list` / `mcp__plugin_clickmax_clickmax__helpdesk_releases_latest` instead of docs search.
 - The user only wants to know WHERE a screen is ("onde fica a carteira", "onde adiciono o template da Meta") and a screen-lookup tool is available (Max: `find_screen`) -> use it; it links straight to the screen in one call. Search the help center only when they also need the steps or a fix.
 
@@ -68,4 +69,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `23efdcda186f`
+Clickmax skill revision: `53fac6a70402`

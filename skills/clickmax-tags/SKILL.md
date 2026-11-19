@@ -38,7 +38,7 @@ Not this skill:
 - Use `mcp__plugin_clickmax_clickmax__tags_system_insights` (by `eventName` taken from `tags_system_list`) for one system tag: reach, 7/30-day pace, first-time firers, weekday/hour pattern, top contacts, events that tend to come with it (`coOccurring` is measured over a sample of the 500 most recent contacts — say "in a recent sample"), and the automations listening to it. Unknown `eventName` = not found.
 - Use `mcp__plugin_clickmax_clickmax__tags_get` before changing a specific tag so manual vs system status is explicit.
 - Use `mcp__plugin_clickmax_clickmax__tags_create` for new manual tags. If the user also wants the new tag applied immediately, create first, then use `mcp__plugin_clickmax_clickmax__tags_apply_to_leads` with the returned tag id.
-- Use `mcp__plugin_clickmax_clickmax__tags_update`, `mcp__plugin_clickmax_clickmax__tags_clone`, and `mcp__plugin_clickmax_clickmax__tags_delete` only for manual tags. Before `tags_delete`, read `mcp__plugin_clickmax_clickmax__tags_insights`: if `references` is not empty, name the automations/segments/forms/boards that will lose the tag and get an explicit go-ahead.
+- Use `mcp__plugin_clickmax_clickmax__tags_update`, `mcp__plugin_clickmax_clickmax__tags_clone`, and `mcp__plugin_clickmax_clickmax__tags_delete` only for manual tags. The tag goes in `tagId` for all three (`tags_delete({ tagId })`, never `{ id }`). Before `tags_delete`, read `mcp__plugin_clickmax_clickmax__tags_insights`: if `references` is not empty, name the automations/segments/forms/boards that will lose the tag and get an explicit go-ahead.
 - Cloned tags are named from the original with a numeric suffix, such as `<original name> (1)`; rename after cloning if the user needs a business-friendly label.
 - Use `mcp__plugin_clickmax_clickmax__tags_remove_from_leads` when the tag definition should stay but specific leads should lose the assignment.
 - CSV / spreadsheet of the contacts with a tag: `mcp__plugin_clickmax_clickmax__leads_export_csv` with one `tagId` filter item; it returns the download `url` (details in `clickmax-leads`).
@@ -71,4 +71,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `136f46b6b226`
+Clickmax skill revision: `23f2b5440092`

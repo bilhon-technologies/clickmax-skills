@@ -37,6 +37,7 @@ Not this skill:
 - Manual list lifecycle: use `mcp__plugin_clickmax_clickmax__lists_create` to create the list, then `mcp__plugin_clickmax_clickmax__lists_update_leads` to add or remove explicit lead IDs, then `mcp__plugin_clickmax_clickmax__lists_get_leads` to verify the resulting membership.
 - List inspection and maintenance: use `mcp__plugin_clickmax_clickmax__lists_list` to browse lists, `mcp__plugin_clickmax_clickmax__lists_get` to inspect one list, and `mcp__plugin_clickmax_clickmax__lists_update` when the user wants to rename the list or change its emoji.
 - Dynamic segment lifecycle: use `mcp__plugin_clickmax_clickmax__segments_create` to create the segment shell, `mcp__plugin_clickmax_clickmax__segments_preview_count` to estimate cohort size from a candidate filter tree, and `mcp__plugin_clickmax_clickmax__segments_upsert_filters` to replace the segment's full filter definition.
+- CSV / spreadsheet of a list or segment (including one just created): `mcp__plugin_clickmax_clickmax__leads_export_csv` with its `listId` or `segmentId`; it returns the download `url` (details in `clickmax-leads`).
 - For nested AND/OR or negation, model the filter tree from [filter model](references/filter-model.md), preview the count, then upsert the complete tree.
 - Segment inspection and recomputation: use `mcp__plugin_clickmax_clickmax__segments_get` for the segment record, `mcp__plugin_clickmax_clickmax__segments_get_filters` for the current filter tree, `mcp__plugin_clickmax_clickmax__segments_reload` when the user wants membership recomputed, and `mcp__plugin_clickmax_clickmax__segments_get_leads` to inspect the resulting cohort.
 - Analytics follow-up: use `mcp__plugin_clickmax_clickmax__segments_timeseries` or `mcp__plugin_clickmax_clickmax__segments_categories_metrics` when the user wants trend, category or entry-channel breakdowns for a segment instead of only raw membership.
@@ -63,4 +64,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `94984d83e296`
+Clickmax skill revision: `136f46b6b226`

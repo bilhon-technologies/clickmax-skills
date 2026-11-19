@@ -41,6 +41,7 @@ Not this skill:
 - Use `mcp__plugin_clickmax_clickmax__tags_update`, `mcp__plugin_clickmax_clickmax__tags_clone`, and `mcp__plugin_clickmax_clickmax__tags_delete` only for manual tags. Before `tags_delete`, read `mcp__plugin_clickmax_clickmax__tags_insights`: if `references` is not empty, name the automations/segments/forms/boards that will lose the tag and get an explicit go-ahead.
 - Cloned tags are named from the original with a numeric suffix, such as `<original name> (1)`; rename after cloning if the user needs a business-friendly label.
 - Use `mcp__plugin_clickmax_clickmax__tags_remove_from_leads` when the tag definition should stay but specific leads should lose the assignment.
+- CSV / spreadsheet of the contacts with a tag: `mcp__plugin_clickmax_clickmax__leads_export_csv` with one `tagId` filter item; it returns the download `url` (details in `clickmax-leads`).
 - Use `mcp__plugin_clickmax_clickmax__tags_batch_apply_to_leads` only for intentional bulk cohort changes across many leads. When the result needs validation, inspect membership changes with `mcp__plugin_clickmax_clickmax__tags_manual_leads_timeline`.
 - Preferred order: inspect tag type -> inspect current definition, usage or membership when relevant -> mutate the tag or assignments -> verify updated state for high-impact changes.
 
@@ -70,4 +71,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `94984d83e296`
+Clickmax skill revision: `136f46b6b226`

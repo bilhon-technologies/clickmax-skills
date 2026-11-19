@@ -38,7 +38,8 @@ Not this skill:
 - End with the source: page title + `url` (markdown link).
 - `truncated: true` → the answer may be past the cut; if the needed part is missing, say so and link the page.
 - Nothing relevant: say honestly it isn't in the help center → point to the official support channel to reach a human. No invented answer, no general knowledge.
-- Answer-only: never call a write/action tool from this skill.
+- "Why isn't X working" that turns out to be a failure the user cannot fix (platform bug, needs Clickmax internal access) → the official support channel, with a short summary of what was found. Max: offer to open the ticket with the diagnosis instead (`mcp__plugin_clickmax_clickmax__support_escalate`, private knowledge `support-escalation`). Proposed by you or asked by the user, always show the full diagnosis in the chat first (title, what happened, evidence, what was checked, what the team needs), then call; the user decides on the approval card (approve = sent, reject = nothing sent). After `created`, tell them the team follows up in the support chat.
+- Answer-only: never call a write/action tool from this skill; the only exception is the support ticket above, shown in the chat first and approved on the card.
 
 ## Report
 
@@ -48,6 +49,7 @@ Not this skill:
 - The question is how to create something you can build with your own tools (WhatsApp template via `mcp__plugin_clickmax_clickmax__gupshup_templates_create` → `mcp__plugin_clickmax_clickmax__gupshup_templates_submit`, funnel, page, automation, quiz, product…) and the user did not say they will do it themselves → after the cited steps, ask "Quer que eu crie pra você?" and make building it the obvious next action. The offer is a question, not an action: build only after they accept.
   - Max: close with `<cx-cta action="confirm" label="Criar <thing> com o Max" prompt="<the request as an order, e.g. Crie um template de WhatsApp para disparo em massa>">one line on what you will ask</cx-cta>` as the reply's single `cx-cta` — NOT the `find_screen` link card; the manual path stays in the steps.
 - On deflection: one honest sentence that you did not find it in the help center, then the official support channel to reach a human. Keep it short and non-defensive.
+- After a support ticket was opened: one sentence that it was opened with the diagnosis and the team follows up in the support chat; no promised deadline.
 
 ## Warnings
 
@@ -66,4 +68,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `23f2b5440092`
+Clickmax skill revision: `23efdcda186f`

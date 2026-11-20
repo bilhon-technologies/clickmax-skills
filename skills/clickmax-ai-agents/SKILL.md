@@ -37,6 +37,7 @@ Not this skill:
 - Edit persona: `mcp__plugin_clickmax_clickmax__ai_agents_get` → change the text the user asked → `mcp__plugin_clickmax_clickmax__ai_agents_update({ persona })`. Escalation is replaced whole: send every rule to keep (reuse existing `id`s).
 - Audience/abilities/follow-up/hours: `mcp__plugin_clickmax_clickmax__ai_agents_deployments_update`; `null` clears pipeline, stage, calendar, team or follow-up.
 - Stop now: `mcp__plugin_clickmax_clickmax__ai_agents_pause` (everywhere) or `mcp__plugin_clickmax_clickmax__ai_agents_deployments_pause` (one deployment). No confirmation needed.
+- Routine task ("todo dia às 9h, veja quem sumiu e retome"): `mcp__plugin_clickmax_clickmax__ai_agents_deployments_list` → `mcp__plugin_clickmax_clickmax__ai_agents_routine_tasks_create({ deploymentId, title, instruction, scope, action, weekdays, minute, maxContacts })`. Pick `act` only when the user asks the agent to message contacts; listing/summarizing = `notify`; unsure = `suggest`. Check with `mcp__plugin_clickmax_clickmax__ai_agents_routine_tasks_list`; `mcp__plugin_clickmax_clickmax__ai_agents_routine_tasks_run` runs it now (once a day).
 
 ## Report
 
@@ -52,9 +53,10 @@ Not this skill:
 ## Anti-patterns
 
 - Activating "só para testar" or "para sugerir respostas": activating means it answers real contacts by itself — say so; test on a connection with no real traffic instead.
+- A routine task with `action: 'act'` when the user only asked for a report: it writes to real contacts every run.
 - Writing a long generic persona instead of the user's business facts.
 - Creating a second agent when the user wanted to place the existing one on another connection (that is a deployment).
 
 ---
 
-Clickmax skill revision: `2a6f572f151c`
+Clickmax skill revision: `e7272fc15094`

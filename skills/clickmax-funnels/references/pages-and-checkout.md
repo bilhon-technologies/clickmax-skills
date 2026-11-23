@@ -27,15 +27,15 @@ The fastest path when the user explicitly wants a ready-made Clickmax checkout r
 
 When the checkout should carry the funnel's own visual identity instead of the template's, author it through `clickmax-pages` with the `checkout` recipe and connect it the same way from step 3.
 
-## Whop, Hotmart, Stripe, Pagar.me or PagBank checkout step
+## Whop, Hotmart, Stripe, Pagar.me, PagBank or InfinitePay checkout step
 
-When the step sells through the workspace's Whop, Hotmart, Stripe, Pagar.me or PagBank account (not a Clickmax offer):
+When the step sells through the workspace's Whop, Hotmart, Stripe, Pagar.me, PagBank or InfinitePay account (not a Clickmax offer):
 
 0. `mcp__plugin_clickmax_clickmax__external_checkout_accounts_list` for that platform FIRST. `setup` not null → relay `setup.instructions` (connect or complete the integration in Integrações) and stop: no node, no page.
-1. `mcp__plugin_clickmax_clickmax__funnels_nodes_create` with `type: "external_checkout"` and `config: { provider: "whop" | "hotmart" | "stripe" | "pagarme" | "pagbank" }` — always pass the provider. Omit `triggers`: the node gets `purchase_approved` (+ accept fallbacks). Whop/Hotmart/Stripe never emit `purchase_declined`, `cart_abandoned`, pix or boleto; Pagar.me and PagBank can also take `card_declined`, `pix_generated` and `boleto_generated` (add them with `mcp__plugin_clickmax_clickmax__funnels_nodes_triggers_update` when the user wants those paths). Its triggers cannot go to a `workflow` node.
+1. `mcp__plugin_clickmax_clickmax__funnels_nodes_create` with `type: "external_checkout"` and `config: { provider: "whop" | "hotmart" | "stripe" | "pagarme" | "pagbank" | "infinitepay" }` — always pass the provider. Omit `triggers`: the node gets `purchase_approved` (+ accept fallbacks). Whop/Hotmart/Stripe never emit `purchase_declined`, `cart_abandoned`, pix or boleto; Pagar.me and PagBank can also take `card_declined`, `pix_generated` and `boleto_generated` (add them with `mcp__plugin_clickmax_clickmax__funnels_nodes_triggers_update` when the user wants those paths); InfinitePay only emits `purchase_approved`, when the buyer returns to the page after paying. Its triggers cannot go to a `workflow` node.
 2. Author the page in `clickmax-pages` (its external-checkout reference): catalog walk → `mcp__plugin_clickmax_clickmax__pages_import_html_draft` with `externalCheckout` of the SAME provider and the funnel's `projectId`/`funnelId`.
 3. `mcp__plugin_clickmax_clickmax__funnels_nodes_connect_page` on that node, then route `purchase_approved` to the next step (thank-you/upsell) with `mcp__plugin_clickmax_clickmax__funnels_triggers_connect`.
-4. Tell the user Whop, Stripe, Pagar.me and PagBank sales are tied to the page once the funnel/page is published (Stripe, Pagar.me and PagBank do not charge before that); revenue shows in the funnel's results.
+4. Tell the user Whop, Stripe, Pagar.me, PagBank and InfinitePay sales are tied to the page once the funnel/page is published (Stripe, Pagar.me, PagBank and InfinitePay do not charge before that); revenue shows in the funnel's results.
 
 Never fall back to a page node without checkout, or to another platform, when the integration is missing.
 
@@ -57,7 +57,7 @@ When the funnel's pages are routes of a Max Design site. Default for a NEW funne
    - Automations ("comprou", "recusou", pix/boleto reminders): workflow node with its flow linked first (`mcp__plugin_clickmax_clickmax__funnels_workflow_flow_set`), then `mcp__plugin_clickmax_clickmax__funnels_triggers_connect` the route trigger into it; the trigger keeps its page arrow. They fire only for purchases of the route's offer. `upsell_declined`/`downsell_declined` count in the funnel but start NO automation: never connect them to a workflow; say so when the user asks for one.
    - Price change of the same offer or of a bump offer: the site republishes by itself after the user confirms; nothing to change in code or funnel.
 
-   Checkout outside the site = the user prefers it, the plugin has no `runtime/checkout`, or the step sells through Whop/Hotmart/Stripe/Pagar.me/PagBank: the checkout stays a Clickmax checkout page (above) or an external checkout step, and the site's purchase buttons link to its URL.
+   Checkout outside the site = the user prefers it, the plugin has no `runtime/checkout`, or the step sells through Whop/Hotmart/Stripe/Pagar.me/PagBank/InfinitePay: the checkout stays a Clickmax checkout page (above) or an external checkout step, and the site's purchase buttons link to its URL.
 
 ## Linking and routing
 
@@ -70,7 +70,7 @@ When the funnel's pages are routes of a Max Design site. Default for a NEW funne
 
 ## A checkout is an offer's checkout
 
-"Page with a checkout" means a page whose checkout block is bound to an `offerId` — or, for a Whop/Hotmart/Stripe/Pagar.me/PagBank step, to the account's plan/offer/price via `externalCheckout`. Passing the offer at creation (template path) or at import (authored path) is what wires it; without an offer the block renders and charges nothing. One checkout per page — payment is resolved per page.
+"Page with a checkout" means a page whose checkout block is bound to an `offerId` — or, for a Whop/Hotmart/Stripe/Pagar.me/PagBank/InfinitePay step, to the account's plan/offer/price via `externalCheckout`. Passing the offer at creation (template path) or at import (authored path) is what wires it; without an offer the block renders and charges nothing. One checkout per page — payment is resolved per page.
 
 ## Notes
 

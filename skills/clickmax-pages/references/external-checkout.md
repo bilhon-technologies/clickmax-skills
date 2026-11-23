@@ -1,6 +1,6 @@
-# External checkout on a page — Whop, Hotmart, Stripe, Pagar.me and PagBank
+# External checkout on a page — Whop, Hotmart, Stripe, Pagar.me, PagBank and InfinitePay
 
-A page can sell through the workspace's own **Whop**, **Hotmart**, **Stripe**, **Pagar.me** or **PagBank** account instead of a Clickmax offer. The checkout is embedded in the page, the funnel moves on when the payment is approved, and the sale is recorded against the page.
+A page can sell through the workspace's own **Whop**, **Hotmart**, **Stripe**, **Pagar.me**, **PagBank** or **InfinitePay** account instead of a Clickmax offer. The checkout is embedded in the page (InfinitePay: a short form on the page, payment on InfinitePay's page, buyer returns to the same page), the funnel moves on when the payment is approved, and the sale is recorded against the page.
 
 ## When to use it
 
@@ -11,15 +11,16 @@ A page can sell through the workspace's own **Whop**, **Hotmart**, **Stripe**, *
 |"checkout da Stripe", a Stripe product/price, `price_…`|Stripe|
 |"checkout da Pagar.me", "checkout transparente da Pagar.me"|Pagar.me|
 |"checkout da PagBank", "checkout transparente do PagBank"|PagBank|
+|"checkout da InfinitePay", "vender pela InfinitePay"|InfinitePay|
 |A Clickmax product/offer, or no platform named|Native checkout (`offerId`) — see [components](components.md#checkout)|
 
 Never mix them: one page has exactly one checkout, either a Clickmax offer or one external account.
 
-Which platforms you may name: only these five, the ones Clickmax embeds. Offer one only when the user already has an active integration for it, or when the user asks about selling through another platform ("you can connect Whop, Hotmart, Stripe, Pagar.me or PagBank if you prefer"). Never name or suggest other gateways (PayPal, Mercado Pago, Kiwify, Eduzz…) as a page checkout — say they are not available and offer the native checkout or these five.
+Which platforms you may name: only these six, the ones Clickmax embeds. Offer one only when the user already has an active integration for it, or when the user asks about selling through another platform ("you can connect Whop, Hotmart, Stripe, Pagar.me, PagBank or InfinitePay if you prefer"). Never name or suggest other gateways (PayPal, Mercado Pago, Kiwify, Eduzz…) as a page checkout — say they are not available and offer the native checkout or these six.
 
 ## Step 0 — the integration must exist
 
-`mcp__plugin_clickmax_clickmax__external_checkout_accounts_list` with `platform: "whop" | "hotmart" | "stripe" | "pagarme" | "pagbank"` is ALWAYS the first call, before writing any copy or HTML.
+`mcp__plugin_clickmax_clickmax__external_checkout_accounts_list` with `platform: "whop" | "hotmart" | "stripe" | "pagarme" | "pagbank" | "infinitepay"` is ALWAYS the first call, before writing any copy or HTML.
 
 - `setup` is not null → **stop the build** and guide the setup, in the user's language:
   1. Say in one line what is missing: `not_connected` = no active integration; `incomplete` = the integration lacks the fields in `missingCredentials` (named exactly as the Integrations form shows, e.g. **Chave publicável**).
@@ -36,6 +37,7 @@ Which platforms you may name: only these five, the ones Clickmax embeds. Offer o
 |Stripe|**Chave secreta ou restrita**, **Chave publicável**, **Segredo de assinatura do webhook**|The checkout does not charge — the import is rejected until all three are filled|
 |Pagar.me|**Chave secreta (sk\_)**, **Chave pública (pk\_)**, **Senha do webhook**, plus the page domain released in Pagar.me (**Configurações > Conta > Domínios**)|The checkout does not charge — the import accepts the page with a warning, so treat it like Stripe: do not build until complete|
 |PagBank|**Token PagBank** (the card public key and the payment notice secret are handled by Clickmax), plus Pix and boleto enabled in the PagBank account|The checkout does not charge — the import accepts the page with a warning, so treat it like Stripe: do not build until complete|
+|InfinitePay|**API Key da InfinitePay** (`inchk_…`, from **Configurações do Checkout > Checkout integrado**; the payment notice secret is handled by Clickmax)|The checkout does not charge — the import accepts the page with a warning, so treat it like Stripe: do not build until complete|
 
 ## Collect the choice from real data
 
@@ -52,6 +54,7 @@ One account → use it without asking. Several → ask which, by name. Then walk
 Several products/plans/offers/prices and the user did not name one → ask with names and prices as choices. Exactly one → use it and say so.
 
 - PagBank (transparent checkout, no product catalog, no plans, no subscription — one-time only): the product is defined inline from what the user tells you: name and price. Ask for any you do not have; never invent a price. If the user asks for a subscription on PagBank, say it is not available there and offer Pagar.me, Stripe or Whop when they have one connected.
+- InfinitePay: same as PagBank (inline product, one-time only, no subscription); the product alone must cost ≥ R$ 1,00 (`amount` ≥ `100`).
 
 Whop/Hotmart/Stripe lists are cursor-paginated with no name search: keep calling with `cursor` = `meta.nextCursor` while `meta.hasNextPage` is true and the item is not found yet.
 
@@ -75,6 +78,7 @@ Pass `externalCheckout` on `mcp__plugin_clickmax_clickmax__pages_validate_html` 
   Optional, only when asked: `paymentMethods` (`credit_card`, `pix`, `boleto` — Pix is dropped on subscriptions), `maxInstallments` (1–12), `statementDescriptor` (≤13 chars), `buttonLabel`, `accentColor` (`#RRGGBB`), `fontFamily`. One-click purchase after an approved card sale on the same domain is on by default (`oneClick`).
 
 - PagBank: `{ provider: "pagbank", incomingId, pagbankOffer }` with `pagbankOffer: { product: { code, name, amount }, bumps? }` — same `code`/`amount` rules as Pagar.me one-time (cents; R$ 97 = `9700`; max 5 bumps). Optional, only when asked: `paymentMethods` (`credit_card`, `pix`, `boleto`), `maxInstallments` (1–12, interest-free for the buyer), `pixExpiresInMinutes` (5–1440), `boletoDueDays` (1–30), `statementDescriptor` (≤17 letters/digits/spaces), `buttonLabel`, `accentColor` (`#RRGGBB`), `fontFamily`. One-click after an approved card sale on the same domain is on by default and only reuses the saved card.
+- InfinitePay: `{ provider: "infinitepay", incomingId, infinitepayOffer }` with `infinitepayOffer: { product: { code, name, amount }, bumps? }` — same `code`/`amount` rules as PagBank (max 5 bumps). Optional, only when asked: `pixEnabled` (card is always on), `askPhone` (optional phone field), `buttonLabel` (≤40), `accentColor`/`buttonTextColor` (`#RRGGBB`), `fontFamily` (same fonts as PagBank). No installments, statement name or one-click.
 
 Optional, only when the user asked:
 
@@ -84,27 +88,28 @@ Optional, only when the user asked:
 |`locale`: `pt`, `en`, `es`, `fr`, `de`, `it`, …|`hideBillet`/`hidePix`/`hidePayPal`/`hideCoupon`: `true` hides it|`promotionCodes: true` — coupon field|
 ||`split`: max card installments, 1–12|`collectPhone: true` — asks the phone|
 
-The `checkout` recipe accepts an external checkout as its checkout. An inactive account, one from another workspace, or a Stripe integration missing keys is rejected on import (a Pagar.me one missing keys, or a PagBank one missing its token, is accepted with a warning but does not sell) — go back to Step 0 instead of retrying.
+The `checkout` recipe accepts an external checkout as its checkout. An inactive account, one from another workspace, or a Stripe integration missing keys is rejected on import (a Pagar.me one missing keys, or a PagBank/InfinitePay one missing its token/API Key, is accepted with a warning but does not sell) — go back to Step 0 instead of retrying.
 
 ## What the user must know
 
-- The checkout's look comes from the platform. Hotmart takes colors and fields from the product's checkout settings in Hotmart; Whop only takes the light/dark theme here; Stripe follows the account's branding in Stripe. Pagar.me and PagBank are transparent checkouts drawn by Clickmax in each gateway's style (accent color, font and button text can be set).
-- Whop, Stripe, Pagar.me and PagBank tie each sale to the page when the page is **published**. Before publishing, Stripe, Pagar.me and PagBank do not charge at all and Whop purchases are not attributed.
+- The checkout's look comes from the platform. Hotmart takes colors and fields from the product's checkout settings in Hotmart; Whop only takes the light/dark theme here; Stripe follows the account's branding in Stripe. Pagar.me and PagBank are transparent checkouts drawn by Clickmax in each gateway's style (accent color, font and button text can be set). InfinitePay is a short Clickmax form (name, e-mail, optional phone, bumps) that redirects to InfinitePay's payment page (card + Pix there); accent/button colors, font and button text can be set.
+- Whop, Stripe, Pagar.me, PagBank and InfinitePay tie each sale to the page when the page is **published**. Before publishing, Stripe, Pagar.me, PagBank and InfinitePay do not charge at all and Whop purchases are not attributed.
 - Pagar.me: the card fails until the page's domain is released in Pagar.me (**Configurações > Conta > Domínios**), and each payment method must be active in the Pagar.me account.
 - PagBank: no domain to release (the card is encrypted in the browser); Pix and boleto must be enabled in the PagBank account, and the boleto asks the buyer for the full address.
+- InfinitePay: the payment link lasts 24h and accepts one payment; the funnel advances only when the buyer returns to the page after paying (closed tab → sale still arrives by webhook, funnel does not advance); refunds/cancellations only in the InfinitePay app/Conta Web; no sandbox (test = real R$ 1,00 + refund).
 - Revenue comes from the platform's webhook. Hotmart's "change country" button cannot be hidden; boleto and other async methods confirm only when the platform notifies, and the funnel does not advance on them.
-- Order bumps and `checkouts_set` from the native checkout do not apply; Stripe bumps go in `optionalItems`, Pagar.me bumps in `pagarmeOffer.bumps`, PagBank bumps in `pagbankOffer.bumps`.
+- Order bumps and `checkouts_set` from the native checkout do not apply; Stripe bumps go in `optionalItems`, Pagar.me bumps in `pagarmeOffer.bumps`, PagBank bumps in `pagbankOffer.bumps`, InfinitePay bumps in `infinitepayOffer.bumps`.
 - Fine-tuning (Whop accent/radius/custom colors) is done in the editor: select the block and use its side panel.
 
 ## Change the checkout later
 
 To change a checkout already on a page (payment methods, installments, bumps, product/plan, coupon, theme…):
 
-- Page open in the editor → mounted `editor` `codemode.updateExternalCheckout({ options })` (add `componentId` only when the page has more than one checkout block). It writes the block the same way its side panel does, saves, and the canvas shows it at once. Pass only the keys to change, e.g. "só Pix" on Pagar.me or PagBank = `{ paymentMethods: ["pix"] }`; Hotmart "sem boleto" = `{ hideBillet: true }`; Stripe "com cupom" = `{ promotionCodes: true }`.
+- Page open in the editor → mounted `editor` `codemode.updateExternalCheckout({ options })` (add `componentId` only when the page has more than one checkout block). It writes the block the same way its side panel does, saves, and the canvas shows it at once. Pass only the keys to change, e.g. "só Pix" on Pagar.me or PagBank = `{ paymentMethods: ["pix"] }`; InfinitePay "sem Pix" = `{ pixEnabled: false }` (card cannot be turned off); Hotmart "sem boleto" = `{ hideBillet: true }`; Stripe "com cupom" = `{ promotionCodes: true }`.
 - Never re-import a page that is open in the editor to change its checkout: the mounted editor keeps the old content, reading it back shows no change, and its next save can overwrite the import.
 - Page not open → re-import the same `pageId` with the new `externalCheckout`, or open it in the editor and use the method above.
 - The account cannot be changed this way; switching account is done in the block's side panel.
 
 ## Inside a funnel
 
-A funnel step that sells through Whop/Hotmart/Stripe/Pagar.me/PagBank is an `external_checkout` node, not a `page` node — see the `clickmax-funnels` skill. Build the page with the SAME provider as the node's `config.provider`.
+A funnel step that sells through Whop/Hotmart/Stripe/Pagar.me/PagBank/InfinitePay is an `external_checkout` node, not a `page` node — see the `clickmax-funnels` skill. Build the page with the SAME provider as the node's `config.provider`.

@@ -52,6 +52,8 @@ Rule of thumb for "object or field?": object when the thing has its OWN identity
 - Links: `mcp__plugin_clickmax_clickmax__custom_object_links_create` pairs are always `{ recordId: <source object record>, targetId: <other side> }`. What a contact/card/record has linked: `mcp__plugin_clickmax_clickmax__custom_object_links_list` (groups as that page shows them, including empty ones = what COULD be linked there).
 - Filtering records by what they are linked to: a `relation` item in the object filters, whose JSON carries the other side's filter tree (contact segment filters, opportunity filters, or object filters). Labels (`"g1"`) are fine everywhere, including inside the JSON.
 - Notes: `notes_create` writes into the record history; only the author or a manager can edit/delete a note.
+- CSV of records: `mcp__plugin_clickmax_clickmax__custom_object_records_export_csv` (same targeting as the bulk tools, `columns` by id); hand over the `url`; still running -> `custom_object_records_bulk_jobs_status` with the `jobId`.
+- Portal integration ("Integrações"): `mcp__plugin_clickmax_clickmax__catalog_sync_catalog` for canonical keys/profiles -> `mcp__plugin_clickmax_clickmax__custom_objects_catalog_mapping_get` -> `..._update` with the FULL mapping (rules left out are deleted). `readiness[].missing` = what blocks each portal. Connecting a portal account is done in the app.
 - Saved views are shared with the whole workspace; create one only when the user asks for a reusable view.
 
 ## Report
@@ -77,4 +79,4 @@ Rule of thumb for "object or field?": object when the thing has its OWN identity
 
 ---
 
-Clickmax skill revision: `f86020e0ba3e`
+Clickmax skill revision: `8720ac6b3017`

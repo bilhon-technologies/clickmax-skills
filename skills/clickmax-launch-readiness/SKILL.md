@@ -85,7 +85,7 @@ Fix link per finding (screen id for a screen-lookup tool, or the entity's own li
 - funnel steps / triggers / pages → the funnel itself | external checkout integration → `setup.openPath`
 - external page script → give `headScript` from `mcp__plugin_clickmax_clickmax__pages_get_external_script` inline (paste before `</head>`) + the page; button that does not advance → the redirect markers of `clickmax-external-pages` (`cm-checkout-button`, `cm-next-funnel-node`, or `data-cx-redirect-url` = the next step's public URL from `mcp__plugin_clickmax_clickmax__pages_get`)
 - WhatsApp number / alerts → `connections-whatsapp` | template paused or rejected → `message-templates`
-- sender / domain DNS → `connections-email` (records from `email_domains_dns_get`) | domain not in the workspace → `domains`
+- sender / domain DNS → `connections-email` (records from `email_domains_dns_get`) | domain not in the workspace, not connected, or nothing on its home `/` → `domains` + the `clickmax-domains` skill to fix it
 - automation → the automation itself | campaign → `broadcasts`
 
 User-fixable vs platform bug:
@@ -121,4 +121,4 @@ User-fixable vs platform bug:
 
 ---
 
-Clickmax skill revision: `8720ac6b3017`
+Clickmax skill revision: `1733531c93dd`

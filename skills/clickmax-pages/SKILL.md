@@ -15,6 +15,7 @@ Scope boundary — pick the right skill first:
 |Whole connected funnel with several pages and edges|`clickmax-funnels`|
 |Offer, price, guarantee, deliverable|`clickmax-offers`|
 |Form/quiz behavior, fields, logic|`clickmax-forms-quizzes`|
+|Custom domain: connect, DNS, domain not opening, what opens on the domain home `/`|`clickmax-domains`|
 |One native page — content, visual system, structure, publish|this skill|
 
 ## Key assumptions
@@ -80,4 +81,4 @@ Scope boundary — pick the right skill first:
 
 ---
 
-Clickmax skill revision: `8720ac6b3017`
+Clickmax skill revision: `1733531c93dd`

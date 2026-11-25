@@ -11,6 +11,7 @@ Not this skill:
 
 - Funnel step backed by an EXTERNAL page (URL hosted outside Clickmax, e.g. the user's own site/domain) -> STAY here: compose the granular tools (see the external-page common flow below). Never use `pages_create` for an external URL — that makes an empty INTERNAL page.
 - Script-install help for an EXISTING external page (no graph change) -> `clickmax-external-pages`
+- Connecting/fixing the funnel's custom domain (DNS, status, domain home `/`) -> `clickmax-domains`; come back here for the graph
 - Lead/payment cohort analysis inside a funnel -> solve that with the relevant sales/CRM skill first
 - "Is my funnel ready / vou lançar hoje / status do funil / why isn't my funnel working", no change asked -> `clickmax-launch-readiness` (checks the funnel plus receiving, offers, channels, e-mail and automations it depends on); come back here to fix a finding
 - Overview of how a funnel and its automations are doing ("como está meu funil junto com as automações", where it loses people), no change asked -> the flow canvas (`canvas_render` with the funnel layout); read it with `mcp__plugin_clickmax_clickmax__funnels_structure_get`, `mcp__plugin_clickmax_clickmax__funnels_automations_list` and `mcp__plugin_clickmax_clickmax__funnels_analytics`, never answer it as a table
@@ -45,7 +46,7 @@ For AI-authored pages, read [AI funnel creation](references/ai-funnel-creation.m
 - `funnels_validate.valid` is not enough by itself; still inspect disconnected triggers, orphan nodes, and missing page links
 - Delete tools are destructive and should be confirmed unless deletion was already explicit
 - Connections define the visual flow: the builder arranges the funnel left-to-right by following routed edges. Disconnected nodes have no graph flow, so they tend to stack in the first column.
-- One domain per funnel: the funnel serves every published node on its domain (`funnels_get.settings.domain`, else the project's public domain), and every next-step redirect opens there. A page with its own `domainId` inside a funnel on another domain → the visitor leaves the page's address on the next step. Page created for / linked to a funnel → same `domainId` as the funnel (`null` when the funnel has none)
+- One domain per funnel: the funnel serves every published node on its domain (`funnels_get.settings.domain`, else the project's public domain), and every next-step redirect opens there. A page with its own `domainId` inside a funnel on another domain → the visitor leaves the page's address on the next step. Page created for / linked to a funnel → same `domainId` as the funnel (`null` when the funnel has none). Change the funnel's domain = `funnels_update` `domainId` (from `domains_list`, `null` clears) → applies on the next `funnels_publish`; connecting the domain itself → `clickmax-domains`
 
 - Read [lifecycle and safety](references/lifecycle-and-safety.md) when deciding between draft edits, publish, deactivate, or destructive delete.
 - Read [node types and edges](references/node-types-and-edges.md) when choosing node types and the correct connection tool for each edge family.
@@ -128,7 +129,7 @@ Common flows:
 - `funnels_validate.nodesWithUnusedPage` = node carrying a page its type never serves (legacy link); the visitor never reaches that page
 - `funnels_validate` sales-route warnings (never flip `valid`): `checkoutsMissingOffer` = checkout page without offer → charges nothing (`clickmax-offers` / page editor) | `externalCheckoutIssues` = unknown provider or provider block missing on the page (fix in the page editor) | `stepsWithoutNextStep` = sales CTA / purchase / upsell-downsell accept-decline leading nowhere → ask before connecting, a last step may end on purpose
 - External page node (`externalUrl`) only advances once its head script fires → `pages_tracking_status` (`lastPageViewAt: null` = never seen) → `clickmax-external-pages`
-- "Lead doesn't reach the next page" / next step on an unexpected address → compare `pages_get.domainName` of each funnel page with the funnel domain before touching triggers; fix = align the domain (`pages_update` `domainId` or the funnel's domain) + republish, only with user approval
+- "Lead doesn't reach the next page" / next step on an unexpected address → compare `pages_get.domainName` of each funnel page with the funnel domain before touching triggers; fix = align the domain (`pages_update` `domainId` or `funnels_update` `domainId` for the funnel) + republish, only with user approval
 - For a `workflow` node, link its flow (`funnels_workflow_flow_set`, resolving `flowId` via `flows_list`/`flows_create`) — its goal ("Objetivo", the conversion that can end the lead's stay) is configured by the user on the node or in the flow editor, not by a tool; a workflow without a linked flow does not fire automation and is flagged by `funnels_validate.workflowsMissingFlow`
 - For a `workflow` node, configure entry/exit from the funnel side; flow-level start events are for standalone automations, not funnel-embedded flows
 - Creating nodes without connecting them leaves a broken-looking graph: no routed edges and stacked nodes
@@ -153,4 +154,4 @@ Common flows:
 
 ---
 
-Clickmax skill revision: `8720ac6b3017`
+Clickmax skill revision: `1733531c93dd`

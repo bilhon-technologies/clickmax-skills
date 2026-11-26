@@ -22,6 +22,7 @@ Not this skill:
 - WhatsApp campaign = approved template only (free text has no 24h window here). `paramMapping` all or none, one token per `positionParams`: `{{name}}`, `{{email}}`, `{{custom.<key>}}`.
 - Sending costs credits; schedule/send fails upfront (402) without balance, or 409 when the WhatsApp number is blocked or its use in campaigns is off.
 - Pause works only on the new send engine (409 otherwise → cancel is the only stop). Cancel is final.
+- Email sender domain warms up: daily marketing cap per domain (`broadcasts_get` `sendLimit`; `null` = none). Over the cap → queue waits, nothing fails, rest leaves from `renewsAt` | `recipientCount > remainingToday` → warn before send | sending + `remainingToday: 0` = waiting, not stuck | need more today → support (suporte@clickmax.io).
 - Email templates: gallery (`isOwn: false`) is read-only → `email_templates_duplicate` to customize. Category `scheduling` = layout with the `{{conteudo}}` slot, not a campaign body.
 
 ## Thought process
@@ -63,4 +64,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `1733531c93dd`
+Clickmax skill revision: `9fdb5796bedc`

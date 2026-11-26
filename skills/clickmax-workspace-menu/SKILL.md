@@ -16,7 +16,7 @@ Changes to the menu every member of the workspace sees (Settings › Personaliza
 
 - Draft → publish. Edits go to a shared draft the admin also sees on the screen; members only see the change after `workspace_personalization_publish`.
 - `nav` is a diff over the default Clickmax menu keyed by native id. A wrong native id is ignored with no error, so the change "succeeds" and nothing happens.
-- Native ids come only from `nav.nativeCatalog` in the draft. Without it (no admin has published from the screen since it started being recorded), only created entries can be edited.
+- Native ids come only from `nav.nativeCatalog` in the draft. Clickmax fills it in when an admin opens the app in the browser. If it is missing or lacks a name the user said, ask them to reload Clickmax and try again; until then only created entries can be edited.
 - An admin may be editing the same draft on the screen. Whatever the screen saves later wins.
 
 ## Execute guide
@@ -41,10 +41,11 @@ Describe the result in menu terms the user sees ("Webinar no longer shows in the
 ## Anti-patterns
 
 - Guessing ids such as `contacts` instead of reading the catalog.
+- Saying "try again later" or "do it on the screen" when the catalog is missing, instead of asking for a reload.
 - Sending only the keys you changed in `nav`.
 - Telling the user that hiding a page blocks access to it.
 - Publishing right after editing without the user's go-ahead.
 
 ---
 
-Clickmax skill revision: `be31e0029b7f`
+Clickmax skill revision: `0843ea4f10f6`

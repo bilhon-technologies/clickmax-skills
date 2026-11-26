@@ -115,6 +115,7 @@ Sem esses passos, a cópia local fica parada na versão instalada e a IA segue o
 - **clickmax-wallet-receivables** — Use when the user asks if they are ready to sell/receive, about the Clickmax wallet ("Carteira"), bank/receiving account approval, balances, "a receber", receivables, statement/extrato, or withdrawals (saques).
 - **clickmax-webchat** — Use when the user wants to create, inspect, edit, enable, or disable a Clickmax webchat bot (the embeddable chat widget channel) and its pre-chat bot flow — greetings, lead capture, clickable questions, AI classification, and handoff to a human attendant.
 - **clickmax-webinars** — Use when the user wants to create or configure a Clickmax webinar — titles, slug, presenter/host, schedule and sessions, offer cards, room settings (simulated audience, sales, chat, reactions, appearance, ended page), automations — or publish it.
+- **clickmax-workspace-menu** — Use when the user wants to customize the workspace menu (module rail and side menu) — hide, rename, reorder, change icons, move items between modules, create modules, groups, links or shortcuts — or asks why the menu looks different.
 - **clickmax-workspace-plans** — Use when the user wants to inspect, compare, preview cancellation of, or cancel the workspace's own Clickmax SaaS subscription and billing plan.
 
 ## Licença

@@ -25,6 +25,7 @@ Not this skill:
 
 - designing/editing builder page content -> use the visual builder workflow
 - funnel graph routing -> `clickmax-funnels`
+- a booking agenda on the external site ("código da agenda", embed, booking link) -> `clickmax-scheduling`; it needs no page record
 
 ## Key assumptions
 
@@ -74,4 +75,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `0843ea4f10f6`
+Clickmax skill revision: `8dd17b666bc7`

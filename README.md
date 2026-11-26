@@ -102,6 +102,7 @@ Sem esses passos, a cópia local fica parada na versão instalada e a IA segue o
 - **clickmax-projects** — Use when the user wants to create, list, inspect, rename, set-default, or delete workspace projects in Clickmax, or when any build needs a target project resolved first.
 - **clickmax-proposals** — Use when the user wants to find, create, edit, version or consolidate Clickmax proposal templates (slide deck or Word document) and the proposals generated for contacts/opportunities.
 - **clickmax-sales-insights** — Use when the user wants to know what is selling — top offers/products by revenue and quantity, order-bump attach rate, or period-over-period sales trend (revenue, average ticket, sales count) for seller sales analysis in Clickmax.
+- **clickmax-scheduling** — Use when the user wants to create, list, edit or configure a scheduling agenda (booking page), or get its public link or the embed code to show it on an external site.
 - **clickmax-seller-subscriptions** — Use when the user wants to inspect, chart, or cancel customer subscriptions sold through Clickmax.
 - **clickmax-social** — Use when the user wants to write, approve, schedule, publish or retry social posts, answer post comments, manage queue, templates, goals or social reports in Clickmax.
 - **clickmax-studio** — Use when the user wants to plan, write, review, approve, produce, schedule or measure content in the Cx Studio pauta — editorial lines, the idea inbox, scripts, the video of a script, or the monthly results of a brand.

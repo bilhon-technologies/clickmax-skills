@@ -12,6 +12,7 @@ Not this skill:
 - the raw event timeline of a contact or card (things that happened) -> `clickmax-leads-activity-analysis`. Same word, different thing: that is an event log, this is work someone owes or booked
 - creating an appointment, or editing one appointment's details -> the `scheduled_calls_*` operations (`clickmax-pipelines` covers the card side); follow-up tasks and cadences ARE covered below
 - pipeline/kanban analytics -> `clickmax-pipelines`
+- a booking agenda (the public booking page: create, configure, link, embed code) -> `clickmax-scheduling`
 
 ## Key assumptions
 
@@ -76,4 +77,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `0843ea4f10f6`
+Clickmax skill revision: `8dd17b666bc7`

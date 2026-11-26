@@ -13,6 +13,7 @@ Not this skill:
 - a follow-up reminder with a deadline (a task, not a slot) -> the task operations; card side in `clickmax-pipelines`
 - meeting KPIs: show rate, no-show, self booking, who books x who conducts -> `clickmax-insights-dashboards`
 - writing the sales method a meeting follows -> `clickmax-playbooks`
+- creating or configuring an agenda (booking page), its public link or its embed code for a site -> `clickmax-scheduling`
 
 ## Key assumptions
 
@@ -77,4 +78,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `0843ea4f10f6`
+Clickmax skill revision: `8dd17b666bc7`

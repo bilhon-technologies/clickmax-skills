@@ -13,6 +13,7 @@ Not this skill:
 - The user asks about their own workspace data (their leads, their orders, their revenue) -> the operational analysis skills. The help center documents the product, not the user's data.
 - "Why isn't my funnel/launch working", "is everything ready to launch" about their own funnel or account -> `clickmax-launch-readiness`: it reads the account's real state; come back here only for how a feature works.
 - Custom domain the user wants connected, checked or fixed on their account, or a troubleshooting question about one ("conecta meu domínio", "meu domínio não abre", "site fora do ar", "erro de certificado", "mexi no DNS") -> `clickmax-domains`: it reads the domain's real state first and uses the help center only for provider-specific steps.
+- The user wants an agenda's booking link or the code to show it on a site ("onde pego o código da agenda") -> `clickmax-scheduling`: it returns the real link and code, not only the screen.
 - The user asks "what changed / what's new" about a release -> use `mcp__plugin_clickmax_clickmax__helpdesk_releases_list` / `mcp__plugin_clickmax_clickmax__helpdesk_releases_latest` instead of docs search.
 - The user only wants to know WHERE a screen is ("onde fica a carteira", "onde adiciono o template da Meta") and a screen-lookup tool is available (Max: `find_screen`) -> use it; it links straight to the screen in one call. Search the help center only when they also need the steps or a fix.
 
@@ -70,4 +71,4 @@ Not this skill:
 
 ---
 
-Clickmax skill revision: `0843ea4f10f6`
+Clickmax skill revision: `8dd17b666bc7`

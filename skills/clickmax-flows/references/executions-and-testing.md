@@ -53,7 +53,7 @@ Production runs have no per-step trace, only step order and the failing step's e
 |Severity|Codes|
 |-|-|
 |error|`missingEntryTrigger` · `danglingTarget` · `incompleteChannelStep` (also an email with an empty body — rewrite it with `flows_send_email`) · `whatsappTemplateNotApproved` · `brokenReference` (tag/stage/pipeline/offer/list/number/template deleted) · `senderNumberUnavailable` (pinned WhatsApp number archived, deactivated or automations disabled)|
-|warning|`unreachableStep` · `stepWithoutNext` (may be intended) · `emptyConditionalBranch` · `triggerWithoutScope` · `variableOutsideTriggerContext` (message uses a variable the trigger never provides; renders empty)|
+|warning|`unreachableStep` · `stepWithoutNext` (may be intended) · `emptyConditionalBranch` · `triggerWithoutScope` · `variableOutsideTriggerContext` (message uses a variable the trigger never provides; renders empty) · `whatsappFreeTextOutsideWindow` (official WhatsApp free text reachable before any reply; closed 24h window → held `suppressed`, execution still `finished`; use a template)|
 
 Numbers taken from the trigger (`numberStrategy: 'context'`) cannot be checked before runtime.
 

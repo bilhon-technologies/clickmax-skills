@@ -121,4 +121,4 @@ User-fixable vs platform bug:
 
 ---
 
-Clickmax skill revision: `d63a63046a94`
+Clickmax skill revision: `b12180b3129f`

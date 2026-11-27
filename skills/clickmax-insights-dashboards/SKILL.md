@@ -55,6 +55,18 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 - MEETING widgets (`entity: meeting`) have two people per meeting: who CONDUCTS it (`segmentBy: attendant`) and who BOOKED it (`segmentBy: scheduler`; public booking, automations and calendar sync have no booker and land in an unnamed bucket). `segmentBy: appointmentSchedule` groups by the public agenda the meeting was booked on (no agenda = "no record"). Read the catalog `meetings` group before composing — it already has: who-books × who-conducts table (`meetingHandoff`: booked, for self / for others, held, no-show, still scheduled, show rate), show rate by conductor and by booker, and four self-booking cards. Prefer these presets over hand-built selections.
 - SELF BOOKING = `selfBookedOnly: true` on a meeting widget: only meetings the contact booked alone on the public agenda. It rides on presets (`meetings-self-booked-*`) and is accepted in a raw `widget` selection.
 - Options that exist ONLY in a full dashboard `config` (`analytics_dashboards_create` / `_update` / `_run`) — the widget-level tools (`compose`, `widget_add`, `widget_update`) cannot set them and a key they do not know is dropped silently, not refused: `meetingAttendantField` (`attendant` default | `scheduler` — WHICH person the shared `attendantIds` filter and a widget owner scope point at; "meetings Helena booked" needs `scheduler`, otherwise the number is the closer agenda), `distinctByOpportunity` (counts opportunities with at least one meeting instead of meetings; meetings without a card drop out; the period total is distinct over the whole period, so it is not the sum of the daily buckets), `leadTimeDateFrom`/`leadTimeDateTo` (own cohort window for `leadTime`, by card CREATION date — replaces the dashboard period for that widget and the run lists the period as ignored) and `businessDaysOnly` (time-in-stage counted Mon–Fri only, BRT, no holiday calendar).
+- CUSTOM OBJECT widgets (`entity: customObject` + `objectId`, records of an object the workspace created — list objects/fields/relations with the custom objects tools) have NO catalog preset; send a raw `widget`:
+
+  |Key|Meaning|
+  |-|-|
+  |`reportType`|`performance` = records in the period, over time \| `progress` = records that exist now, no period|
+  |`objectAggregate`|`count` (default) \| `sum` \| `avg` \| `min` \| `max` of `objectValueFieldId` (number/currency/percentage/rating field OF THAT OBJECT; required when not `count`, 400 otherwise)|
+  |`objectDateFieldId`|date field OF THAT OBJECT used as time axis AND period (absent = record creation). Records without that date drop out of `performance`|
+  |`segmentBy`|`none` \| `attendant` (record responsible) \| `customField` + `customFieldId` (field of that object) \| `relation` + `objectRelationId` (linked lead/opportunity/company/record; a record linked to many counts in each slice, the total counts it once)|
+  |`objectFilters`|≤5 AND cuts `{fieldId, operator: eq\|neq\|gt\|gte\|lt\|lte\|contains\|empty\|notEmpty, value?}` on fields of that object; `value` is text read by field type (number, ISO date, `true`/`false`, option value); `neq` keeps records without a value|
+
+  Units: a currency `objectValueFieldId` comes back in **cents** (`measure: "value"`), like every money measure; number/percentage/rating fields come back as stored. A field of another object, or of the wrong type, = empty widget. Broad ask about one object ("um dashboard dos meus imóveis") → `mcp__plugin_clickmax_clickmax__analytics_dashboards_create_from_object` with the `objectId`, then edit widget by widget.
+
 - Forecast has a daily view per closer: preset `forecast-upcoming-daily-by-attendant` (table day × responsible, from today on). Preset `forecast-by-attendant` is a daily bar per responsible (it was a monthly ranking).
 
 ## Thought process
@@ -128,4 +140,4 @@ A dashboard is a saved artifact. If the user just wants a number once, answer wi
 
 ---
 
-Clickmax skill revision: `f76f0f24e098`
+Clickmax skill revision: `0858cc6123fb`

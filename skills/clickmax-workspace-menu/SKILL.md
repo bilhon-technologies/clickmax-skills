@@ -48,4 +48,4 @@ Describe the result in menu terms the user sees ("Webinar no longer shows in the
 
 ---
 
-Clickmax skill revision: `f76f0f24e098`
+Clickmax skill revision: `0858cc6123fb`

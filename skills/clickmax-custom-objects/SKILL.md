@@ -1,6 +1,6 @@
 ---
 name: clickmax-custom-objects
-description: Use when the user wants to model, fill, link, filter or clean up CUSTOM OBJECTS (objetos personalizados) in the CRM — entities beyond contacts/opportunities/companies like Imóveis, Veículos, Contratos, Turmas — their records, fields, links (ligações/vínculos), history notes, saved views, bulk changes, or segmenting contacts by linked records.
+description: Use when the user wants to model, fill, link, filter, total or clean up CUSTOM OBJECTS (objetos personalizados) in the CRM — entities beyond contacts/opportunities/companies like Imóveis, Veículos, Contratos, Turmas — their records, fields, links (ligações/vínculos), history notes, saved views, bulk changes, segmenting contacts by linked records, or asks about the data of a Clickmax App (apps built in Max Design store their data in custom objects — "quanto faturei no meu app financeiro").
 ---
 
 ## When this applies
@@ -41,7 +41,9 @@ Rule of thumb for "object or field?": object when the thing has its OWN identity
 3. Question request ("quais imóveis de 3 quartos estão disponíveis?", "quem tem contrato vencendo?"):
    - `mcp__plugin_clickmax_clickmax__custom_object_records_query` with filters; page through `meta` when the user wants the full list.
    - "Which contacts…" questions over objects -> `mcp__plugin_clickmax_clickmax__segments_preview_count` with the `customObject` filter, not a loop over records.
-4. Cleanup/mass change -> count with the query first, then `bulk_update` / `bulk_delete` with the same filters; async beyond 200 records.
+4. Totals ("quanto faturei", "quantos contratos ativos", "receita por mês") -> `mcp__plugin_clickmax_clickmax__custom_object_records_aggregate` (sum/count/avg/min/max, optional `groupBy` option | responsible | month…), computed in the database with the same filters and ownership as the query. Never add up query pages.
+5. Question about a Clickmax App ("no meu app financeiro", "no app de RH") -> `mcp__plugin_clickmax_clickmax__clickmax_apps_list` with `search` = app name -> pick object + fields by meaning (money field, paid/received status option, payment/competence date) -> aggregate with filters (status = paid option, date range of the period asked). Say which object, fields, status and period you used; ambiguous model (two money fields, no paid status) -> ask or state the assumption.
+6. Cleanup/mass change -> count with the query first, then `bulk_update` / `bulk_delete` with the same filters; async beyond 200 records.
 
 ## Execute guide
 
@@ -79,4 +81,4 @@ Rule of thumb for "object or field?": object when the thing has its OWN identity
 
 ---
 
-Clickmax skill revision: `b12180b3129f`
+Clickmax skill revision: `f76f0f24e098`

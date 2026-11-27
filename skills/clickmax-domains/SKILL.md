@@ -99,4 +99,4 @@ Reading the signals:
 
 ---
 
-Clickmax skill revision: `b12180b3129f`
+Clickmax skill revision: `f76f0f24e098`

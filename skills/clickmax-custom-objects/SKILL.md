@@ -1,6 +1,6 @@
 ---
 name: clickmax-custom-objects
-description: Use when the user wants to model, fill, link, filter, total or clean up CUSTOM OBJECTS (objetos personalizados) in the CRM — entities beyond contacts/opportunities/companies like Imóveis, Veículos, Contratos, Turmas — their records, fields, links (ligações/vínculos), history notes, saved views, bulk changes, segmenting contacts by linked records, or asks about the data of a Clickmax App (apps built in Max Design store their data in custom objects — "quanto faturei no meu app financeiro").
+description: Use for ANY question about the data of a Clickmax App (apps built in Max Design or by API store their data in custom objects — "quanto faturei no meu app financeiro", "quanto Fulano recebeu de comissão no app", "quantos alunos no app da escola"; read it here, never by opening the Max Design project), and when the user wants to model, fill, link, filter, total or clean up CUSTOM OBJECTS (objetos personalizados) in the CRM — entities beyond contacts/opportunities/companies like Imóveis, Veículos, Contratos, Turmas — their records, fields, links (ligações/vínculos), history notes, saved views, bulk changes, or segmenting contacts by linked records.
 ---
 
 ## When this applies
@@ -81,4 +81,4 @@ Rule of thumb for "object or field?": object when the thing has its OWN identity
 
 ---
 
-Clickmax skill revision: `0858cc6123fb`
+Clickmax skill revision: `a5deccf1c144`
